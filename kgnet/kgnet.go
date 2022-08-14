@@ -18,6 +18,7 @@
 package kgnet
 
 import (
+	"context"
 	"encoding/binary"
 	"fmt"
 	"github.com/panjf2000/gnet"
@@ -235,8 +236,14 @@ func (k *KafkaServer) Run() error {
 	return gnet.Serve(k, fmt.Sprintf("tcp://%s:%d", k.GnetConfig.ListenHost, k.GnetConfig.ListenPort), gnet.WithNumEventLoop(k.GnetConfig.EventLoopNum), gnet.WithCodec(kfkCodec))
 }
 
-func NewKafkaServer(gnetConfig GnetConfig) *KafkaServer {
+func (k *KafkaServer) Stop(ctx context.Context) error {
+	addr := fmt.Sprintf("tcp://%s:%d", k.GnetConfig.ListenHost, k.GnetConfig.ListenPort)
+	return gnet.Stop(context.Background(), addr)
+}
+
+func NewKafkaServer(gnetConfig GnetConfig, impl KafkaImpl) *KafkaServer {
 	return &KafkaServer{
 		GnetConfig: gnetConfig,
+		impl:       impl,
 	}
 }
