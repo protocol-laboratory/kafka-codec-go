@@ -89,6 +89,9 @@ func (k *KafkaServer) React(frame []byte, c gnet.Conn) (_ []byte, action gnet.Ac
 			return nil, gnet.Close
 		}
 		resp, action := k.impl.ApiVersion(c, req)
+		if resp == nil {
+			return nil, action
+		}
 		return resp.Bytes(apiVersion), action
 	case codec.SaslHandshake:
 		req, r, stack := codec.DecodeSaslHandshakeReq(frame[4:], apiVersion)
@@ -97,6 +100,9 @@ func (k *KafkaServer) React(frame []byte, c gnet.Conn) (_ []byte, action gnet.Ac
 			return nil, gnet.Close
 		}
 		resp, action := k.impl.SaslHandshake(c, req)
+		if resp == nil {
+			return nil, action
+		}
 		return resp.Bytes(apiVersion), action
 	case codec.SaslAuthenticate:
 		req, r, stack := codec.DecodeSaslAuthenticateReq(frame[4:], apiVersion)
@@ -105,6 +111,9 @@ func (k *KafkaServer) React(frame []byte, c gnet.Conn) (_ []byte, action gnet.Ac
 			return nil, gnet.Close
 		}
 		resp, action := k.impl.SaslAuthenticate(c, req)
+		if resp == nil {
+			return nil, action
+		}
 		return resp.Bytes(apiVersion), action
 	case codec.Heartbeat:
 		req, r, stack := codec.DecodeHeartbeatReq(frame[4:], apiVersion)
@@ -113,6 +122,9 @@ func (k *KafkaServer) React(frame []byte, c gnet.Conn) (_ []byte, action gnet.Ac
 			return nil, gnet.Close
 		}
 		resp, action := k.impl.Heartbeat(c, req)
+		if resp == nil {
+			return nil, action
+		}
 		return resp.Bytes(apiVersion), action
 	case codec.JoinGroup:
 		req, r, stack := codec.DecodeJoinGroupReq(frame[4:], apiVersion)
@@ -121,6 +133,9 @@ func (k *KafkaServer) React(frame []byte, c gnet.Conn) (_ []byte, action gnet.Ac
 			return nil, gnet.Close
 		}
 		resp, action := k.impl.JoinGroup(c, req)
+		if resp == nil {
+			return nil, action
+		}
 		return resp.Bytes(apiVersion), action
 	case codec.SyncGroup:
 		req, r, stack := codec.DecodeSyncGroupReq(frame[4:], apiVersion)
@@ -129,6 +144,9 @@ func (k *KafkaServer) React(frame []byte, c gnet.Conn) (_ []byte, action gnet.Ac
 			return nil, gnet.Close
 		}
 		resp, action := k.impl.SyncGroup(c, req)
+		if resp == nil {
+			return nil, action
+		}
 		return resp.Bytes(apiVersion), action
 	case codec.OffsetFetch:
 		req, r, stack := codec.DecodeOffsetFetchReq(frame[4:], apiVersion)
@@ -137,6 +155,9 @@ func (k *KafkaServer) React(frame []byte, c gnet.Conn) (_ []byte, action gnet.Ac
 			return nil, gnet.Close
 		}
 		resp, action := k.impl.OffsetFetch(c, req)
+		if resp == nil {
+			return nil, action
+		}
 		return resp.Bytes(apiVersion), action
 	case codec.ListOffsets:
 		req, r, stack := codec.DecodeListOffsetsReq(frame[4:], apiVersion)
@@ -145,6 +166,9 @@ func (k *KafkaServer) React(frame []byte, c gnet.Conn) (_ []byte, action gnet.Ac
 			return nil, gnet.Close
 		}
 		resp, action := k.impl.ListOffsets(c, req)
+		if resp == nil {
+			return nil, action
+		}
 		return resp.Bytes(apiVersion), action
 	case codec.Fetch:
 		req, r, stack := codec.DecodeFetchReq(frame[4:], apiVersion)
@@ -153,6 +177,9 @@ func (k *KafkaServer) React(frame []byte, c gnet.Conn) (_ []byte, action gnet.Ac
 			return nil, gnet.Close
 		}
 		resp, action := k.impl.Fetch(c, req)
+		if resp == nil {
+			return nil, action
+		}
 		return resp.Bytes(apiVersion), action
 	case codec.OffsetCommit:
 		req, r, stack := codec.DecodeOffsetCommitReq(frame[4:], apiVersion)
@@ -161,6 +188,9 @@ func (k *KafkaServer) React(frame []byte, c gnet.Conn) (_ []byte, action gnet.Ac
 			return nil, gnet.Close
 		}
 		resp, action := k.impl.OffsetCommit(c, req)
+		if resp == nil {
+			return nil, action
+		}
 		return resp.Bytes(apiVersion), action
 	case codec.OffsetForLeaderEpoch:
 		req, r, stack := codec.DecodeOffsetForLeaderEpochReq(frame[4:], apiVersion)
@@ -169,6 +199,9 @@ func (k *KafkaServer) React(frame []byte, c gnet.Conn) (_ []byte, action gnet.Ac
 			return nil, gnet.Close
 		}
 		resp, action := k.impl.OffsetForLeaderEpoch(c, req)
+		if resp == nil {
+			return nil, action
+		}
 		return resp.Bytes(apiVersion), action
 	case codec.LeaveGroup:
 		req, r, stack := codec.DecodeLeaveGroupReq(frame[4:], apiVersion)
@@ -177,6 +210,9 @@ func (k *KafkaServer) React(frame []byte, c gnet.Conn) (_ []byte, action gnet.Ac
 			return nil, gnet.Close
 		}
 		resp, action := k.impl.LeaveGroup(c, req)
+		if resp == nil {
+			return nil, action
+		}
 		return resp.Bytes(apiVersion), action
 	case codec.Produce:
 		req, r, stack := codec.DecodeProduceReq(frame[4:], apiVersion)
@@ -185,6 +221,9 @@ func (k *KafkaServer) React(frame []byte, c gnet.Conn) (_ []byte, action gnet.Ac
 			return nil, gnet.Close
 		}
 		resp, action := k.impl.Produce(c, req)
+		if resp == nil {
+			return nil, action
+		}
 		return resp.Bytes(apiVersion), action
 	case codec.Metadata:
 		req, r, stack := codec.DecodeMetadataReq(frame[4:], apiVersion)
@@ -193,6 +232,9 @@ func (k *KafkaServer) React(frame []byte, c gnet.Conn) (_ []byte, action gnet.Ac
 			return nil, gnet.Close
 		}
 		resp, action := k.impl.Metadata(c, req)
+		if resp == nil {
+			return nil, action
+		}
 		return resp.Bytes(apiVersion), action
 	case codec.FindCoordinator:
 		req, r, stack := codec.DecodeFindCoordinatorReq(frame[4:], apiVersion)
@@ -201,6 +243,9 @@ func (k *KafkaServer) React(frame []byte, c gnet.Conn) (_ []byte, action gnet.Ac
 			return nil, gnet.Close
 		}
 		resp, action := k.impl.FindCoordinator(c, req)
+		if resp == nil {
+			return nil, action
+		}
 		return resp.Bytes(apiVersion), action
 	}
 
