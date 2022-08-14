@@ -45,6 +45,7 @@ func DecodeOffsetFetchReq(bytes []byte, version int16) (fetchReq *OffsetFetchReq
 		}
 	}()
 	fetchReq = &OffsetFetchReq{}
+	fetchReq.ApiVersion = version
 	idx := 0
 	fetchReq.CorrelationId, idx = readCorrId(bytes, idx)
 	fetchReq.ClientId, idx = readClientId(bytes, idx)

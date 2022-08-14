@@ -24,13 +24,13 @@ import (
 
 func TestDecodeIllegalMetadataReq(t *testing.T) {
 	bytes := make([]byte, 0)
-	_, r, _ := DecodeMetadataTopicReq(bytes, 0)
+	_, r, _ := DecodeMetadataReq(bytes, 0)
 	assert.NotNil(t, r)
 }
 
 func TestDecodeMetadataV1(t *testing.T) {
 	bytes := testHex2Bytes(t, "00000001006d5f5f5f546573744b61666b6150726f647563655f696e5f676f5f64656d6f5f64656d6f5f6b61666b612e746573744068657a68616e676a69616e64654d6163426f6f6b2d50726f2e6c6f63616c20286769746875622e636f6d2f7365676d656e74696f2f6b61666b612d676f29000000010005746f706963")
-	metadataTopicReq, r, _ := DecodeMetadataTopicReq(bytes, 1)
+	metadataTopicReq, r, _ := DecodeMetadataReq(bytes, 1)
 	assert.Nil(t, r)
 	assert.Equal(t, 1, metadataTopicReq.CorrelationId)
 	assert.Equal(t, "___TestKafkaProduce_in_go_demo_demo_kafka.test@hezhangjiandeMacBook-Pro.local (github.com/segmentio/kafka-go)", metadataTopicReq.ClientId)
@@ -44,7 +44,7 @@ func TestDecodeMetadataV1(t *testing.T) {
 
 func TestDecodeMetadataV9(t *testing.T) {
 	bytes := testHex2Bytes(t, "00000002002f636f6e73756d65722d37336664633964612d306439322d346537622d613761372d6563323636663637633137312d3100022537363465646565332d303037652d343865302d623966392d6466376637313366663730370001000000")
-	metadataTopicReq, r, _ := DecodeMetadataTopicReq(bytes, 9)
+	metadataTopicReq, r, _ := DecodeMetadataReq(bytes, 9)
 	assert.Nil(t, r)
 	assert.Equal(t, 2, metadataTopicReq.CorrelationId)
 	assert.Equal(t, "consumer-73fdc9da-0d92-4e7b-a7a7-ec266f67c171-1", metadataTopicReq.ClientId)

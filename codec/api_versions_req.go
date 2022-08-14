@@ -35,6 +35,7 @@ func DecodeApiReq(bytes []byte, version int16) (apiReq *ApiReq, r any, stack []b
 		}
 	}()
 	apiReq = &ApiReq{}
+	apiReq.ApiVersion = version
 	idx := 0
 	apiReq.CorrelationId, idx = readCorrId(bytes, idx)
 	apiReq.ClientId, idx = readClientId(bytes, idx)

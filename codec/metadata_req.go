@@ -33,7 +33,7 @@ type MetadataTopicReq struct {
 	Topic string
 }
 
-func DecodeMetadataTopicReq(bytes []byte, version int16) (metadataReq *MetadataReq, r any, stack []byte) {
+func DecodeMetadataReq(bytes []byte, version int16) (metadataReq *MetadataReq, r any, stack []byte) {
 	defer func() {
 		if r = recover(); r != nil {
 			stack = debug.Stack()
@@ -41,6 +41,7 @@ func DecodeMetadataTopicReq(bytes []byte, version int16) (metadataReq *MetadataR
 		}
 	}()
 	metadataReq = &MetadataReq{}
+	metadataReq.ApiVersion = version
 	idx := 0
 	metadataReq.CorrelationId, idx = readCorrId(bytes, idx)
 	metadataReq.ClientId, idx = readClientId(bytes, idx)

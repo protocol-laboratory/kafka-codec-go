@@ -17,25 +17,25 @@
 
 package codec
 
-type OffsetLeaderEpochResp struct {
+type OffsetForLeaderEpochResp struct {
 	BaseResp
 	ThrottleTime  int
-	TopicRespList []*OffsetLeaderEpochTopicResp
+	TopicRespList []*OffsetForLeaderEpochTopicResp
 }
 
-type OffsetLeaderEpochTopicResp struct {
+type OffsetForLeaderEpochTopicResp struct {
 	Topic             string
-	PartitionRespList []*OffsetLeaderEpochPartitionResp
+	PartitionRespList []*OffsetForLeaderEpochPartitionResp
 }
 
-type OffsetLeaderEpochPartitionResp struct {
+type OffsetForLeaderEpochPartitionResp struct {
 	ErrorCode   int16
 	PartitionId int
 	LeaderEpoch int32
 	Offset      int64
 }
 
-func (o *OffsetLeaderEpochResp) BytesLength(version int16) int {
+func (o *OffsetForLeaderEpochResp) BytesLength(version int16) int {
 	result := LenCorrId
 	result += LenThrottleTime
 	result += LenArray
@@ -52,7 +52,7 @@ func (o *OffsetLeaderEpochResp) BytesLength(version int16) int {
 	return result
 }
 
-func (o *OffsetLeaderEpochResp) Bytes(version int16) []byte {
+func (o *OffsetForLeaderEpochResp) Bytes(version int16) []byte {
 	bytes := make([]byte, o.BytesLength(version))
 	idx := 0
 	idx = putCorrId(bytes, idx, o.CorrelationId)

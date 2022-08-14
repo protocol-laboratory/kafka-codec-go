@@ -17,17 +17,17 @@
 
 package codec
 
-type HeartBeatResp struct {
+type HeartbeatResp struct {
 	BaseResp
 	ErrorCode    int16
 	ThrottleTime int
 }
 
-func (h *HeartBeatResp) BytesLength(version int16) int {
+func (h *HeartbeatResp) BytesLength(version int16) int {
 	return LenCorrId + LenTaggedField + LenThrottleTime + LenErrorCode + LenTaggedField
 }
 
-func (h *HeartBeatResp) Bytes(version int16) []byte {
+func (h *HeartbeatResp) Bytes(version int16) []byte {
 	bytes := make([]byte, h.BytesLength(version))
 	idx := 0
 	idx = putCorrId(bytes, idx, h.CorrelationId)

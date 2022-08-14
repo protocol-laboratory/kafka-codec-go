@@ -51,6 +51,7 @@ func DecodeOffsetCommitReq(bytes []byte, version int16) (offsetReq *OffsetCommit
 		}
 	}()
 	offsetReq = &OffsetCommitReq{}
+	offsetReq.ApiVersion = version
 	idx := 0
 	offsetReq.CorrelationId, idx = readCorrId(bytes, idx)
 	offsetReq.ClientId, idx = readClientId(bytes, idx)

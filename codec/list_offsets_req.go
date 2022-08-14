@@ -21,32 +21,33 @@ import (
 	"runtime/debug"
 )
 
-type ListOffsetReq struct {
+type ListOffsetsReq struct {
 	BaseReq
 	ReplicaId      int32
 	IsolationLevel byte
-	TopicReqList   []*ListOffsetTopic
+	TopicReqList   []*ListOffsetsTopic
 }
 
-type ListOffsetTopic struct {
+type ListOffsetsTopic struct {
 	Topic            string
-	PartitionReqList []*ListOffsetPartition
+	PartitionReqList []*ListOffsetsPartition
 }
 
-type ListOffsetPartition struct {
+type ListOffsetsPartition struct {
 	PartitionId int
 	LeaderEpoch int32
 	Time        int64
 }
 
-func DecodeListOffsetReq(bytes []byte, version int16) (offsetReq *ListOffsetReq, r any, stack []byte) {
+func DecodeListOffsetsReq(bytes []byte, version int16) (offsetReq *ListOffsetsReq, r any, stack []byte) {
 	defer func() {
 		if r = recover(); r != nil {
 			stack = debug.Stack()
 			offsetReq = nil
 		}
 	}()
-	offsetReq = &ListOffsetReq{}
+	offsetReq = &ListOffsetsReq{}
+	offsetReq.ApiVersion = version
 	idx := 0
 	offsetReq.CorrelationId, idx = readCorrId(bytes, idx)
 	offsetReq.ClientId, idx = readClientId(bytes, idx)
@@ -56,15 +57,15 @@ func DecodeListOffsetReq(bytes []byte, version int16) (offsetReq *ListOffsetReq,
 	}
 	var length int
 	length, idx = readInt(bytes, idx)
-	offsetReq.TopicReqList = make([]*ListOffsetTopic, length)
+	offsetReq.TopicReqList = make([]*ListOffsetsTopic, length)
 	for i := 0; i < length; i++ {
-		topic := &ListOffsetTopic{}
+		topic := &ListOffsetsTopic{}
 		topic.Topic, idx = readTopicString(bytes, idx)
 		var partitionLength int
 		partitionLength, idx := readInt(bytes, idx)
-		topic.PartitionReqList = make([]*ListOffsetPartition, partitionLength)
+		topic.PartitionReqList = make([]*ListOffsetsPartition, partitionLength)
 		for j := 0; j < partitionLength; j++ {
-			partition := &ListOffsetPartition{}
+			partition := &ListOffsetsPartition{}
 			partition.PartitionId, idx = readInt(bytes, idx)
 			if version == 5 {
 				partition.LeaderEpoch, idx = readLeaderEpoch(bytes, idx)

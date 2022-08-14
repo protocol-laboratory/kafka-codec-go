@@ -35,6 +35,7 @@ func DecodeFindCoordinatorReq(bytes []byte, version int16) (findCoordinatorReq *
 		}
 	}()
 	findCoordinatorReq = &FindCoordinatorReq{}
+	findCoordinatorReq.ApiVersion = version
 	idx := 0
 	findCoordinatorReq.CorrelationId, idx = readCorrId(bytes, idx)
 	findCoordinatorReq.ClientId, idx = readClientId(bytes, idx)

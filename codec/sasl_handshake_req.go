@@ -34,6 +34,7 @@ func DecodeSaslHandshakeReq(bytes []byte, version int16) (saslHandshakeReq *Sasl
 		}
 	}()
 	req := &SaslHandshakeReq{}
+	req.ApiVersion = version
 	idx := 0
 	req.CorrelationId, idx = readCorrId(bytes, idx)
 	req.ClientId, idx = readClientId(bytes, idx)

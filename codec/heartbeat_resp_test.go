@@ -23,7 +23,7 @@ import (
 )
 
 func TestCodeHeartbeatRespV4(t *testing.T) {
-	heartBeatResp := HeartBeatResp{
+	heartBeatResp := HeartbeatResp{
 		BaseResp: BaseResp{
 			CorrelationId: 17,
 		},
@@ -34,7 +34,7 @@ func TestCodeHeartbeatRespV4(t *testing.T) {
 }
 
 func TestCodeHeartbeatRespWithErrV4(t *testing.T) {
-	heartBeatResp := HeartBeatResp{
+	heartBeatResp := HeartbeatResp{
 		BaseResp: BaseResp{
 			CorrelationId: 17,
 		},

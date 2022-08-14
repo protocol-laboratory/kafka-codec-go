@@ -21,7 +21,7 @@ import (
 	"runtime/debug"
 )
 
-type OffsetLeaderEpochReq struct {
+type OffsetForLeaderEpochReq struct {
 	BaseReq
 	ReplicaId    int32
 	TopicReqList []*OffsetLeaderEpochTopicReq
@@ -38,14 +38,15 @@ type OffsetLeaderEpochPartitionReq struct {
 	LeaderEpoch        int32
 }
 
-func DecodeOffsetLeaderEpochReq(bytes []byte, version int16) (leaderEpochReq *OffsetLeaderEpochReq, r any, stack []byte) {
+func DecodeOffsetForLeaderEpochReq(bytes []byte, version int16) (leaderEpochReq *OffsetForLeaderEpochReq, r any, stack []byte) {
 	defer func() {
 		if r = recover(); r != nil {
 			stack = debug.Stack()
 			leaderEpochReq = nil
 		}
 	}()
-	leaderEpochReq = &OffsetLeaderEpochReq{}
+	leaderEpochReq = &OffsetForLeaderEpochReq{}
+	leaderEpochReq.ApiVersion = version
 	idx := 0
 	leaderEpochReq.CorrelationId, idx = readCorrId(bytes, idx)
 	leaderEpochReq.ClientId, idx = readClientId(bytes, idx)

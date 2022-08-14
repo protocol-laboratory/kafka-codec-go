@@ -27,7 +27,7 @@ type SaslAuthenticateReq struct {
 	Password string
 }
 
-func DecodeSaslHandshakeAuthReq(bytes []byte, version int16) (authReq *SaslAuthenticateReq, r any, stack []byte) {
+func DecodeSaslAuthenticateReq(bytes []byte, version int16) (authReq *SaslAuthenticateReq, r any, stack []byte) {
 	defer func() {
 		if r = recover(); r != nil {
 			stack = debug.Stack()
@@ -35,6 +35,7 @@ func DecodeSaslHandshakeAuthReq(bytes []byte, version int16) (authReq *SaslAuthe
 		}
 	}()
 	authReq = &SaslAuthenticateReq{}
+	authReq.ApiVersion = version
 	idx := 0
 	authReq.CorrelationId, idx = readCorrId(bytes, idx)
 	authReq.ClientId, idx = readClientId(bytes, idx)

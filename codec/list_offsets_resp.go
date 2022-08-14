@@ -17,19 +17,19 @@
 
 package codec
 
-type ListOffsetResp struct {
+type ListOffsetsResp struct {
 	BaseResp
 	ErrorCode     int16
 	ThrottleTime  int
-	TopicRespList []*ListOffsetTopicResp
+	TopicRespList []*ListOffsetsTopicResp
 }
 
-type ListOffsetTopicResp struct {
+type ListOffsetsTopicResp struct {
 	Topic             string
-	PartitionRespList []*ListOffsetPartitionResp
+	PartitionRespList []*ListOffsetsPartitionResp
 }
 
-type ListOffsetPartitionResp struct {
+type ListOffsetsPartitionResp struct {
 	PartitionId int
 	ErrorCode   int16
 	Timestamp   int64
@@ -37,7 +37,7 @@ type ListOffsetPartitionResp struct {
 	LeaderEpoch int32
 }
 
-func (o *ListOffsetResp) BytesLength(version int16) int {
+func (o *ListOffsetsResp) BytesLength(version int16) int {
 	result := LenCorrId
 	if version == 5 {
 		result += LenThrottleTime
@@ -55,7 +55,7 @@ func (o *ListOffsetResp) BytesLength(version int16) int {
 	return result
 }
 
-func (o *ListOffsetResp) Bytes(version int16) []byte {
+func (o *ListOffsetsResp) Bytes(version int16) []byte {
 	bytes := make([]byte, o.BytesLength(version))
 	idx := 0
 	idx = putCorrId(bytes, idx, o.CorrelationId)

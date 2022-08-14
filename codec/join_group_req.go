@@ -45,6 +45,7 @@ func DecodeJoinGroupReq(bytes []byte, version int16) (joinGroupReq *JoinGroupReq
 		}
 	}()
 	joinGroupReq = &JoinGroupReq{}
+	joinGroupReq.ApiVersion = version
 	idx := 0
 	joinGroupReq.CorrelationId, idx = readCorrId(bytes, idx)
 	joinGroupReq.ClientId, idx = readClientId(bytes, idx)
