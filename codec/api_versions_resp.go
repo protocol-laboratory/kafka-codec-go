@@ -17,7 +17,7 @@
 
 package codec
 
-type ApiResponse struct {
+type ApiResp struct {
 	BaseResp
 	ErrorCode       int16
 	ApiRespVersions []*ApiRespVersion
@@ -30,7 +30,7 @@ type ApiRespVersion struct {
 	MaxVersion int16
 }
 
-func (a *ApiResponse) BytesLength(version int16) int {
+func (a *ApiResp) BytesLength(version int16) int {
 	length := LenCorrId + LenErrorCode + LenArray
 	if version == 0 {
 		length += LenApiV0 * len(a.ApiRespVersions)
@@ -41,7 +41,7 @@ func (a *ApiResponse) BytesLength(version int16) int {
 	return length
 }
 
-func (a *ApiResponse) Bytes(version int16) []byte {
+func (a *ApiResp) Bytes(version int16) []byte {
 	bytes := make([]byte, a.BytesLength(version))
 	idx := 0
 	idx = putCorrId(bytes, idx, a.CorrelationId)
