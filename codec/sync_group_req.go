@@ -46,6 +46,7 @@ func DecodeSyncGroupReq(bytes []byte, version int16) (groupReq *SyncGroupReq, r 
 		}
 	}()
 	groupReq = &SyncGroupReq{}
+	groupReq.ApiVersion = version
 	idx := 0
 	groupReq.CorrelationId, idx = readCorrId(bytes, idx)
 	groupReq.ClientId, idx = readClientId(bytes, idx)

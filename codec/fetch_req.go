@@ -55,6 +55,7 @@ func DecodeFetchReq(bytes []byte, version int16) (fetchReq *FetchReq, r any, sta
 		}
 	}()
 	fetchReq = &FetchReq{}
+	fetchReq.ApiVersion = version
 	idx := 0
 	fetchReq.CorrelationId, idx = readCorrId(bytes, idx)
 	fetchReq.ClientId, idx = readClientId(bytes, idx)

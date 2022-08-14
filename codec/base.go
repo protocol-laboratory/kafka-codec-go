@@ -18,6 +18,7 @@
 package codec
 
 type BaseReq struct {
+	ApiVersion    int16
 	CorrelationId int
 	ClientId      string
 }

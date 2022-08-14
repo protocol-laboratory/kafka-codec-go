@@ -21,7 +21,7 @@ import (
 	"runtime/debug"
 )
 
-type HeartBeatReq struct {
+type HeartbeatReq struct {
 	BaseReq
 	GroupId         string
 	GenerationId    int
@@ -29,14 +29,15 @@ type HeartBeatReq struct {
 	GroupInstanceId *string
 }
 
-func DecodeHeartbeatReq(bytes []byte, version int16) (heartBeatReq *HeartBeatReq, r any, stack []byte) {
+func DecodeHeartbeatReq(bytes []byte, version int16) (heartBeatReq *HeartbeatReq, r any, stack []byte) {
 	defer func() {
 		if r = recover(); r != nil {
 			stack = debug.Stack()
 			heartBeatReq = nil
 		}
 	}()
-	heartBeatReq = &HeartBeatReq{}
+	heartBeatReq = &HeartbeatReq{}
+	heartBeatReq.ApiVersion = version
 	idx := 0
 	heartBeatReq.CorrelationId, idx = readCorrId(bytes, idx)
 	heartBeatReq.ClientId, idx = readClientId(bytes, idx)

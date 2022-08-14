@@ -35,6 +35,7 @@ func DecodeLeaveGroupReq(bytes []byte, version int16) (leaveGroupReq *LeaveGroup
 		}
 	}()
 	leaveGroupReq = &LeaveGroupReq{}
+	leaveGroupReq.ApiVersion = version
 	idx := 0
 	leaveGroupReq.CorrelationId, idx = readCorrId(bytes, idx)
 	leaveGroupReq.ClientId, idx = readClientId(bytes, idx)

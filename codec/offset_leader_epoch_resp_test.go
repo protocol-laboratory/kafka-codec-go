@@ -22,21 +22,21 @@ import (
 	"testing"
 )
 
-func TestCodeOffsetLeaderEpochRespV3(t *testing.T) {
-	offsetLeaderEpochResp := OffsetLeaderEpochResp{
+func TestCodeOffsetForLeaderEpochRespV3(t *testing.T) {
+	offsetLeaderEpochResp := OffsetForLeaderEpochResp{
 		BaseResp: BaseResp{
 			CorrelationId: 9,
 		},
 	}
-	offsetLeaderEpochPartitionResp := &OffsetLeaderEpochPartitionResp{}
+	offsetLeaderEpochPartitionResp := &OffsetForLeaderEpochPartitionResp{}
 	offsetLeaderEpochPartitionResp.ErrorCode = 0
 	offsetLeaderEpochPartitionResp.PartitionId = 0
 	offsetLeaderEpochPartitionResp.LeaderEpoch = 0
 	offsetLeaderEpochPartitionResp.Offset = 6
-	offsetLeaderEpochTopicResp := &OffsetLeaderEpochTopicResp{}
+	offsetLeaderEpochTopicResp := &OffsetForLeaderEpochTopicResp{}
 	offsetLeaderEpochTopicResp.Topic = "lt-test-1"
-	offsetLeaderEpochTopicResp.PartitionRespList = []*OffsetLeaderEpochPartitionResp{offsetLeaderEpochPartitionResp}
-	offsetLeaderEpochResp.TopicRespList = []*OffsetLeaderEpochTopicResp{offsetLeaderEpochTopicResp}
+	offsetLeaderEpochTopicResp.PartitionRespList = []*OffsetForLeaderEpochPartitionResp{offsetLeaderEpochPartitionResp}
+	offsetLeaderEpochResp.TopicRespList = []*OffsetForLeaderEpochTopicResp{offsetLeaderEpochTopicResp}
 	bytes := offsetLeaderEpochResp.Bytes(3)
 	expectBytes := testHex2Bytes(t, "00000009000000000000000100096c742d746573742d3100000001000000000000000000000000000000000006")
 	assert.Equal(t, expectBytes, bytes)

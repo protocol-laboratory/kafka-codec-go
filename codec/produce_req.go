@@ -48,6 +48,7 @@ func DecodeProduceReq(bytes []byte, version int16) (produceReq *ProduceReq, r an
 		}
 	}()
 	produceReq = &ProduceReq{}
+	produceReq.ApiVersion = version
 	idx := 0
 	produceReq.CorrelationId, idx = readCorrId(bytes, idx)
 	produceReq.ClientId, idx = readClientId(bytes, idx)
