@@ -27,8 +27,9 @@ import (
 )
 
 type GnetConfig struct {
-	ListenHost   string
-	ListenPort   uint16
+	ListenHost string
+	// ListenPort we use int instead of uint16 because of kafka protocol widely use port as int
+	ListenPort   int
 	EventLoopNum int
 }
 
@@ -57,7 +58,7 @@ type KafkaImpl interface {
 }
 
 type KafkaServer struct {
-	GnetConfig GnetConfig
+	gnetConfig GnetConfig
 	impl       KafkaImpl
 	*gnet.EventServer
 }
@@ -278,17 +279,17 @@ func (k *KafkaServer) Run() error {
 		InitialBytesToStrip: 4,
 	}
 	kfkCodec := gnet.NewLengthFieldBasedFrameCodec(encoderConfig, decoderConfig)
-	return gnet.Serve(k, fmt.Sprintf("tcp://%s:%d", k.GnetConfig.ListenHost, k.GnetConfig.ListenPort), gnet.WithNumEventLoop(k.GnetConfig.EventLoopNum), gnet.WithCodec(kfkCodec))
+	return gnet.Serve(k, fmt.Sprintf("tcp://%s:%d", k.gnetConfig.ListenHost, k.gnetConfig.ListenPort), gnet.WithNumEventLoop(k.gnetConfig.EventLoopNum), gnet.WithCodec(kfkCodec))
 }
 
 func (k *KafkaServer) Stop(ctx context.Context) error {
-	addr := fmt.Sprintf("tcp://%s:%d", k.GnetConfig.ListenHost, k.GnetConfig.ListenPort)
+	addr := fmt.Sprintf("tcp://%s:%d", k.gnetConfig.ListenHost, k.gnetConfig.ListenPort)
 	return gnet.Stop(context.Background(), addr)
 }
 
 func NewKafkaServer(gnetConfig GnetConfig, impl KafkaImpl) *KafkaServer {
 	return &KafkaServer{
-		GnetConfig: gnetConfig,
+		gnetConfig: gnetConfig,
 		impl:       impl,
 	}
 }
