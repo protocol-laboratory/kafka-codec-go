@@ -19,7 +19,7 @@ package codec
 
 type SaslHandshakeResp struct {
 	BaseResp
-	ErrorCode        int16
+	ErrorCode        ErrorCode
 	EnableMechanisms []*EnableMechanism
 }
 

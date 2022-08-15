@@ -30,7 +30,7 @@ type ProduceTopicResp struct {
 
 type ProducePartitionResp struct {
 	PartitionId     int
-	ErrorCode       int16
+	ErrorCode       ErrorCode
 	Offset          int64
 	Time            int64
 	LogStartOffset  int64

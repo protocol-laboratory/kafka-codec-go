@@ -36,7 +36,7 @@ type BrokerMetadata struct {
 }
 
 type TopicMetadata struct {
-	ErrorCode                int16
+	ErrorCode                ErrorCode
 	Topic                    string
 	IsInternal               bool
 	PartitionMetadataList    []*PartitionMetadata
@@ -44,7 +44,7 @@ type TopicMetadata struct {
 }
 
 type PartitionMetadata struct {
-	ErrorCode       int16
+	ErrorCode       ErrorCode
 	PartitionId     int
 	LeaderId        int32
 	LeaderEpoch     int32

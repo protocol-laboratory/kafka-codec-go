@@ -19,7 +19,7 @@ package codec
 
 type ApiResp struct {
 	BaseResp
-	ErrorCode       int16
+	ErrorCode       ErrorCode
 	ApiRespVersions []*ApiRespVersion
 	ThrottleTime    int
 }

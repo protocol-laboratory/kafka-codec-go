@@ -34,7 +34,7 @@ func TestDecodeFetchRespV11(t *testing.T) {
 	assert.Len(t, topicResp.PartitionRespList, 1)
 	partitionResp := topicResp.PartitionRespList[0]
 	assert.Equal(t, 0, partitionResp.PartitionIndex)
-	var expectErrorCode int16 = 0
+	var expectErrorCode ErrorCode = 0
 	assert.Equal(t, expectErrorCode, partitionResp.ErrorCode)
 	var expectHighWatermark int64 = 1
 	assert.Equal(t, expectHighWatermark, partitionResp.HighWatermark)

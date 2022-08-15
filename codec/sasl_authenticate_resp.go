@@ -19,7 +19,7 @@ package codec
 
 type SaslAuthenticateResp struct {
 	BaseResp
-	ErrorCode       int16
+	ErrorCode       ErrorCode
 	ErrorMessage    string
 	AuthBytes       []byte
 	SessionLifetime int64

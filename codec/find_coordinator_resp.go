@@ -19,7 +19,7 @@ package codec
 
 type FindCoordinatorResp struct {
 	BaseResp
-	ErrorCode    int16
+	ErrorCode    ErrorCode
 	ThrottleTime int
 	ErrorMessage *string
 	NodeId       int32

@@ -30,7 +30,7 @@ type OffsetCommitTopicResp struct {
 
 type OffsetCommitPartitionResp struct {
 	PartitionId int
-	ErrorCode   int16
+	ErrorCode   ErrorCode
 }
 
 func (o *OffsetCommitResp) BytesLength(version int16) int {

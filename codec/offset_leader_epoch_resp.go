@@ -29,7 +29,7 @@ type OffsetForLeaderEpochTopicResp struct {
 }
 
 type OffsetForLeaderEpochPartitionResp struct {
-	ErrorCode   int16
+	ErrorCode   ErrorCode
 	PartitionId int
 	LeaderEpoch int32
 	Offset      int64
