@@ -22,9 +22,9 @@ import (
 	"testing"
 )
 
-func TestReadSaslAuthBytes(t *testing.T) {
-	bytes := testHex2Bytes(t, "00616c69636500707764")
-	username, pwd := readSaslAuthBytes(bytes, 0)
-	assert.Equal(t, "alice", username)
-	assert.Equal(t, "pwd", pwd)
+func TestReadFindCoordinatorErrorMessage(t *testing.T) {
+	bytes := testHex2Bytes(t, "0000000000")
+	msg, idx := readFindCoordinatorErrorMessage(bytes, 0)
+	assert.Nil(t, msg)
+	assert.Equal(t, 1, idx)
 }
