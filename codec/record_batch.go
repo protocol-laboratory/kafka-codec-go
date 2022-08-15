@@ -53,7 +53,8 @@ func DecodeRecordBatch(bytes []byte, version int16) *RecordBatch {
 	length, idx = readInt(bytes, idx)
 	recordBatch.Records = make([]*Record, length)
 	for i := 0; i < length; i++ {
-		recordLength, idx := readVarint(bytes, idx)
+		var recordLength int
+		recordLength, idx = readVarint(bytes, idx)
 		record := DecodeRecord(bytes[idx:idx+recordLength-1], version)
 		idx += recordLength
 		recordBatch.Records[i] = record
