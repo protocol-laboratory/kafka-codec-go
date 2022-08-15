@@ -19,7 +19,7 @@ package codec
 
 type JoinGroupResp struct {
 	BaseResp
-	ErrorCode    int16
+	ErrorCode    ErrorCode
 	ThrottleTime int
 	GenerationId int
 	ProtocolType *string

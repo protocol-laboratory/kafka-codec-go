@@ -19,7 +19,7 @@ package codec
 
 type HeartbeatResp struct {
 	BaseResp
-	ErrorCode    int16
+	ErrorCode    ErrorCode
 	ThrottleTime int
 }
 

@@ -38,7 +38,7 @@ func TestCodeHeartbeatRespWithErrV4(t *testing.T) {
 		BaseResp: BaseResp{
 			CorrelationId: 17,
 		},
-		ErrorCode: int16(REBALANCE_IN_PROGRESS),
+		ErrorCode: REBALANCE_IN_PROGRESS,
 	}
 	bytes := heartBeatResp.Bytes(4)
 	expectBytes := testHex2Bytes(t, "000000110000000000001b00")

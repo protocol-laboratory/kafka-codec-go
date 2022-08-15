@@ -37,7 +37,7 @@ package codec
 type OffsetFetchResp struct {
 	BaseResp
 	ThrottleTime  int
-	ErrorCode     int16
+	ErrorCode     ErrorCode
 	TopicRespList []*OffsetFetchTopicResp
 }
 
@@ -51,7 +51,7 @@ type OffsetFetchPartitionResp struct {
 	Offset      int64
 	LeaderEpoch int32
 	Metadata    *string
-	ErrorCode   int16
+	ErrorCode   ErrorCode
 }
 
 func (o *OffsetFetchResp) BytesLength(version int16) int {

@@ -20,7 +20,7 @@ package codec
 type SyncGroupResp struct {
 	BaseResp
 	ThrottleTime     int
-	ErrorCode        int16
+	ErrorCode        ErrorCode
 	ProtocolType     string
 	ProtocolName     string
 	MemberAssignment string

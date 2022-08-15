@@ -19,7 +19,7 @@ package codec
 
 type ListOffsetsResp struct {
 	BaseResp
-	ErrorCode     int16
+	ErrorCode     ErrorCode
 	ThrottleTime  int
 	TopicRespList []*ListOffsetsTopicResp
 }
@@ -31,7 +31,7 @@ type ListOffsetsTopicResp struct {
 
 type ListOffsetsPartitionResp struct {
 	PartitionId int
-	ErrorCode   int16
+	ErrorCode   ErrorCode
 	Timestamp   int64
 	Offset      int64
 	LeaderEpoch int32

@@ -19,7 +19,7 @@ package codec
 
 type LeaveGroupResp struct {
 	BaseResp
-	ErrorCode       int16
+	ErrorCode       ErrorCode
 	ThrottleTime    int
 	Members         []*LeaveGroupMember
 	MemberErrorCode int16

@@ -24,7 +24,7 @@ import (
 type FetchResp struct {
 	BaseResp
 	ThrottleTime  int
-	ErrorCode     int16
+	ErrorCode     ErrorCode
 	SessionId     int
 	TopicRespList []*FetchTopicResp
 }
@@ -36,7 +36,7 @@ type FetchTopicResp struct {
 
 type FetchPartitionResp struct {
 	PartitionIndex      int
-	ErrorCode           int16
+	ErrorCode           ErrorCode
 	HighWatermark       int64
 	LastStableOffset    int64
 	LogStartOffset      int64
