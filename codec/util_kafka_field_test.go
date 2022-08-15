@@ -22,7 +22,7 @@ import (
 	"testing"
 )
 
-func Test_readSaslAuthBytes(t *testing.T) {
+func TestReadSaslAuthBytes(t *testing.T) {
 	bytes := testHex2Bytes(t, "00616c69636500707764")
 	username, pwd := readSaslAuthBytes(bytes, 0)
 	assert.Equal(t, "alice", username)
