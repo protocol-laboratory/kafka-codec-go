@@ -24,8 +24,8 @@ import (
 
 func TestDecodeFetchRespV11(t *testing.T) {
 	bytes := testHex2Bytes(t, "0000000a00000000000072fb9ef7000000010006746573742d3300000001000000000000000000000000000100000000000000010000000000000000ffffffffffffffff0000004c0000000000000000000000400000000002ab9216c10000000000000000017a92e383dd0000017a92e383ddffffffffffffffffffffffffffff000000011c000000011053686f6f74487a6a00")
-	fetchResp, r, _ := DecodeFetchResp(bytes, 11)
-	assert.Nil(t, r)
+	fetchResp, err := DecodeFetchResp(bytes, 11)
+	assert.Nil(t, err)
 	assert.Equal(t, 10, fetchResp.CorrelationId)
 	assert.Equal(t, 1929092855, fetchResp.SessionId)
 	assert.Len(t, fetchResp.TopicRespList, 1)

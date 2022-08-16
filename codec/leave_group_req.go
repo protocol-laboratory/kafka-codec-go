@@ -27,10 +27,10 @@ type LeaveGroupReq struct {
 	Members []*LeaveGroupMember
 }
 
-func DecodeLeaveGroupReq(bytes []byte, version int16) (leaveGroupReq *LeaveGroupReq, r any, stack []byte) {
+func DecodeLeaveGroupReq(bytes []byte, version int16) (leaveGroupReq *LeaveGroupReq, err error) {
 	defer func() {
-		if r = recover(); r != nil {
-			stack = debug.Stack()
+		if r := recover(); r != nil {
+			err = PanicToError(r, debug.Stack())
 			leaveGroupReq = nil
 		}
 	}()
@@ -66,5 +66,5 @@ func DecodeLeaveGroupReq(bytes []byte, version int16) (leaveGroupReq *LeaveGroup
 		}
 		idx = readTaggedField(bytes, idx)
 	}
-	return leaveGroupReq, nil, nil
+	return leaveGroupReq, nil
 }

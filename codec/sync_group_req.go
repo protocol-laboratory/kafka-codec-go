@@ -38,10 +38,10 @@ type GroupAssignment struct {
 	MemberAssignment string
 }
 
-func DecodeSyncGroupReq(bytes []byte, version int16) (groupReq *SyncGroupReq, r any, stack []byte) {
+func DecodeSyncGroupReq(bytes []byte, version int16) (groupReq *SyncGroupReq, err error) {
 	defer func() {
-		if r = recover(); r != nil {
-			stack = debug.Stack()
+		if r := recover(); r != nil {
+			err = PanicToError(r, debug.Stack())
 			groupReq = nil
 		}
 	}()
@@ -98,5 +98,5 @@ func DecodeSyncGroupReq(bytes []byte, version int16) (groupReq *SyncGroupReq, r 
 	if version == 4 || version == 5 {
 		idx = readTaggedField(bytes, idx)
 	}
-	return groupReq, nil, nil
+	return groupReq, nil
 }

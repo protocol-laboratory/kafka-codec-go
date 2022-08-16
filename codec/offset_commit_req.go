@@ -43,10 +43,10 @@ type OffsetCommitPartitionReq struct {
 	Metadata    string
 }
 
-func DecodeOffsetCommitReq(bytes []byte, version int16) (offsetReq *OffsetCommitReq, r any, stack []byte) {
+func DecodeOffsetCommitReq(bytes []byte, version int16) (offsetReq *OffsetCommitReq, err error) {
 	defer func() {
-		if r = recover(); r != nil {
-			stack = debug.Stack()
+		if r := recover(); r != nil {
+			err = PanicToError(r, debug.Stack())
 			offsetReq = nil
 		}
 	}()
@@ -121,5 +121,5 @@ func DecodeOffsetCommitReq(bytes []byte, version int16) (offsetReq *OffsetCommit
 	if version == 8 {
 		idx = readTaggedField(bytes, idx)
 	}
-	return offsetReq, nil, nil
+	return offsetReq, nil
 }

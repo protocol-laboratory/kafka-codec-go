@@ -37,10 +37,10 @@ type OffsetFetchPartitionReq struct {
 	PartitionId int
 }
 
-func DecodeOffsetFetchReq(bytes []byte, version int16) (fetchReq *OffsetFetchReq, r any, stack []byte) {
+func DecodeOffsetFetchReq(bytes []byte, version int16) (fetchReq *OffsetFetchReq, err error) {
 	defer func() {
-		if r = recover(); r != nil {
-			stack = debug.Stack()
+		if r := recover(); r != nil {
+			err = PanicToError(r, debug.Stack())
 			fetchReq = nil
 		}
 	}()
@@ -99,5 +99,5 @@ func DecodeOffsetFetchReq(bytes []byte, version int16) (fetchReq *OffsetFetchReq
 	if version == 6 || version == 7 {
 		idx = readTaggedField(bytes, idx)
 	}
-	return fetchReq, nil, nil
+	return fetchReq, nil
 }

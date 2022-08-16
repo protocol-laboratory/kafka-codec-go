@@ -24,8 +24,8 @@ import (
 
 func TestDecodeProduceReqV7(t *testing.T) {
 	bytes := testHex2Bytes(t, "00000002006d5f5f5f546573744b61666b6150726f647563655f696e5f676f5f64656d6f5f64656d6f5f6b61666b612e746573744068657a68616e676a69616e64654d6163426f6f6b2d50726f2e6c6f63616c20286769746875622e636f6d2f7365676d656e74696f2f6b61666b612d676f29ffffffff00000f9a000000010005746f70696300000001000000000000004700000000000000000000003bffffffff022c30096c0000000000000000017df19951180000017df1995118ffffffffffffffffffffffffffff000000011200000001066d736700")
-	produceReq, r, _ := DecodeProduceReq(bytes, 7)
-	assert.Nil(t, r)
+	produceReq, err := DecodeProduceReq(bytes, 7)
+	assert.Nil(t, err)
 	assert.Equal(t, 2, produceReq.CorrelationId)
 	assert.Equal(t, "___TestKafkaProduce_in_go_demo_demo_kafka.test@hezhangjiandeMacBook-Pro.local (github.com/segmentio/kafka-go)", produceReq.ClientId)
 	assert.Equal(t, 3994, produceReq.Timeout)
@@ -63,8 +63,8 @@ func TestDecodeProduceReqV7(t *testing.T) {
 
 func TestDecodeProduceReqV8(t *testing.T) {
 	bytes := testHex2Bytes(t, "00000004002464646162333263392d663632302d343061322d616662382d313862373636393662653064ffff000100007530000000010005746f70696300000001000000000000004c000000000000000000000040ffffffff02635624670000000000000000017e685832d60000017e685832d6ffffffffffffffffffffffffffff000000011c000000066b65790a76616c756500")
-	produceReq, r, _ := DecodeProduceReq(bytes, 8)
-	assert.Nil(t, r)
+	produceReq, err := DecodeProduceReq(bytes, 8)
+	assert.Nil(t, err)
 	assert.Equal(t, 4, produceReq.CorrelationId)
 	assert.Equal(t, "ddab32c9-f620-40a2-afb8-18b76696be0d", produceReq.ClientId)
 	assert.Equal(t, 30_000, produceReq.Timeout)

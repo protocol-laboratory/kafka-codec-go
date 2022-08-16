@@ -27,10 +27,10 @@ type ApiReq struct {
 	ClientSoftwareVersion string
 }
 
-func DecodeApiReq(bytes []byte, version int16) (apiReq *ApiReq, r any, stack []byte) {
+func DecodeApiReq(bytes []byte, version int16) (apiReq *ApiReq, err error) {
 	defer func() {
-		if r = recover(); r != nil {
-			stack = debug.Stack()
+		if r := recover(); r != nil {
+			err = PanicToError(r, debug.Stack())
 			apiReq = nil
 		}
 	}()
@@ -45,5 +45,36 @@ func DecodeApiReq(bytes []byte, version int16) (apiReq *ApiReq, r any, stack []b
 		apiReq.ClientSoftwareVersion, idx = readClientSoftwareVersion(bytes, idx)
 		idx = readTaggedField(bytes, idx)
 	}
-	return apiReq, nil, nil
+	return apiReq, nil
+}
+
+func (a *ApiReq) BytesLength() int {
+	version := a.ApiVersion
+	length := LenCorrId
+	length += StrLen(a.ClientId)
+	if version == 3 {
+		length += LenTaggedField
+	}
+	length += CompactStrLen(a.ClientSoftwareName)
+	length += CompactStrLen(a.ClientSoftwareVersion)
+	if version == 3 {
+		length += LenTaggedField
+	}
+	return length
+}
+
+func (a *ApiReq) Bytes() []byte {
+	version := a.ApiVersion
+	bytes := make([]byte, a.BytesLength()+4)
+	idx := 0
+	idx = putApiKey(bytes, idx, ApiVersions)
+	idx = putApiVersion(bytes, idx, version)
+	idx = putCorrId(bytes, idx, a.CorrelationId)
+	idx = putClientId(bytes, idx, a.ClientId)
+	if version == 3 {
+		idx = putTaggedField(bytes, idx)
+	}
+	idx = putCompactString(bytes, idx, a.ClientSoftwareName)
+	idx = putCompactString(bytes, idx, a.ClientSoftwareVersion)
+	return bytes
 }

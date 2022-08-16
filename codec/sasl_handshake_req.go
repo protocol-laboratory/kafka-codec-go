@@ -26,10 +26,10 @@ type SaslHandshakeReq struct {
 	SaslMechanism string
 }
 
-func DecodeSaslHandshakeReq(bytes []byte, version int16) (saslHandshakeReq *SaslHandshakeReq, r any, stack []byte) {
+func DecodeSaslHandshakeReq(bytes []byte, version int16) (saslHandshakeReq *SaslHandshakeReq, err error) {
 	defer func() {
-		if r = recover(); r != nil {
-			stack = debug.Stack()
+		if r := recover(); r != nil {
+			err = PanicToError(r, debug.Stack())
 			saslHandshakeReq = nil
 		}
 	}()
@@ -39,5 +39,5 @@ func DecodeSaslHandshakeReq(bytes []byte, version int16) (saslHandshakeReq *Sasl
 	req.CorrelationId, idx = readCorrId(bytes, idx)
 	req.ClientId, idx = readClientId(bytes, idx)
 	req.SaslMechanism, idx = readSaslMechanism(bytes, idx)
-	return req, nil, nil
+	return req, nil
 }

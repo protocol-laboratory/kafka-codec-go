@@ -1,6 +1,6 @@
 module github.com/protocol-laboratory/kafka-codec-go
 
-go 1.18
+go 1.19
 
 require (
 	github.com/panjf2000/gnet v1.6.6

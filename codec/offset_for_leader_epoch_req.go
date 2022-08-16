@@ -38,10 +38,10 @@ type OffsetLeaderEpochPartitionReq struct {
 	LeaderEpoch        int32
 }
 
-func DecodeOffsetForLeaderEpochReq(bytes []byte, version int16) (leaderEpochReq *OffsetForLeaderEpochReq, r any, stack []byte) {
+func DecodeOffsetForLeaderEpochReq(bytes []byte, version int16) (leaderEpochReq *OffsetForLeaderEpochReq, err error) {
 	defer func() {
-		if r = recover(); r != nil {
-			stack = debug.Stack()
+		if r := recover(); r != nil {
+			err = PanicToError(r, debug.Stack())
 			leaderEpochReq = nil
 		}
 	}()
@@ -69,5 +69,5 @@ func DecodeOffsetForLeaderEpochReq(bytes []byte, version int16) (leaderEpochReq 
 		}
 		leaderEpochReq.TopicReqList[i] = &topic
 	}
-	return leaderEpochReq, nil, nil
+	return leaderEpochReq, nil
 }

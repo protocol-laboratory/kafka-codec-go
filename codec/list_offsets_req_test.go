@@ -24,14 +24,14 @@ import (
 
 func TestDecodeIllegalListOffsetReq(t *testing.T) {
 	bytes := make([]byte, 0)
-	_, r, _ := DecodeListOffsetsReq(bytes, 0)
-	assert.NotNil(t, r)
+	_, err := DecodeListOffsetsReq(bytes, 0)
+	assert.NotNil(t, err)
 }
 
 func TestDecodeListOffsetsReqV1(t *testing.T) {
 	bytes := testHex2Bytes(t, "00000004006d5f5f5f546573744b61666b61436f6e73756d655f696e5f676f5f64656d6f5f64656d6f5f6b61666b612e746573744068657a68616e676a69616e64654d6163426f6f6b2d50726f2e6c6f63616c20286769746875622e636f6d2f7365676d656e74696f2f6b61666b612d676f29ffffffff000000010005746f7069630000000100000000ffffffffffffffff")
-	listOffsetReq, r, _ := DecodeListOffsetsReq(bytes, 1)
-	assert.Nil(t, r)
+	listOffsetReq, err := DecodeListOffsetsReq(bytes, 1)
+	assert.Nil(t, err)
 	assert.Equal(t, 4, listOffsetReq.CorrelationId)
 	assert.Equal(t, "___TestKafkaConsume_in_go_demo_demo_kafka.test@hezhangjiandeMacBook-Pro.local (github.com/segmentio/kafka-go)", listOffsetReq.ClientId)
 	var expectedReplicaId int32 = -1
@@ -51,8 +51,8 @@ func TestDecodeListOffsetsReqV1(t *testing.T) {
 
 func TestDecodeListOffsetsReqV5(t *testing.T) {
 	bytes := testHex2Bytes(t, "00000008002f636f6e73756d65722d38646437623936622d366239342d346139622d623263632d3363623538393863396364662d31ffffffff00000000010006746573742d35000000010000000000000000fffffffffffffffe")
-	listOffsetReq, r, _ := DecodeListOffsetsReq(bytes, 5)
-	assert.Nil(t, r)
+	listOffsetReq, err := DecodeListOffsetsReq(bytes, 5)
+	assert.Nil(t, err)
 	assert.Equal(t, 8, listOffsetReq.CorrelationId)
 	assert.Equal(t, "consumer-8dd7b96b-6b94-4a9b-b2cc-3cb5898c9cdf-1", listOffsetReq.ClientId)
 	var expectedReplicaId int32 = -1

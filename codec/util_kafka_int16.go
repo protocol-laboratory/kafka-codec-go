@@ -23,12 +23,33 @@ func putApiKey(bytes []byte, idx int, x ApiCode) int {
 	return putInt16(bytes, idx, int16(x))
 }
 
+func readApiKey(bytes []byte, idx int) (ApiCode, int) {
+	ac, idx := readInt16(bytes, idx)
+	return ApiCode(ac), idx
+}
+
 func putApiMaxVersion(bytes []byte, idx int, x int16) int {
 	return putInt16(bytes, idx, x)
 }
 
+func readApiMaxVersion(bytes []byte, idx int) (int16, int) {
+	return readInt16(bytes, idx)
+}
+
 func putApiMinVersion(bytes []byte, idx int, x int16) int {
 	return putInt16(bytes, idx, x)
+}
+
+func readApiMinVersion(bytes []byte, idx int) (int16, int) {
+	return readInt16(bytes, idx)
+}
+
+func putApiVersion(bytes []byte, idx int, x int16) int {
+	return putInt16(bytes, idx, x)
+}
+
+func readApiVersion(bytes []byte, idx int) (int16, int) {
+	return readInt16(bytes, idx)
 }
 
 func putErrorCode(bytes []byte, idx int, errorCode ErrorCode) int {
