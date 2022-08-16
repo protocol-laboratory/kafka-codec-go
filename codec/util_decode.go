@@ -18,10 +18,9 @@
 package codec
 
 import (
-	"errors"
 	"fmt"
 )
 
 func PanicToError(r any, stack []byte) error {
-	return errors.New(fmt.Sprintf("error is %v stack is %s", r, string(stack)))
+	return fmt.Errorf("error is %v stack is %s", r, string(stack))
 }
