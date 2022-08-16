@@ -24,8 +24,8 @@ import (
 
 func TestDecodeOffsetForLeaderEpochReqV3(t *testing.T) {
 	bytes := testHex2Bytes(t, "000000090015636f6e73756d65722d6c742d67726f75702d312d31ffffffff0000000100096c742d746573742d3100000001000000000000000000000000")
-	leaderEpochReq, r, _ := DecodeOffsetForLeaderEpochReq(bytes, 3)
-	assert.Nil(t, r)
+	leaderEpochReq, err := DecodeOffsetForLeaderEpochReq(bytes, 3)
+	assert.Nil(t, err)
 	assert.Equal(t, 9, leaderEpochReq.CorrelationId)
 	var expectedReplicaId int32 = -1
 	assert.Equal(t, expectedReplicaId, leaderEpochReq.ReplicaId)

@@ -40,10 +40,10 @@ type ProducePartitionReq struct {
 	RecordBatch *RecordBatch
 }
 
-func DecodeProduceReq(bytes []byte, version int16) (produceReq *ProduceReq, r any, stack []byte) {
+func DecodeProduceReq(bytes []byte, version int16) (produceReq *ProduceReq, err error) {
 	defer func() {
-		if r = recover(); r != nil {
-			stack = debug.Stack()
+		if r := recover(); r != nil {
+			err = PanicToError(r, debug.Stack())
 			produceReq = nil
 		}
 	}()
@@ -77,5 +77,5 @@ func DecodeProduceReq(bytes []byte, version int16) (produceReq *ProduceReq, r an
 		}
 		produceReq.TopicReqList[i] = topic
 	}
-	return produceReq, nil, nil
+	return produceReq, nil
 }

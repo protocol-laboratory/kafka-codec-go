@@ -45,10 +45,10 @@ type FetchPartitionResp struct {
 	RecordBatch         *RecordBatch
 }
 
-func DecodeFetchResp(bytes []byte, version int16) (fetchResp *FetchResp, r any, stack []byte) {
+func DecodeFetchResp(bytes []byte, version int16) (fetchResp *FetchResp, err error) {
 	defer func() {
-		if r = recover(); r != nil {
-			stack = debug.Stack()
+		if r := recover(); r != nil {
+			err = PanicToError(r, debug.Stack())
 			fetchResp = nil
 		}
 	}()
@@ -84,7 +84,7 @@ func DecodeFetchResp(bytes []byte, version int16) (fetchResp *FetchResp, r any, 
 		}
 		fetchResp.TopicRespList[i] = topicResp
 	}
-	return fetchResp, nil, nil
+	return fetchResp, nil
 }
 
 func NewFetchResp(corrId int) *FetchResp {

@@ -33,10 +33,10 @@ type MetadataTopicReq struct {
 	Topic string
 }
 
-func DecodeMetadataReq(bytes []byte, version int16) (metadataReq *MetadataReq, r any, stack []byte) {
+func DecodeMetadataReq(bytes []byte, version int16) (metadataReq *MetadataReq, err error) {
 	defer func() {
-		if r = recover(); r != nil {
-			stack = debug.Stack()
+		if r := recover(); r != nil {
+			err = PanicToError(r, debug.Stack())
 			metadataReq = nil
 		}
 	}()
@@ -65,5 +65,5 @@ func DecodeMetadataReq(bytes []byte, version int16) (metadataReq *MetadataReq, r
 		}
 		metadataReq.Topics[i] = &metadataTopicReq
 	}
-	return metadataReq, nil, nil
+	return metadataReq, nil
 }

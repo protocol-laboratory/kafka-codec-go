@@ -17,6 +17,10 @@
 
 package codec
 
+import (
+	"runtime/debug"
+)
+
 type ApiResp struct {
 	BaseResp
 	ErrorCode       ErrorCode
@@ -28,6 +32,36 @@ type ApiRespVersion struct {
 	ApiKey     ApiCode
 	MinVersion int16
 	MaxVersion int16
+}
+
+func DecodeApiResp(bytes []byte, version int16) (apiResp *ApiResp, err error) {
+	defer func() {
+		if r := recover(); r != nil {
+			err = PanicToError(r, debug.Stack())
+			apiResp = nil
+		}
+	}()
+	apiResp = &ApiResp{}
+	idx := 0
+	apiResp.CorrelationId, idx = readCorrId(bytes, idx)
+	apiResp.ErrorCode, idx = readErrorCode(bytes, idx)
+	var length int
+	if version == 1 {
+		length, idx = readArrayLen(bytes, idx)
+	} else if version == 3 {
+		length, idx = readCompactArrayLen(bytes, idx)
+	}
+	for i := 0; i < length; i++ {
+		apiRespVersion := &ApiRespVersion{}
+		apiRespVersion.ApiKey, idx = readApiKey(bytes, idx)
+		apiRespVersion.MinVersion, idx = readApiMinVersion(bytes, idx)
+		apiRespVersion.MaxVersion, idx = readApiMaxVersion(bytes, idx)
+		if version == 3 {
+			idx = readTaggedField(bytes, idx)
+		}
+		apiResp.ApiRespVersions = append(apiResp.ApiRespVersions, apiRespVersion)
+	}
+	return apiResp, nil
 }
 
 func (a *ApiResp) BytesLength(version int16) int {

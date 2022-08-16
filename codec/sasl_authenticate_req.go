@@ -27,10 +27,10 @@ type SaslAuthenticateReq struct {
 	Password string
 }
 
-func DecodeSaslAuthenticateReq(bytes []byte, version int16) (authReq *SaslAuthenticateReq, r any, stack []byte) {
+func DecodeSaslAuthenticateReq(bytes []byte, version int16) (authReq *SaslAuthenticateReq, err error) {
 	defer func() {
-		if r = recover(); r != nil {
-			stack = debug.Stack()
+		if r := recover(); r != nil {
+			err = PanicToError(r, debug.Stack())
 			authReq = nil
 		}
 	}()
@@ -50,5 +50,5 @@ func DecodeSaslAuthenticateReq(bytes []byte, version int16) (authReq *SaslAuthen
 	if version == 2 {
 		idx = readTaggedField(bytes, idx)
 	}
-	return authReq, nil, nil
+	return authReq, nil
 }

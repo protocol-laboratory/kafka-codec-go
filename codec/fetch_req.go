@@ -47,10 +47,10 @@ type FetchPartitionReq struct {
 	PartitionMaxBytes  int
 }
 
-func DecodeFetchReq(bytes []byte, version int16) (fetchReq *FetchReq, r any, stack []byte) {
+func DecodeFetchReq(bytes []byte, version int16) (fetchReq *FetchReq, err error) {
 	defer func() {
-		if r = recover(); r != nil {
-			stack = debug.Stack()
+		if r := recover(); r != nil {
+			err = PanicToError(r, debug.Stack())
 			fetchReq = nil
 		}
 	}()
@@ -86,5 +86,5 @@ func DecodeFetchReq(bytes []byte, version int16) (fetchReq *FetchReq, r any, sta
 		}
 		fetchReq.TopicReqList[i] = &topicReq
 	}
-	return fetchReq, nil, nil
+	return fetchReq, nil
 }

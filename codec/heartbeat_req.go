@@ -29,10 +29,10 @@ type HeartbeatReq struct {
 	GroupInstanceId *string
 }
 
-func DecodeHeartbeatReq(bytes []byte, version int16) (heartBeatReq *HeartbeatReq, r any, stack []byte) {
+func DecodeHeartbeatReq(bytes []byte, version int16) (heartBeatReq *HeartbeatReq, err error) {
 	defer func() {
-		if r = recover(); r != nil {
-			stack = debug.Stack()
+		if r := recover(); r != nil {
+			err = PanicToError(r, debug.Stack())
 			heartBeatReq = nil
 		}
 	}()
@@ -47,5 +47,5 @@ func DecodeHeartbeatReq(bytes []byte, version int16) (heartBeatReq *HeartbeatReq
 	heartBeatReq.MemberId, idx = readMemberId(bytes, idx)
 	heartBeatReq.GroupInstanceId, idx = readGroupInstanceId(bytes, idx)
 	idx = readTaggedField(bytes, idx)
-	return heartBeatReq, nil, nil
+	return heartBeatReq, nil
 }

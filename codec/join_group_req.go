@@ -37,10 +37,10 @@ type GroupProtocol struct {
 	ProtocolMetadata string
 }
 
-func DecodeJoinGroupReq(bytes []byte, version int16) (joinGroupReq *JoinGroupReq, r any, stack []byte) {
+func DecodeJoinGroupReq(bytes []byte, version int16) (joinGroupReq *JoinGroupReq, err error) {
 	defer func() {
-		if r = recover(); r != nil {
-			stack = debug.Stack()
+		if r := recover(); r != nil {
+			err = PanicToError(r, debug.Stack())
 			joinGroupReq = nil
 		}
 	}()
@@ -99,5 +99,5 @@ func DecodeJoinGroupReq(bytes []byte, version int16) (joinGroupReq *JoinGroupReq
 	if version == 6 {
 		readTaggedField(bytes, idx)
 	}
-	return joinGroupReq, nil, nil
+	return joinGroupReq, nil
 }
