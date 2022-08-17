@@ -17,6 +17,8 @@
 
 package codec
 
+import "runtime/debug"
+
 type MetadataResp struct {
 	BaseResp
 	ThrottleTime               int
@@ -55,6 +57,129 @@ type PartitionMetadata struct {
 
 type Replica struct {
 	ReplicaId int32
+}
+
+func DecodeMetadataResp(bytes []byte, version int16) (metadataResp *MetadataResp, err error) {
+	defer func() {
+		if r := recover(); r != nil {
+			err = PanicToError(r, debug.Stack())
+			metadataResp = nil
+		}
+	}()
+	metadataResp = &MetadataResp{}
+	idx := 0
+	metadataResp.CorrelationId, idx = readCorrId(bytes, idx)
+	if version == 9 {
+		idx = readTaggedField(bytes, idx)
+	}
+	metadataResp.ThrottleTime, idx = readThrottleTime(bytes, idx)
+	var length int
+	if version == 1 {
+		length, idx = readArrayLen(bytes, idx)
+	} else if version == 9 {
+		length, idx = readCompactArrayLen(bytes, idx)
+	}
+	metadataResp.BrokerMetadataList = make([]*BrokerMetadata, length)
+	for i := 0; i < length; i++ {
+		brokerMetadata := &BrokerMetadata{}
+		brokerMetadata.NodeId, idx = readNodeId(bytes, idx)
+		if version == 1 {
+			brokerMetadata.Host, idx = readString(bytes, idx)
+		} else if version == 9 {
+			brokerMetadata.Host, idx = readCompactString(bytes, idx)
+		}
+		brokerMetadata.Port, idx = readBrokerPort(bytes, idx)
+		brokerMetadata.Rack, idx = readRack(bytes, idx)
+		if version == 9 {
+			idx = readTaggedField(bytes, idx)
+		}
+		metadataResp.BrokerMetadataList[i] = brokerMetadata
+	}
+	if version == 9 {
+		metadataResp.ClusterId, idx = readClusterId(bytes, idx)
+	}
+	metadataResp.ControllerId, idx = readControllerId(bytes, idx)
+	var topicLength int
+	if version == 1 {
+		topicLength, idx = readArrayLen(bytes, idx)
+	} else if version == 9 {
+		topicLength, idx = readCompactArrayLen(bytes, idx)
+	}
+	metadataResp.TopicMetadataList = make([]*TopicMetadata, topicLength)
+	for i := 0; i < topicLength; i++ {
+		topicMetadata := &TopicMetadata{}
+		topicMetadata.ErrorCode, idx = readErrorCode(bytes, idx)
+		if version == 1 {
+			topicMetadata.Topic, idx = readString(bytes, idx)
+		} else if version == 9 {
+			topicMetadata.Topic, idx = readCompactString(bytes, idx)
+		}
+		topicMetadata.IsInternal, idx = readBool(bytes, idx)
+		var partitionLength int
+		if version == 1 {
+			partitionLength, idx = readArrayLen(bytes, idx)
+		} else if version == 9 {
+			partitionLength, idx = readCompactArrayLen(bytes, idx)
+		}
+		topicMetadata.PartitionMetadataList = make([]*PartitionMetadata, partitionLength)
+		for j := 0; j < partitionLength; j++ {
+			partitionMetadata := &PartitionMetadata{}
+			partitionMetadata.ErrorCode, idx = readErrorCode(bytes, idx)
+			partitionMetadata.PartitionId, idx = readPartitionId(bytes, idx)
+			partitionMetadata.LeaderId, idx = readInt32(bytes, idx)
+			partitionMetadata.LeaderEpoch, idx = readInt32(bytes, idx)
+			var replicaLength int
+			if version == 1 {
+				replicaLength, idx = readArrayLen(bytes, idx)
+			} else if version == 9 {
+				replicaLength, idx = readCompactArrayLen(bytes, idx)
+			}
+			partitionMetadata.Replicas = make([]*Replica, replicaLength)
+			for k := 0; k < replicaLength; k++ {
+				replica := &Replica{}
+				replica.ReplicaId, idx = readReplicaId(bytes, idx)
+				partitionMetadata.Replicas[k] = replica
+			}
+			var caughtReplicaLength int
+			if version == 1 {
+				caughtReplicaLength, idx = readArrayLen(bytes, idx)
+			} else if version == 9 {
+				caughtReplicaLength, idx = readCompactArrayLen(bytes, idx)
+			}
+			partitionMetadata.CaughtReplicas = make([]*Replica, caughtReplicaLength)
+			for k := 0; k < caughtReplicaLength; k++ {
+				replica := &Replica{}
+				replica.ReplicaId, idx = readReplicaId(bytes, idx)
+				partitionMetadata.CaughtReplicas[k] = replica
+			}
+			var offlineReplicaLength int
+			if version == 1 {
+				offlineReplicaLength, idx = readArrayLen(bytes, idx)
+			} else if version == 9 {
+				offlineReplicaLength, idx = readCompactArrayLen(bytes, idx)
+			}
+			partitionMetadata.OfflineReplicas = make([]*Replica, offlineReplicaLength)
+			for k := 0; k < offlineReplicaLength; k++ {
+				replica := &Replica{}
+				replica.ReplicaId, idx = readReplicaId(bytes, idx)
+				partitionMetadata.OfflineReplicas[k] = replica
+			}
+			topicMetadata.PartitionMetadataList[j] = partitionMetadata
+			if version == 9 {
+				idx = readTaggedField(bytes, idx)
+			}
+		}
+		topicMetadata.TopicAuthorizedOperation, idx = readTopicAuthorizedOperation(bytes, idx)
+		metadataResp.TopicMetadataList[i] = topicMetadata
+		if version == 9 {
+			idx = readTaggedField(bytes, idx)
+		}
+	}
+	metadataResp.ClusterAuthorizedOperation, idx = readClusterAuthorizedOperation(bytes, idx)
+	if version == 9 {
+		idx = readTaggedField(bytes, idx)
+	}
+	return metadataResp, nil
 }
 
 func (m *MetadataResp) BytesLength(version int16) int {

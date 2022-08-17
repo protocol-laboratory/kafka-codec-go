@@ -22,6 +22,35 @@ import (
 	"testing"
 )
 
+func TestDecodeMetadataRespV9(t *testing.T) {
+	bytes := testHex2Bytes(t, "00000002000000000002000000000a6c6f63616c686f7374000023840000174b304345692d436152543231437064526879425241770000000002000007746573742d330002000000000000000000000000000002000000000200000000010080000000008000000000")
+	metadataResp, err := DecodeMetadataResp(bytes, 9)
+	assert.Nil(t, err)
+	assert.Equal(t, 2, metadataResp.CorrelationId)
+	assert.Equal(t, 0, metadataResp.ThrottleTime)
+	assert.Len(t, metadataResp.BrokerMetadataList, 1)
+	brokerMetadata := metadataResp.BrokerMetadataList[0]
+	assert.Equal(t, int32(0), brokerMetadata.NodeId)
+	assert.Equal(t, "localhost", metadataResp.BrokerMetadataList[0].Host)
+	assert.Equal(t, 9092, metadataResp.BrokerMetadataList[0].Port)
+	assert.Nil(t, brokerMetadata.Rack)
+	assert.Equal(t, "K0CEi-CaRT21CpdRhyBRAw", metadataResp.ClusterId)
+	assert.Equal(t, int32(0), metadataResp.ControllerId)
+	assert.Len(t, metadataResp.TopicMetadataList, 1)
+	topicMetadata := metadataResp.TopicMetadataList[0]
+	assert.Equal(t, ErrorCode(0), topicMetadata.ErrorCode)
+	assert.Equal(t, "test-3", topicMetadata.Topic)
+	assert.False(t, topicMetadata.IsInternal)
+	partitionMetadata := topicMetadata.PartitionMetadataList[0]
+	assert.Equal(t, ErrorCode(0), partitionMetadata.ErrorCode)
+	assert.Equal(t, 0, partitionMetadata.PartitionId)
+	assert.Equal(t, int32(0), partitionMetadata.LeaderId)
+	assert.Equal(t, int32(0), partitionMetadata.LeaderEpoch)
+	assert.Len(t, partitionMetadata.Replicas, 1)
+	assert.Len(t, partitionMetadata.CaughtReplicas, 1)
+	assert.Len(t, partitionMetadata.OfflineReplicas, 0)
+}
+
 func TestCodeMetadataRespV1(t *testing.T) {
 	metadataResp := MetadataResp{}
 	metadataResp.CorrelationId = 2

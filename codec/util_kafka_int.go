@@ -31,6 +31,10 @@ func putClusterAuthorizedOperation(bytes []byte, idx int, corrId int) int {
 	return putInt(bytes, idx, corrId)
 }
 
+func readClusterAuthorizedOperation(bytes []byte, idx int) (int, int) {
+	return readInt(bytes, idx)
+}
+
 func putCorrId(bytes []byte, idx int, corrId int) int {
 	return putInt(bytes, idx, corrId)
 }
@@ -89,4 +93,8 @@ func readThrottleTime(bytes []byte, idx int) (int, int) {
 
 func putTopicAuthorizedOperation(bytes []byte, idx int, x int) int {
 	return putInt(bytes, idx, x)
+}
+
+func readTopicAuthorizedOperation(bytes []byte, idx int) (int, int) {
+	return readInt(bytes, idx)
 }
