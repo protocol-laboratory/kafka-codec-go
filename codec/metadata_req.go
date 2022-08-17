@@ -49,7 +49,7 @@ func DecodeMetadataReq(bytes []byte, version int16) (metadataReq *MetadataReq, e
 		idx = readTaggedField(bytes, idx)
 	}
 	var length int
-	if version == 1 {
+	if version == 1 || version == 8 {
 		length, idx = readArrayLen(bytes, idx)
 	} else {
 		length, idx = readCompactArrayLen(bytes, idx)
@@ -57,7 +57,7 @@ func DecodeMetadataReq(bytes []byte, version int16) (metadataReq *MetadataReq, e
 	metadataReq.Topics = make([]*MetadataTopicReq, length)
 	for i := 0; i < length; i++ {
 		metadataTopicReq := MetadataTopicReq{}
-		if version == 1 {
+		if version == 1 || version == 8 {
 			metadataTopicReq.Topic, idx = readTopicString(bytes, idx)
 		} else if version == 9 {
 			metadataTopicReq.Topic, idx = readTopic(bytes, idx)

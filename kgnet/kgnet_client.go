@@ -46,11 +46,11 @@ func (k *KafkaLowLevelClient) ApiVersions(req *codec.ApiReq) (*codec.ApiResp, er
 	if err != nil {
 		return nil, err
 	}
-	apiResp, err := codec.DecodeApiResp(bytes, 3)
+	resp, err := codec.DecodeApiResp(bytes, req.ApiVersion)
 	if err != nil {
 		return nil, err
 	}
-	return apiResp, nil
+	return resp, nil
 }
 
 func (k *KafkaLowLevelClient) Close() {

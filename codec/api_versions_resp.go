@@ -66,11 +66,16 @@ func DecodeApiResp(bytes []byte, version int16) (apiResp *ApiResp, err error) {
 
 func (a *ApiResp) BytesLength(version int16) int {
 	length := LenCorrId + LenErrorCode + LenArray
-	if version == 0 {
-		length += LenApiV0 * len(a.ApiRespVersions)
+	if version < 3 {
+		length += LenApiV0to2 * len(a.ApiRespVersions)
+	} else if version == 3 {
+		length += LenApiV3 * len(a.ApiRespVersions)
+	}
+	if version == 2 || version == 3 {
+		length += LenThrottleTime
 	}
 	if version == 3 {
-		length += LenApiV3*len(a.ApiRespVersions) + LenThrottleTime + 1
+		length += LenTaggedField
 	}
 	return length
 }
@@ -80,7 +85,7 @@ func (a *ApiResp) Bytes(version int16) []byte {
 	idx := 0
 	idx = putCorrId(bytes, idx, a.CorrelationId)
 	idx = putErrorCode(bytes, idx, a.ErrorCode)
-	if version == 0 {
+	if version < 3 {
 		idx = putArrayLen(bytes, idx, len(a.ApiRespVersions))
 	}
 	if version == 3 {
@@ -95,8 +100,10 @@ func (a *ApiResp) Bytes(version int16) []byte {
 			idx = putTaggedField(bytes, idx)
 		}
 	}
-	if version == 3 {
+	if version == 2 || version == 3 {
 		idx = putThrottleTime(bytes, idx, a.ThrottleTime)
+	}
+	if version == 3 {
 		idx = putTaggedField(bytes, idx)
 	}
 	return bytes

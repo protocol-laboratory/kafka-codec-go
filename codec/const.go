@@ -20,7 +20,7 @@ package codec
 const (
 	LenAbortTransactions                  = 4
 	LenAllowAutoTopicCreation             = 1
-	LenApiV0                              = 6
+	LenApiV0to2                           = 6
 	LenApiV3                              = 7
 	LenArray                              = 4
 	LenBaseSequence                       = 4
