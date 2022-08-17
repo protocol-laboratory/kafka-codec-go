@@ -43,6 +43,14 @@ func readClusterId(bytes []byte, idx int) (string, int) {
 	return readCompactString(bytes, idx)
 }
 
+func putClusterIdString(bytes []byte, idx int, str string) int {
+	return putString(bytes, idx, str)
+}
+
+func readClusterIdString(bytes []byte, idx int) (string, int) {
+	return readString(bytes, idx)
+}
+
 func readCoordinatorKey(bytes []byte, idx int) (string, int) {
 	return readCompactString(bytes, idx)
 }

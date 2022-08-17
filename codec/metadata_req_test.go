@@ -42,6 +42,20 @@ func TestDecodeMetadataV1(t *testing.T) {
 	assert.False(t, metadataTopicReq.IncludeTopicAuthorizedOperations)
 }
 
+func TestDecodeMetadataV8(t *testing.T) {
+	bytes := testHex2Bytes(t, "00000001000a70726f64756365722d3100000001000a746573742d746f706963010000")
+	metadataTopicReq, err := DecodeMetadataReq(bytes, 8)
+	assert.Nil(t, err)
+	assert.Equal(t, 1, metadataTopicReq.CorrelationId)
+	assert.Equal(t, "producer-1", metadataTopicReq.ClientId)
+	assert.Len(t, metadataTopicReq.Topics, 1)
+	topicReq := metadataTopicReq.Topics[0]
+	assert.Equal(t, "test-topic", topicReq.Topic)
+	assert.False(t, metadataTopicReq.AllowAutoTopicCreation)
+	assert.False(t, metadataTopicReq.IncludeClusterAuthorizedOperations)
+	assert.False(t, metadataTopicReq.IncludeTopicAuthorizedOperations)
+}
+
 func TestDecodeMetadataV9(t *testing.T) {
 	bytes := testHex2Bytes(t, "00000002002f636f6e73756d65722d37336664633964612d306439322d346537622d613761372d6563323636663637633137312d3100022537363465646565332d303037652d343865302d623966392d6466376637313366663730370001000000")
 	metadataTopicReq, err := DecodeMetadataReq(bytes, 9)

@@ -35,14 +35,6 @@ func readBatchIndex(bytes []byte, idx int) (int32, int) {
 	return readInt32(bytes, idx)
 }
 
-func putBrokerNodeId(bytes []byte, idx int, x int32) int {
-	return putInt32(bytes, idx, x)
-}
-
-func readBrokerNodeId(bytes []byte, idx int) (int32, int) {
-	return readInt32(bytes, idx)
-}
-
 func putControllerId(bytes []byte, idx int, x int32) int {
 	return putInt32(bytes, idx, x)
 }
