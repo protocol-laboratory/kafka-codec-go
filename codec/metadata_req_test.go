@@ -55,3 +55,21 @@ func TestDecodeMetadataV9(t *testing.T) {
 	assert.False(t, metadataTopicReq.IncludeClusterAuthorizedOperations)
 	assert.False(t, metadataTopicReq.IncludeTopicAuthorizedOperations)
 }
+
+func TestCodeMetadataReqV9(t *testing.T) {
+	metadataReq := &MetadataReq{}
+	metadataReq.ApiVersion = 9
+	metadataReq.CorrelationId = 2
+	metadataReq.ClientId = "consumer-a1e12365-ddfa-43fc-826e-9661fb54c274-1"
+	metadataReq.Topics = []*MetadataTopicReq{
+		{
+			Topic: "test-3",
+		},
+	}
+	metadataReq.AllowAutoTopicCreation = true
+	metadataReq.IncludeClusterAuthorizedOperations = false
+	metadataReq.IncludeTopicAuthorizedOperations = false
+	bytes := metadataReq.Bytes()
+	expectBytes := testHex2Bytes(t, "0003000900000002002f636f6e73756d65722d61316531323336352d646466612d343366632d383236652d3936363166623534633237342d31000207746573742d330001000000")
+	assert.Equal(t, expectBytes, bytes)
+}

@@ -67,3 +67,69 @@ func DecodeMetadataReq(bytes []byte, version int16) (metadataReq *MetadataReq, e
 	}
 	return metadataReq, nil
 }
+
+func (m *MetadataReq) BytesLength() int {
+	version := m.ApiVersion
+	length := LenCorrId
+	length += StrLen(m.ClientId)
+	if version == 9 {
+		length += LenTaggedField
+	}
+	if version == 1 {
+		length += LenArray
+	} else {
+		length += CompactArrayLen(len(m.Topics))
+	}
+	for _, topic := range m.Topics {
+		if version == 1 {
+			length += StrLen(topic.Topic)
+		} else if version == 9 {
+			length += CompactStrLen(topic.Topic)
+		}
+		if version == 9 {
+			length += LenTaggedField
+		}
+	}
+	length += LenAllowAutoTopicCreation
+	length += LenIncludeClusterAuthorizedOperations
+	length += LenIncludeTopicAuthorizedOperations
+	if version == 9 {
+		length += LenTaggedField
+	}
+	return length
+}
+
+func (m *MetadataReq) Bytes() []byte {
+	version := m.ApiVersion
+	bytes := make([]byte, m.BytesLength()+4)
+	idx := 0
+	idx = putApiKey(bytes, idx, Metadata)
+	idx = putApiVersion(bytes, idx, version)
+	idx = putCorrId(bytes, idx, m.CorrelationId)
+	idx = putClientId(bytes, idx, m.ClientId)
+	if version == 9 {
+		idx = putTaggedField(bytes, idx)
+	}
+	if version == 9 {
+		idx = putCompactArrayLen(bytes, idx, len(m.Topics))
+	} else if version == 1 {
+		idx = putArrayLen(bytes, idx, len(m.Topics))
+	}
+	for _, topic := range m.Topics {
+		if version == 1 {
+			idx = putTopicString(bytes, idx, topic.Topic)
+		} else if version == 9 {
+			idx = putTopic(bytes, idx, topic.Topic)
+		}
+		if version == 9 {
+			idx = putTaggedField(bytes, idx)
+		}
+	}
+	idx = putAllowAutoTopicCreation(bytes, idx, m.AllowAutoTopicCreation)
+	idx = putIncludeClusterAuthorizedOperations(bytes, idx, m.IncludeClusterAuthorizedOperations)
+	idx = putIncludeTopicAuthorizedOperations(bytes, idx, m.IncludeTopicAuthorizedOperations)
+	if version == 9 {
+		idx = putTaggedField(bytes, idx)
+	}
+	return bytes
+}
