@@ -31,6 +31,5 @@ func TestReadInt64Case1(t *testing.T) {
 func TestReadInt64Case2(t *testing.T) {
 	timestampSlice := testHex2Bytes(t, "0000017a931dccdf")
 	res, _ := readInt64(timestampSlice, 0)
-	var expected int64 = 1625965841631
-	assert.Equal(t, expected, res)
+	assert.Equal(t, int64(1625965841631), res)
 }

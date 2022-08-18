@@ -42,8 +42,7 @@ func TestDecodeOffsetCommitReqV2(t *testing.T) {
 	assert.Equal(t, "topic", offsetTopic.Topic)
 	offsetPartition := offsetTopic.PartitionReqList[0]
 	assert.Equal(t, 0, offsetPartition.PartitionId)
-	var expectedOffset int64 = 1
-	assert.Equal(t, expectedOffset, offsetPartition.Offset)
+	assert.Equal(t, int64(1), offsetPartition.Offset)
 }
 
 func TestDecodeOffsetCommitReqV8(t *testing.T) {
@@ -60,6 +59,5 @@ func TestDecodeOffsetCommitReqV8(t *testing.T) {
 	assert.Equal(t, "test-5", offsetTopic.Topic)
 	offsetPartition := offsetTopic.PartitionReqList[0]
 	assert.Equal(t, 0, offsetPartition.PartitionId)
-	var expectedOffset int64 = 1
-	assert.Equal(t, expectedOffset, offsetPartition.Offset)
+	assert.Equal(t, int64(1), offsetPartition.Offset)
 }

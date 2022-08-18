@@ -27,14 +27,12 @@ func TestDecodeOffsetForLeaderEpochReqV3(t *testing.T) {
 	leaderEpochReq, err := DecodeOffsetForLeaderEpochReq(bytes, 3)
 	assert.Nil(t, err)
 	assert.Equal(t, 9, leaderEpochReq.CorrelationId)
-	var expectedReplicaId int32 = -1
-	assert.Equal(t, expectedReplicaId, leaderEpochReq.ReplicaId)
+	assert.Equal(t, int32(-1), leaderEpochReq.ReplicaId)
 	assert.Len(t, leaderEpochReq.TopicReqList, 1)
 	leaderEpochTopicReq := leaderEpochReq.TopicReqList[0]
 	assert.Equal(t, "lt-test-1", leaderEpochTopicReq.Topic)
 	leaderEpochPartitionReq := leaderEpochTopicReq.PartitionReqList[0]
 	assert.Equal(t, 0, leaderEpochPartitionReq.PartitionId)
-	var expectedLeaderEpoch int32 = 0
-	assert.Equal(t, expectedLeaderEpoch, leaderEpochPartitionReq.CurrentLeaderEpoch)
-	assert.Equal(t, expectedLeaderEpoch, leaderEpochPartitionReq.LeaderEpoch)
+	assert.Equal(t, int32(0), leaderEpochPartitionReq.CurrentLeaderEpoch)
+	assert.Equal(t, int32(0), leaderEpochPartitionReq.LeaderEpoch)
 }
