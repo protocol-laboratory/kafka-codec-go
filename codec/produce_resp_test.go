@@ -22,6 +22,26 @@ import (
 	"testing"
 )
 
+func TestDecodeProduceRespV7(t *testing.T) {
+	produceRespBytes := testHex2Bytes(t, "00000002000000010005746f706963000000010000000000000000000000000000ffffffffffffffff000000000000000000000000")
+	resp, err := DecodeProduceResp(produceRespBytes, 7)
+	assert.Nil(t, err)
+	assert.Equal(t, resp.CorrelationId, 2)
+	assert.Equal(t, len(resp.TopicRespList), 1)
+	topicResp := resp.TopicRespList[0]
+	assert.Equal(t, topicResp.Topic, "topic")
+	assert.Equal(t, len(topicResp.PartitionRespList), 1)
+	partitionResp := topicResp.PartitionRespList[0]
+	assert.Equal(t, partitionResp.PartitionId, 0)
+	assert.Equal(t, partitionResp.ErrorCode, NONE)
+	var offset int64 = 0
+	assert.Equal(t, partitionResp.Offset, offset)
+	var time int64 = -1
+	assert.Equal(t, partitionResp.Time, time)
+	var logStartOffset int64 = 0
+	assert.Equal(t, partitionResp.LogStartOffset, logStartOffset)
+}
+
 func TestCodeProduceRespV7(t *testing.T) {
 	produceResp := ProduceResp{
 		BaseResp: BaseResp{

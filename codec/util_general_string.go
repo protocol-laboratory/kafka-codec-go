@@ -64,7 +64,7 @@ func putString(bytes []byte, idx int, str string) int {
 func readNullableString(bytes []byte, idx int) (*string, int) {
 	length, idx := readInt16(bytes, idx)
 	if length == -1 {
-		return nil, idx + 2
+		return nil, idx
 	}
 	intLen := int(length)
 	aux := string(bytes[idx : idx+intLen])

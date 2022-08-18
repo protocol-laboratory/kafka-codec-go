@@ -230,3 +230,11 @@ func putTopic(bytes []byte, idx int, str string) int {
 func readTopic(bytes []byte, idx int) (string, int) {
 	return readCompactString(bytes, idx)
 }
+
+func putTransactionId(bytes []byte, idx int, str *string) int {
+	return putNullableString(bytes, idx, str)
+}
+
+func readTransactionId(bytes []byte, idx int) (*string, int) {
+	return readNullableString(bytes, idx)
+}

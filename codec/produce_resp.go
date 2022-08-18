@@ -17,6 +17,8 @@
 
 package codec
 
+import "runtime/debug"
+
 type ProduceResp struct {
 	BaseResp
 	TopicRespList []*ProduceTopicResp
@@ -41,6 +43,38 @@ type ProducePartitionResp struct {
 type RecordError struct {
 	BatchIndex             int32
 	BatchIndexErrorMessage *string
+}
+
+func DecodeProduceResp(bytes []byte, version int16) (produceResp *ProduceResp, err error) {
+	defer func() {
+		if r := recover(); r != nil {
+			err = PanicToError(r, debug.Stack())
+			produceResp = nil
+		}
+	}()
+	produceResp = &ProduceResp{}
+	idx := 0
+	produceResp.CorrelationId, idx = readCorrId(bytes, idx)
+	var topicLength int
+	topicLength, idx = readArrayLen(bytes, idx)
+	for i := 0; i < topicLength; i++ {
+		produceTopicResp := &ProduceTopicResp{}
+		produceTopicResp.Topic, idx = readTopicString(bytes, idx)
+		var partitionLength int
+		partitionLength, idx = readArrayLen(bytes, idx)
+		for j := 0; j < partitionLength; j++ {
+			producePartitionResp := &ProducePartitionResp{}
+			producePartitionResp.PartitionId, idx = readPartitionId(bytes, idx)
+			producePartitionResp.ErrorCode, idx = readErrorCode(bytes, idx)
+			producePartitionResp.Offset, idx = readOffset(bytes, idx)
+			producePartitionResp.Time, idx = readTime(bytes, idx)
+			producePartitionResp.LogStartOffset, idx = readLogStartOffset(bytes, idx)
+			produceTopicResp.PartitionRespList = append(produceTopicResp.PartitionRespList, producePartitionResp)
+		}
+		produceResp.TopicRespList = append(produceResp.TopicRespList, produceTopicResp)
+	}
+	produceResp.ThrottleTime, idx = readThrottleTime(bytes, idx)
+	return produceResp, nil
 }
 
 func (p *ProduceResp) BytesLength(version int16) int {

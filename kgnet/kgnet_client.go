@@ -41,6 +41,18 @@ type KafkaLowLevelClient struct {
 	kafkaGnetClient *KafkaGnetClient
 }
 
+func (k *KafkaLowLevelClient) Produce(req *codec.ProduceReq) (*codec.ProduceResp, error) {
+	bytes, err := k.kafkaGnetClient.Send(req.Bytes(true))
+	if err != nil {
+		return nil, err
+	}
+	resp, err := codec.DecodeProduceResp(bytes, req.ApiVersion)
+	if err != nil {
+		return nil, err
+	}
+	return resp, nil
+}
+
 func (k *KafkaLowLevelClient) Metadata(req *codec.MetadataReq) (*codec.MetadataResp, error) {
 	bytes, err := k.kafkaGnetClient.Send(req.Bytes())
 	if err != nil {
