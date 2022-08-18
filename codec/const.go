@@ -20,8 +20,10 @@ package codec
 const (
 	LenAbortTransactions                  = 4
 	LenAllowAutoTopicCreation             = 1
+	LenApiKey                             = 2
 	LenApiV0to2                           = 6
 	LenApiV3                              = 7
+	LenApiVersion                         = 2
 	LenArray                              = 4
 	LenBaseSequence                       = 4
 	LenBatchIndex                         = 4
@@ -50,10 +52,13 @@ const (
 	LenProducerEpoch                      = 2
 	LenRecordAttributes                   = 1
 	LenReplicaId                          = 4
+	LenRequiredAcks                       = 2
 	LenSessionTimeout                     = 8
 	LenStartOffset                        = 8
 	LenTaggedField                        = 1
 	LenThrottleTime                       = 4
 	LenTime                               = 8
+	LenTimeout                            = 4
 	LenTopicAuthOperation                 = 4
+	LenTransactionalId                    = 2
 )

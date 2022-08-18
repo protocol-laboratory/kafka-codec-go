@@ -24,7 +24,7 @@ import (
 type ProduceReq struct {
 	BaseReq
 	ClientId      string
-	TransactionId int16
+	TransactionId *string
 	RequiredAcks  int16
 	Timeout       int
 	TopicReqList  []*ProduceTopicReq
@@ -52,10 +52,8 @@ func DecodeProduceReq(bytes []byte, version int16) (produceReq *ProduceReq, err 
 	idx := 0
 	produceReq.CorrelationId, idx = readCorrId(bytes, idx)
 	produceReq.ClientId, idx = readClientId(bytes, idx)
-	// todo skip transactionId
-	idx += 2
-	// todo skip requiredAcks
-	idx += 2
+	produceReq.TransactionId, idx = readTransactionId(bytes, idx)
+	produceReq.RequiredAcks, idx = readRequiredAcks(bytes, idx)
 	produceReq.Timeout, idx = readInt(bytes, idx)
 	var length int
 	length, idx = readInt(bytes, idx)
@@ -78,4 +76,54 @@ func DecodeProduceReq(bytes []byte, version int16) (produceReq *ProduceReq, err 
 		produceReq.TopicReqList[i] = topic
 	}
 	return produceReq, nil
+}
+
+func (m *ProduceReq) BytesLength(containApiKeyVersion bool) int {
+	length := 0
+	if containApiKeyVersion {
+		length += LenApiKey
+		length += LenApiVersion
+	}
+	length += LenCorrId
+	length += StrLen(m.ClientId)
+	length += LenTransactionalId
+	length += LenRequiredAcks
+	length += LenTimeout
+	length += LenArray
+	for _, topicReq := range m.TopicReqList {
+		length += StrLen(topicReq.Topic)
+		length += LenArray
+		for _, partitionReq := range topicReq.PartitionReqList {
+			length += LenPartitionId
+			length += LenMessageSize + partitionReq.RecordBatch.BytesLength()
+		}
+	}
+	return length
+}
+
+func (m *ProduceReq) Bytes(containApiKeyVersion bool) []byte {
+	version := m.ApiVersion
+	bytes := make([]byte, m.BytesLength(containApiKeyVersion))
+	idx := 0
+	if containApiKeyVersion {
+		idx = putApiKey(bytes, idx, Produce)
+		idx = putApiVersion(bytes, idx, version)
+	}
+	idx = putCorrId(bytes, idx, m.CorrelationId)
+	idx = putClientId(bytes, idx, m.ClientId)
+	idx = putTransactionId(bytes, idx, m.TransactionId)
+	idx = putRequiredAcks(bytes, idx, m.RequiredAcks)
+	idx = putInt(bytes, idx, m.Timeout)
+	idx = putArrayLen(bytes, idx, len(m.TopicReqList))
+	for _, topicReq := range m.TopicReqList {
+		idx = putTopicString(bytes, idx, topicReq.Topic)
+		idx = putArrayLen(bytes, idx, len(topicReq.PartitionReqList))
+		for _, partitionReq := range topicReq.PartitionReqList {
+			idx = putPartitionId(bytes, idx, partitionReq.PartitionId)
+			if partitionReq.RecordBatch != nil {
+				idx = putRecordBatch(bytes, idx, partitionReq.RecordBatch.Bytes())
+			}
+		}
+	}
+	return bytes
 }
