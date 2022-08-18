@@ -36,26 +36,18 @@ func TestDecodeProduceReqV7(t *testing.T) {
 	partitionReq := topicReq.PartitionReqList[0]
 	assert.Equal(t, 0, partitionReq.PartitionId)
 	recordBatch := partitionReq.RecordBatch
-	var expectedOffset int64 = 0
-	assert.Equal(t, expectedOffset, recordBatch.Offset)
+	assert.Equal(t, int64(0), recordBatch.Offset)
 	assert.Equal(t, 59, recordBatch.MessageSize)
-	var expectedLeaderEpoch int32 = -1
-	assert.Equal(t, expectedLeaderEpoch, recordBatch.LeaderEpoch)
-	var expectedMagicByte byte = 2
-	assert.Equal(t, expectedMagicByte, recordBatch.MagicByte)
-	var expectedFlags uint16 = 0
-	assert.Equal(t, expectedFlags, recordBatch.Flags)
+	assert.Equal(t, int32(-1), recordBatch.LeaderEpoch)
+	assert.Equal(t, byte(2), recordBatch.MagicByte)
+	assert.Equal(t, uint16(0), recordBatch.Flags)
 	assert.Equal(t, 0, recordBatch.LastOffsetDelta)
-	var expectedProducerId int64 = -1
-	assert.Equal(t, expectedProducerId, recordBatch.ProducerId)
-	var expectedBaseSequence int32 = -1
-	assert.Equal(t, expectedBaseSequence, recordBatch.BaseSequence)
+	assert.Equal(t, int64(-1), recordBatch.ProducerId)
+	assert.Equal(t, int32(-1), recordBatch.BaseSequence)
 	assert.Len(t, recordBatch.Records, 1)
 	record := recordBatch.Records[0]
-	var expectedRecordAttributes byte = 0
-	assert.Equal(t, expectedRecordAttributes, record.RecordAttributes)
-	var expectedRelativeTimestamp int64 = 0
-	assert.Equal(t, expectedRelativeTimestamp, record.RelativeTimestamp)
+	assert.Equal(t, byte(0), record.RecordAttributes)
+	assert.Equal(t, int64(0), record.RelativeTimestamp)
 	assert.Equal(t, 0, record.RelativeOffset)
 	assert.Nil(t, record.Key)
 	assert.Equal(t, "msg", string(record.Value))
@@ -75,26 +67,18 @@ func TestDecodeProduceReqV8(t *testing.T) {
 	partitionReq := topicReq.PartitionReqList[0]
 	assert.Equal(t, 0, partitionReq.PartitionId)
 	recordBatch := partitionReq.RecordBatch
-	var expectedOffset int64 = 0
-	assert.Equal(t, expectedOffset, recordBatch.Offset)
+	assert.Equal(t, int64(0), recordBatch.Offset)
 	assert.Equal(t, 64, recordBatch.MessageSize)
-	var expectedLeaderEpoch int32 = -1
-	assert.Equal(t, expectedLeaderEpoch, recordBatch.LeaderEpoch)
-	var expectedMagicByte byte = 2
-	assert.Equal(t, expectedMagicByte, recordBatch.MagicByte)
-	var expectedFlags uint16 = 0
-	assert.Equal(t, expectedFlags, recordBatch.Flags)
+	assert.Equal(t, int32(-1), recordBatch.LeaderEpoch)
+	assert.Equal(t, byte(2), recordBatch.MagicByte)
+	assert.Equal(t, uint16(0), recordBatch.Flags)
 	assert.Equal(t, 0, recordBatch.LastOffsetDelta)
-	var expectedProducerId int64 = -1
-	assert.Equal(t, expectedProducerId, recordBatch.ProducerId)
-	var expectedBaseSequence int32 = -1
-	assert.Equal(t, expectedBaseSequence, recordBatch.BaseSequence)
+	assert.Equal(t, int64(-1), recordBatch.ProducerId)
+	assert.Equal(t, int32(-1), recordBatch.BaseSequence)
 	assert.Len(t, recordBatch.Records, 1)
 	record := recordBatch.Records[0]
-	var expectedRecordAttributes byte = 0
-	assert.Equal(t, expectedRecordAttributes, record.RecordAttributes)
-	var expectedRelativeTimestamp int64 = 0
-	assert.Equal(t, expectedRelativeTimestamp, record.RelativeTimestamp)
+	assert.Equal(t, byte(0), record.RecordAttributes)
+	assert.Equal(t, int64(0), record.RelativeTimestamp)
 	assert.Equal(t, 0, record.RelativeOffset)
 	assert.Equal(t, []byte("key"), record.Key)
 	assert.Equal(t, "value", string(record.Value))

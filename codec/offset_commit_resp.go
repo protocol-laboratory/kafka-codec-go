@@ -41,7 +41,7 @@ func (o *OffsetCommitResp) BytesLength(version int16) int {
 	if version == 2 {
 		result += LenArray
 	} else if version == 8 {
-		result += varintSize(len(o.TopicRespList) + 1)
+		result += CompactArrayLen(len(o.TopicRespList))
 	}
 	for _, val := range o.TopicRespList {
 		if version == 2 {
@@ -52,7 +52,7 @@ func (o *OffsetCommitResp) BytesLength(version int16) int {
 		if version == 2 {
 			result += LenArray
 		} else if version == 8 {
-			result += varintSize(len(val.PartitionRespList) + 1)
+			result += CompactArrayLen(len(val.PartitionRespList))
 		}
 		for range val.PartitionRespList {
 			result += LenPartitionId + LenErrorCode

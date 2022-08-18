@@ -62,7 +62,7 @@ func (o *OffsetFetchResp) BytesLength(version int16) int {
 	if version == 1 {
 		result += LenArray
 	} else if version == 6 {
-		result += varintSize(len(o.TopicRespList) + 1)
+		result += CompactArrayLen(len(o.TopicRespList))
 	}
 	for _, val := range o.TopicRespList {
 		if version == 1 {
@@ -73,7 +73,7 @@ func (o *OffsetFetchResp) BytesLength(version int16) int {
 		if version == 1 {
 			result += LenArray
 		} else if version == 6 {
-			result += varintSize(len(val.PartitionRespList) + 1)
+			result += CompactArrayLen(len(val.PartitionRespList))
 		}
 		for _, val2 := range val.PartitionRespList {
 			result += LenPartitionId + LenOffset

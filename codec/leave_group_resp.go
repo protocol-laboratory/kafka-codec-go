@@ -28,7 +28,7 @@ type LeaveGroupResp struct {
 func (l *LeaveGroupResp) BytesLength(version int16) int {
 	result := LenCorrId
 	if version == 4 {
-		result += LenTaggedField + LenThrottleTime + LenErrorCode + varintSize(len(l.Members)+1)
+		result += LenTaggedField + LenThrottleTime + LenErrorCode + CompactArrayLen(len(l.Members))
 		for _, val := range l.Members {
 			result += CompactStrLen(val.MemberId)
 			result += CompactNullableStrLen(val.GroupInstanceId)

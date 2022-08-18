@@ -62,7 +62,7 @@ func (j *JoinGroupResp) BytesLength(version int16) int {
 	if version == 1 {
 		result += LenArray
 	} else if version == 6 || version == 7 {
-		result += varintSize(len(j.Members) + 1)
+		result += CompactArrayLen(len(j.Members))
 	}
 	for _, val := range j.Members {
 		if version == 1 {

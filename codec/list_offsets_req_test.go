@@ -34,19 +34,15 @@ func TestDecodeListOffsetsReqV1(t *testing.T) {
 	assert.Nil(t, err)
 	assert.Equal(t, 4, listOffsetReq.CorrelationId)
 	assert.Equal(t, "___TestKafkaConsume_in_go_demo_demo_kafka.test@hezhangjiandeMacBook-Pro.local (github.com/segmentio/kafka-go)", listOffsetReq.ClientId)
-	var expectedReplicaId int32 = -1
-	assert.Equal(t, expectedReplicaId, listOffsetReq.ReplicaId)
-	var expectedIsolationLevel uint8 = 0
-	assert.Equal(t, expectedIsolationLevel, listOffsetReq.IsolationLevel)
+	assert.Equal(t, int32(-1), listOffsetReq.ReplicaId)
+	assert.Equal(t, uint8(0), listOffsetReq.IsolationLevel)
 	assert.Len(t, listOffsetReq.TopicReqList, 1)
 	offsetTopic := listOffsetReq.TopicReqList[0]
 	assert.Equal(t, "topic", offsetTopic.Topic)
 	offsetPartition := offsetTopic.PartitionReqList[0]
 	assert.Equal(t, 0, offsetPartition.PartitionId)
-	var expectedLeaderEpoch int32 = 0
-	assert.Equal(t, expectedLeaderEpoch, offsetPartition.LeaderEpoch)
-	var expectedPartitionTime int64 = -1
-	assert.Equal(t, expectedPartitionTime, offsetPartition.Time)
+	assert.Equal(t, int32(0), offsetPartition.LeaderEpoch)
+	assert.Equal(t, int64(-1), offsetPartition.Time)
 }
 
 func TestDecodeListOffsetsReqV5(t *testing.T) {
@@ -55,17 +51,13 @@ func TestDecodeListOffsetsReqV5(t *testing.T) {
 	assert.Nil(t, err)
 	assert.Equal(t, 8, listOffsetReq.CorrelationId)
 	assert.Equal(t, "consumer-8dd7b96b-6b94-4a9b-b2cc-3cb5898c9cdf-1", listOffsetReq.ClientId)
-	var expectedReplicaId int32 = -1
-	assert.Equal(t, expectedReplicaId, listOffsetReq.ReplicaId)
-	var expectedIsolationLevel uint8 = 0
-	assert.Equal(t, expectedIsolationLevel, listOffsetReq.IsolationLevel)
+	assert.Equal(t, int32(-1), listOffsetReq.ReplicaId)
+	assert.Equal(t, uint8(0), listOffsetReq.IsolationLevel)
 	assert.Len(t, listOffsetReq.TopicReqList, 1)
 	offsetTopic := listOffsetReq.TopicReqList[0]
 	assert.Equal(t, "test-5", offsetTopic.Topic)
 	offsetPartition := offsetTopic.PartitionReqList[0]
 	assert.Equal(t, 0, offsetPartition.PartitionId)
-	var expectedLeaderEpoch int32 = 0
-	assert.Equal(t, expectedLeaderEpoch, offsetPartition.LeaderEpoch)
-	var expectedPartitionTime int64 = -2
-	assert.Equal(t, expectedPartitionTime, offsetPartition.Time)
+	assert.Equal(t, int32(0), offsetPartition.LeaderEpoch)
+	assert.Equal(t, int64(-2), offsetPartition.Time)
 }
