@@ -65,6 +65,18 @@ func (k *KafkaLowLevelClient) Metadata(req *codec.MetadataReq) (*codec.MetadataR
 	return resp, nil
 }
 
+func (k *KafkaLowLevelClient) FindCoordinator(req *codec.FindCoordinatorReq) (*codec.FindCoordinatorResp, error) {
+	bytes, err := k.kafkaGnetClient.Send(req.Bytes(true))
+	if err != nil {
+		return nil, err
+	}
+	resp, err := codec.DecodeFindCoordinatorResp(bytes, req.ApiVersion)
+	if err != nil {
+		return nil, err
+	}
+	return resp, nil
+}
+
 func (k *KafkaLowLevelClient) ApiVersions(req *codec.ApiReq) (*codec.ApiResp, error) {
 	bytes, err := k.kafkaGnetClient.Send(req.Bytes())
 	if err != nil {

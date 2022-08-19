@@ -84,7 +84,7 @@ func TestDecodeProduceReqV8(t *testing.T) {
 	assert.Equal(t, "value", string(record.Value))
 }
 
-func TestCodeReqV7(t *testing.T) {
+func TestCodeProduceReqV7(t *testing.T) {
 	produceReq := &ProduceReq{}
 	produceReq.ApiVersion = 7
 	produceReq.CorrelationId = 6
@@ -108,7 +108,7 @@ func TestCodeReqV7(t *testing.T) {
 	assert.Equal(t, expectBytes, bytes)
 }
 
-func TestDecodeAndCodeReqV7(t *testing.T) {
+func TestDecodeAndCodeProduceReqV7(t *testing.T) {
 	bytes := testHex2Bytes(t, "00000002006d5f5f5f546573744b61666b6150726f647563655f696e5f676f5f64656d6f5f64656d6f5f6b61666b612e746573744068657a68616e676a69616e64654d6163426f6f6b2d50726f2e6c6f63616c20286769746875622e636f6d2f7365676d656e74696f2f6b61666b612d676f29ffffffff00000f9a000000010005746f70696300000001000000000000004700000000000000000000003bffffffff022c30096c0000000000000000017df19951180000017df1995118ffffffffffffffffffffffffffff000000011200000001066d736700")
 	produceReq, err := DecodeProduceReq(bytes, 7)
 	assert.Nil(t, err)

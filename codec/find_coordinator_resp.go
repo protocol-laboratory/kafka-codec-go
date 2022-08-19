@@ -17,6 +17,8 @@
 
 package codec
 
+import "runtime/debug"
+
 type FindCoordinatorResp struct {
 	BaseResp
 	ErrorCode    ErrorCode
@@ -25,6 +27,27 @@ type FindCoordinatorResp struct {
 	NodeId       int32
 	Host         string
 	Port         int
+}
+
+func DecodeFindCoordinatorResp(bytes []byte, version int16) (fResp *FindCoordinatorResp, err error) {
+	defer func() {
+		if r := recover(); r != nil {
+			err = PanicToError(r, debug.Stack())
+			fResp = nil
+		}
+	}()
+	fResp = &FindCoordinatorResp{}
+	idx := 0
+	fResp.CorrelationId, idx = readCorrId(bytes, idx)
+	idx = readTaggedField(bytes, idx)
+	fResp.ThrottleTime, idx = readThrottleTime(bytes, idx)
+	fResp.ErrorCode, idx = readErrorCode(bytes, idx)
+	fResp.ErrorMessage, idx = readFindCoordinatorErrorMessage(bytes, idx)
+	fResp.NodeId, idx = readNodeId(bytes, idx)
+	fResp.Host, idx = readHost(bytes, idx)
+	fResp.Port, idx = readInt(bytes, idx)
+	idx = readTaggedField(bytes, idx)
+	return fResp, nil
 }
 
 func (f *FindCoordinatorResp) BytesLength(version int16) int {

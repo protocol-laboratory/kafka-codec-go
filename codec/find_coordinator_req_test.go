@@ -49,3 +49,26 @@ func TestDecodeFindCoordinatorReqV3(t *testing.T) {
 	var expectKeyType uint8 = 0
 	assert.Equal(t, expectKeyType, findCoordinatorReq.KeyType)
 }
+
+func TestCodeFindCoordinatorReqV3(t *testing.T) {
+	findCoordinatorReq := &FindCoordinatorReq{}
+	findCoordinatorReq.ApiVersion = 3
+	findCoordinatorReq.CorrelationId = 0
+	findCoordinatorReq.ClientId = "consumer-testTopic;testGroup-1-1"
+	findCoordinatorReq.Key = "testTopic;testGroup-1"
+	findCoordinatorReq.KeyType = 0
+	bytes := findCoordinatorReq.Bytes(true)
+	expectBytes := testHex2Bytes(t, "000a0003000000000020636f6e73756d65722d74657374546f7069633b7465737447726f75702d312d31001674657374546f7069633b7465737447726f75702d310000")
+	assert.Equal(t, expectBytes, bytes)
+}
+
+func TestDecodeAndCodeFindCoordinatorReqV3(t *testing.T) {
+	bytes := testHex2Bytes(t, "00000000002f636f6e73756d65722d37336664633964612d306439322d346537622d613761372d6563323636663637633137312d31002537336664633964612d306439322d346537622d613761372d6563323636663637633137310000")
+	findCoordinatorReq, err := DecodeFindCoordinatorReq(bytes, 3)
+	assert.Nil(t, err)
+	assert.Equal(t, 0, findCoordinatorReq.CorrelationId)
+	assert.Equal(t, "consumer-73fdc9da-0d92-4e7b-a7a7-ec266f67c171-1", findCoordinatorReq.ClientId)
+	assert.Equal(t, "73fdc9da-0d92-4e7b-a7a7-ec266f67c171", findCoordinatorReq.Key)
+	codeBytes := findCoordinatorReq.Bytes(false)
+	assert.Equal(t, bytes, codeBytes)
+}

@@ -83,3 +83,15 @@ func TestCodeProduceRespV8(t *testing.T) {
 	expectBytes := testHex2Bytes(t, "00000004000000010005746f706963000000010000000000000000000000000000ffffffffffffffff000000000000000000000000ffff00000000")
 	assert.Equal(t, expectBytes, bytes)
 }
+
+func TestDecodeAndCodeProduceRespV7(t *testing.T) {
+	produceRespBytes := testHex2Bytes(t, "00000002000000010005746f706963000000010000000000000000000000000000ffffffffffffffff000000000000000000000000")
+	resp, err := DecodeProduceResp(produceRespBytes, 7)
+	assert.Nil(t, err)
+	assert.Equal(t, resp.CorrelationId, 2)
+	assert.Equal(t, len(resp.TopicRespList), 1)
+	topicResp := resp.TopicRespList[0]
+	assert.Equal(t, topicResp.Topic, "topic")
+	codeBytes := resp.Bytes(7)
+	assert.Equal(t, produceRespBytes, codeBytes)
+}

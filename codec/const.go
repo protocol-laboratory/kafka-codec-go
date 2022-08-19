@@ -29,6 +29,7 @@ const (
 	LenBatchIndex                         = 4
 	LenClusterAuthOperation               = 4
 	LenControllerId                       = 4
+	LenCoordinatorType                    = 1
 	LenCorrId                             = 4
 	LenCrc32                              = 4
 	LenErrorCode                          = 2
