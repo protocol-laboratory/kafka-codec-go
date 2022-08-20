@@ -92,12 +92,12 @@ func DecodeJoinGroupReq(bytes []byte, version int16) (joinGroupReq *JoinGroupReq
 			groupProtocol.ProtocolMetadata, idx = readCompactString(bytes, idx)
 		}
 		if version == 6 {
-			readTaggedField(bytes, idx)
+			idx = readTaggedField(bytes, idx)
 		}
 		joinGroupReq.GroupProtocols[i] = &groupProtocol
 	}
 	if version == 6 {
-		readTaggedField(bytes, idx)
+		idx = readTaggedField(bytes, idx)
 	}
 	return joinGroupReq, nil
 }
