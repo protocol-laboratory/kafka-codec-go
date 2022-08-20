@@ -225,6 +225,9 @@ func (k *KafkaServer) React(frame []byte, c gnet.Conn) (_ []byte, action gnet.Ac
 		if resp == nil {
 			return nil, action
 		}
+		if req.RequiredAcks == 0 {
+			return nil, action
+		}
 		return resp.Bytes(apiVersion), action
 	case codec.Metadata:
 		req, err := codec.DecodeMetadataReq(frame[4:], apiVersion)
