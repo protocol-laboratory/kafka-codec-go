@@ -18,6 +18,7 @@
 package codec
 
 import (
+	"encoding/hex"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )
@@ -46,6 +47,36 @@ func TestDecodeJoinGroupReqV1(t *testing.T) {
 	assert.NotNil(t, groupProtocol2)
 }
 
+func TestCodeJoinGroupReqV1(t *testing.T) {
+	joinGroupReq := &JoinGroupReq{}
+	joinGroupReq.ApiVersion = 1
+	joinGroupReq.CorrelationId = 1
+	joinGroupReq.ClientId = "___TestKafkaConsume_in_go_demo_demo_kafka.test@hezhangjiandeMacBook-Pro.local (github.com/segmentio/kafka-go)"
+	joinGroupReq.GroupId = "topic"
+	joinGroupReq.SessionTimeout = 30_000
+	joinGroupReq.RebalanceTimeout = 30_000
+	joinGroupReq.MemberId = ""
+	joinGroupReq.ProtocolType = "consumer"
+	joinGroupReq.GroupInstanceId = nil
+	groupProtocols := make([]*GroupProtocol, 1)
+	groupProtocols[0] = &GroupProtocol{ProtocolName: "range", ProtocolMetadata: "metadata"}
+	joinGroupReq.GroupProtocols = groupProtocols
+	codeBytes := joinGroupReq.Bytes(true)
+	expectBytes := testHex2Bytes(t, "000b000100000001006d5f5f5f546573744b61666b61436f6e73756d655f696e5f676f5f64656d6f5f64656d6f5f6b61666b612e746573744068657a68616e676a69616e64654d6163426f6f6b2d50726f2e6c6f63616c20286769746875622e636f6d2f7365676d656e74696f2f6b61666b612d676f290005746f706963000075300000753000000008636f6e73756d657200000001000572616e676500086d65746164617461")
+	assert.Equal(t, expectBytes, codeBytes)
+}
+
+func TestDecodeAndCodeJoinGroupReqV1(t *testing.T) {
+	bytes := testHex2Bytes(t, "00000001006d5f5f5f546573744b61666b61436f6e73756d655f696e5f676f5f64656d6f5f64656d6f5f6b61666b612e746573744068657a68616e676a69616e64654d6163426f6f6b2d50726f2e6c6f63616c20286769746875622e636f6d2f7365676d656e74696f2f6b61666b612d676f290005746f706963000075300000753000000008636f6e73756d657200000002000572616e6765000000110001000000010005746f706963ffffffff000a726f756e64726f62696e")
+	joinGroupReq, err := DecodeJoinGroupReq(bytes, 1)
+	assert.Nil(t, err)
+	assert.Equal(t, 1, joinGroupReq.CorrelationId)
+	assert.Equal(t, "___TestKafkaConsume_in_go_demo_demo_kafka.test@hezhangjiandeMacBook-Pro.local (github.com/segmentio/kafka-go)", joinGroupReq.ClientId)
+	assert.Equal(t, "topic", joinGroupReq.GroupId)
+	codeBytes := joinGroupReq.Bytes(false)
+	assert.Equal(t, bytes, codeBytes)
+}
+
 func TestDecodeJoinGroupReqV6(t *testing.T) {
 	bytes := testHex2Bytes(t, "00000008002f636f6e73756d65722d37336664633964612d306439322d346537622d613761372d6563323636663637633137312d31002537336664633964612d306439322d346537622d613761372d65633236366636376331373100002710000493e0010009636f6e73756d6572020672616e676535000100000001002437363465646565332d303037652d343865302d623966392d646637663731336666373037ffffffff000000000000")
 	joinGroupReq, err := DecodeJoinGroupReq(bytes, 6)
@@ -60,4 +91,36 @@ func TestDecodeJoinGroupReqV6(t *testing.T) {
 	assert.Len(t, joinGroupReq.GroupProtocols, 1)
 	groupProtocol := joinGroupReq.GroupProtocols[0]
 	assert.Equal(t, "range", groupProtocol.ProtocolName)
+}
+
+func TestCodeJoinGroupReqV6(t *testing.T) {
+	joinGroupReq := &JoinGroupReq{}
+	joinGroupReq.ApiVersion = 6
+	joinGroupReq.CorrelationId = 8
+	joinGroupReq.ClientId = "consumer-73fdc9da-0d92-4e7b-a7a7-ec266f67c171-1"
+	joinGroupReq.GroupId = "73fdc9da-0d92-4e7b-a7a7-ec266f67c171"
+	joinGroupReq.SessionTimeout = 10_000
+	joinGroupReq.RebalanceTimeout = 300_000
+	joinGroupReq.MemberId = ""
+	joinGroupReq.ProtocolType = "consumer"
+	joinGroupReq.GroupInstanceId = nil
+	groupProtocols := make([]*GroupProtocol, 1)
+	protocolMetadata, err := hex.DecodeString("000100000001002437363465646565332d303037652d343865302d623966392d646637663731336666373037ffffffff00000000")
+	assert.Nil(t, err)
+	groupProtocols[0] = &GroupProtocol{ProtocolName: "range", ProtocolMetadata: string(protocolMetadata)}
+	joinGroupReq.GroupProtocols = groupProtocols
+	codeBytes := joinGroupReq.Bytes(true)
+	expectBytes := testHex2Bytes(t, "000b000600000008002f636f6e73756d65722d37336664633964612d306439322d346537622d613761372d6563323636663637633137312d31002537336664633964612d306439322d346537622d613761372d65633236366636376331373100002710000493e0010009636f6e73756d6572020672616e676535000100000001002437363465646565332d303037652d343865302d623966392d646637663731336666373037ffffffff000000000000")
+	assert.Equal(t, expectBytes, codeBytes)
+}
+
+func TestDecodeAndCodeJoinGroupReqV6(t *testing.T) {
+	bytes := testHex2Bytes(t, "00000008002f636f6e73756d65722d37336664633964612d306439322d346537622d613761372d6563323636663637633137312d31002537336664633964612d306439322d346537622d613761372d65633236366636376331373100002710000493e0010009636f6e73756d6572020672616e676535000100000001002437363465646565332d303037652d343865302d623966392d646637663731336666373037ffffffff000000000000")
+	joinGroupReq, err := DecodeJoinGroupReq(bytes, 6)
+	assert.Nil(t, err)
+	assert.Equal(t, 8, joinGroupReq.CorrelationId)
+	assert.Equal(t, "consumer-73fdc9da-0d92-4e7b-a7a7-ec266f67c171-1", joinGroupReq.ClientId)
+	assert.Equal(t, "73fdc9da-0d92-4e7b-a7a7-ec266f67c171", joinGroupReq.GroupId)
+	codeBytes := joinGroupReq.Bytes(false)
+	assert.Equal(t, bytes, codeBytes)
 }
