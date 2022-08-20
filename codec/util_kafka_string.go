@@ -123,7 +123,7 @@ func putGroupLeaderId(bytes []byte, idx int, str string) int {
 	return putCompactString(bytes, idx, str)
 }
 
-func readGroupLeaderId(bytes []byte, idx int, version int) (string, int) {
+func readGroupLeaderId(bytes []byte, idx int) (string, int) {
 	return readCompactString(bytes, idx)
 }
 
@@ -131,7 +131,7 @@ func putGroupLeaderIdString(bytes []byte, idx int, str string) int {
 	return putString(bytes, idx, str)
 }
 
-func readGroupLeaderIdString(bytes []byte, idx int, version int) (string, int) {
+func readGroupLeaderIdString(bytes []byte, idx int) (string, int) {
 	return readString(bytes, idx)
 }
 
