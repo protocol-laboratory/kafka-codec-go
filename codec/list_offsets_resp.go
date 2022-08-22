@@ -39,18 +39,37 @@ type ListOffsetsPartitionResp struct {
 
 func (o *ListOffsetsResp) BytesLength(version int16) int {
 	result := LenCorrId
-	if version == 5 {
+	if version == 5 || version == 6 {
 		result += LenThrottleTime
 	}
-	result += LenArray
+	if version == 1 || version == 5 {
+		result += LenArray
+	} else if version == 6 {
+		result += LenTaggedField
+		result += CompactArrayLen(len(o.TopicRespList))
+	}
 	for _, val := range o.TopicRespList {
-		result += StrLen(val.Topic) + LenArray
+		if version == 1 || version == 5 {
+			result += StrLen(val.Topic) + LenArray
+		} else if version == 6 {
+			result += CompactStrLen(val.Topic)
+			result += CompactArrayLen(len(val.PartitionRespList))
+		}
 		for range val.PartitionRespList {
 			result += LenPartitionId + LenErrorCode + LenTime + LenOffset
-			if version == 5 {
+			if version == 5 || version == 6 {
 				result += LenLeaderEpoch
 			}
+			if version == 6 {
+				result += LenTaggedField
+			}
 		}
+		if version == 6 {
+			result += LenTaggedField
+		}
+	}
+	if version == 6 {
+		result += LenTaggedField
 	}
 	return result
 }
@@ -59,22 +78,41 @@ func (o *ListOffsetsResp) Bytes(version int16) []byte {
 	bytes := make([]byte, o.BytesLength(version))
 	idx := 0
 	idx = putCorrId(bytes, idx, o.CorrelationId)
-	if version == 5 {
+	if version == 5 || version == 6 {
 		idx = putThrottleTime(bytes, idx, o.ThrottleTime)
 	}
-	idx = putArrayLen(bytes, idx, len(o.TopicRespList))
+	if version == 1 || version == 5 {
+		idx = putArrayLen(bytes, idx, len(o.TopicRespList))
+	} else if version == 6 {
+		idx = putTaggedField(bytes, idx)
+		idx = putCompactArrayLen(bytes, idx, len(o.TopicRespList))
+	}
 	for _, topic := range o.TopicRespList {
-		idx = putTopicString(bytes, idx, topic.Topic)
-		idx = putArrayLen(bytes, idx, len(topic.PartitionRespList))
+		if version == 1 || version == 5 {
+			idx = putTopicString(bytes, idx, topic.Topic)
+			idx = putArrayLen(bytes, idx, len(topic.PartitionRespList))
+		} else if version == 6 {
+			idx = putTopic(bytes, idx, topic.Topic)
+			idx = putCompactArrayLen(bytes, idx, len(topic.PartitionRespList))
+		}
 		for _, p := range topic.PartitionRespList {
 			idx = putInt(bytes, idx, p.PartitionId)
 			idx = putErrorCode(bytes, idx, p.ErrorCode)
 			idx = putInt64(bytes, idx, p.Timestamp)
 			idx = putInt64(bytes, idx, p.Offset)
-			if version == 5 {
+			if version == 5 || version == 6 {
 				idx = putLeaderEpoch(bytes, idx, p.LeaderEpoch)
 			}
+			if version == 6 {
+				idx = putTaggedField(bytes, idx)
+			}
 		}
+		if version == 6 {
+			idx = putTaggedField(bytes, idx)
+		}
+	}
+	if version == 6 {
+		idx = putTaggedField(bytes, idx)
 	}
 	return bytes
 }
