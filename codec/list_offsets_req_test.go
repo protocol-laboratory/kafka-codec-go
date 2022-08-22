@@ -61,3 +61,21 @@ func TestDecodeListOffsetsReqV5(t *testing.T) {
 	assert.Equal(t, int32(0), offsetPartition.LeaderEpoch)
 	assert.Equal(t, int64(-2), offsetPartition.Time)
 }
+
+func TestDecodeListOffsetsReqV6(t *testing.T) {
+	bytes := testHex2Bytes(t, "000000070027636f6e73756d65722d68706354657374546f7069633b7465737447726f75702d31313232332d3100ffffffff00020d68706354657374546f706963060000000400000000ffffffffffffffff000000000200000000ffffffffffffffff000000000300000000ffffffffffffffff000000000000000000ffffffffffffffff000000000100000000ffffffffffffffff000000")
+	listOffsetReq, err := DecodeListOffsetsReq(bytes, 6)
+	assert.Nil(t, err)
+	assert.Equal(t, 7, listOffsetReq.CorrelationId)
+	assert.Equal(t, "consumer-hpcTestTopic;testGroup-11223-1", listOffsetReq.ClientId)
+	assert.Equal(t, int32(16777215), listOffsetReq.ReplicaId)
+	assert.Equal(t, uint8(255), listOffsetReq.IsolationLevel)
+	assert.Len(t, listOffsetReq.TopicReqList, 1)
+	offsetTopic := listOffsetReq.TopicReqList[0]
+	assert.Equal(t, "hpcTestTopic", offsetTopic.Topic)
+	assert.Len(t, offsetTopic.PartitionReqList, 5)
+	offsetPartition := offsetTopic.PartitionReqList[0]
+	assert.Equal(t, 4, offsetPartition.PartitionId)
+	assert.Equal(t, int32(0), offsetPartition.LeaderEpoch)
+	assert.Equal(t, int64(-1), offsetPartition.Time)
+}
