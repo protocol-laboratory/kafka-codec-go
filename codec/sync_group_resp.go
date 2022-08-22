@@ -17,6 +17,8 @@
 
 package codec
 
+import "runtime/debug"
+
 type SyncGroupResp struct {
 	BaseResp
 	ThrottleTime     int
@@ -24,6 +26,37 @@ type SyncGroupResp struct {
 	ProtocolType     string
 	ProtocolName     string
 	MemberAssignment string
+}
+
+func DecodeSyncGroupResp(bytes []byte, version int16) (resp *SyncGroupResp, err error) {
+	defer func() {
+		if r := recover(); r != nil {
+			err = PanicToError(r, debug.Stack())
+			resp = nil
+		}
+	}()
+	resp = &SyncGroupResp{}
+	idx := 0
+	resp.CorrelationId, idx = readCorrId(bytes, idx)
+	if version == 4 || version == 5 {
+		idx = readTaggedField(bytes, idx)
+		resp.ThrottleTime, idx = readThrottleTime(bytes, idx)
+	}
+	resp.ErrorCode, idx = readErrorCode(bytes, idx)
+	if version == 5 {
+		resp.ProtocolType, idx = readProtocolType(bytes, idx)
+		resp.ProtocolName, idx = readProtocolName(bytes, idx)
+	}
+	if version == 0 {
+		idx += 2
+		resp.MemberAssignment, idx = readString(bytes, idx)
+	} else if version == 4 || version == 5 {
+		resp.MemberAssignment, idx = readCompactString(bytes, idx)
+	}
+	if version == 4 || version == 5 {
+		idx = readTaggedField(bytes, idx)
+	}
+	return resp, nil
 }
 
 func (s *SyncGroupResp) BytesLength(version int16) int {
@@ -53,7 +86,7 @@ func (s *SyncGroupResp) Bytes(version int16) []byte {
 	idx = putCorrId(bytes, idx, s.CorrelationId)
 	if version == 4 || version == 5 {
 		idx = putTaggedField(bytes, idx)
-		idx = putUInt32(bytes, idx, 0)
+		idx = putThrottleTime(bytes, idx, 0)
 	}
 	idx = putErrorCode(bytes, idx, 0)
 	if version == 5 {

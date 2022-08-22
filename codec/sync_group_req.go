@@ -100,3 +100,102 @@ func DecodeSyncGroupReq(bytes []byte, version int16) (groupReq *SyncGroupReq, er
 	}
 	return groupReq, nil
 }
+
+func (m *SyncGroupReq) BytesLength(containApiKeyVersion bool) int {
+	version := m.ApiVersion
+	length := 0
+	if containApiKeyVersion {
+		length += LenApiKey
+		length += LenApiVersion
+	}
+	length += LenCorrId
+	length += StrLen(m.ClientId)
+	if version == 0 {
+		length += StrLen(m.GroupId)
+	} else if version == 4 || version == 5 {
+		length += LenTaggedField
+		length += CompactStrLen(m.GroupId)
+	}
+	length += LenGenerationId
+	if version == 0 {
+		length += StrLen(m.MemberId)
+	} else if version == 4 || version == 5 {
+		length += CompactStrLen(m.MemberId)
+		length += CompactNullableStrLen(m.GroupInstanceId)
+	}
+	if version == 5 {
+		length += CompactStrLen(m.ProtocolType)
+		length += CompactStrLen(m.ProtocolName)
+	}
+	if version == 0 {
+		length += LenArray
+	} else if version == 4 || version == 5 {
+		length += CompactArrayLen(len(m.GroupAssignments))
+	}
+	for _, groupAssignment := range m.GroupAssignments {
+		if version == 0 {
+			length += StrLen(groupAssignment.MemberId)
+			length += StrLen(groupAssignment.MemberAssignment)
+		} else if version == 4 || version == 5 {
+			length += CompactStrLen(groupAssignment.MemberId)
+			length += CompactStrLen(groupAssignment.MemberAssignment)
+		}
+		if version == 4 || version == 5 {
+			length += LenTaggedField
+		}
+	}
+	if version == 4 || version == 5 {
+		length += LenTaggedField
+	}
+	return length
+}
+
+func (m *SyncGroupReq) Bytes(containApiKeyVersion bool) []byte {
+	version := m.ApiVersion
+	bytes := make([]byte, m.BytesLength(containApiKeyVersion))
+	idx := 0
+	if containApiKeyVersion {
+		idx = putApiKey(bytes, idx, SyncGroup)
+		idx = putApiVersion(bytes, idx, version)
+	}
+	idx = putCorrId(bytes, idx, m.CorrelationId)
+	idx = putClientId(bytes, idx, m.ClientId)
+	if version == 0 {
+		idx = putGroupIdString(bytes, idx, m.GroupId)
+	} else if version == 4 || version == 5 {
+		idx = putTaggedField(bytes, idx)
+		idx = putGroupId(bytes, idx, m.GroupId)
+	}
+	idx = putGenerationId(bytes, idx, m.GenerationId)
+	if version == 0 {
+		idx = putMemberIdString(bytes, idx, m.MemberId)
+	} else if version == 4 || version == 5 {
+		idx = putMemberId(bytes, idx, m.MemberId)
+		idx = putGroupInstanceId(bytes, idx, m.GroupInstanceId)
+	}
+	if version == 5 {
+		idx = putProtocolType(bytes, idx, m.ProtocolType)
+		idx = putProtocolName(bytes, idx, m.ProtocolName)
+	}
+	if version == 0 {
+		idx = putArrayLen(bytes, idx, len(m.GroupAssignments))
+	} else if version == 4 || version == 5 {
+		idx = putCompactArrayLen(bytes, idx, len(m.GroupAssignments))
+	}
+	for _, groupAssignment := range m.GroupAssignments {
+		if version == 0 {
+			idx = putMemberIdString(bytes, idx, groupAssignment.MemberId)
+			idx = putString(bytes, idx, groupAssignment.MemberAssignment)
+		} else if version == 4 || version == 5 {
+			idx = putMemberId(bytes, idx, groupAssignment.MemberId)
+			idx = putCompactString(bytes, idx, groupAssignment.MemberAssignment)
+		}
+		if version == 4 || version == 5 {
+			idx = putTaggedField(bytes, idx)
+		}
+	}
+	if version == 4 || version == 5 {
+		idx = putTaggedField(bytes, idx)
+	}
+	return bytes
+}
