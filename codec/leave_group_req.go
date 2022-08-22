@@ -68,3 +68,70 @@ func DecodeLeaveGroupReq(bytes []byte, version int16) (leaveGroupReq *LeaveGroup
 	}
 	return leaveGroupReq, nil
 }
+
+func (m *LeaveGroupReq) BytesLength(containApiKeyVersion bool) int {
+	version := m.ApiVersion
+	length := 0
+	if containApiKeyVersion {
+		length += LenApiKey
+		length += LenApiVersion
+	}
+	length += LenCorrId
+	length += StrLen(m.ClientId)
+	if version == 0 {
+		length += StrLen(m.GroupId)
+	} else if version == 4 {
+		length += LenTaggedField
+		length += CompactStrLen(m.GroupId)
+	}
+	if version == 0 {
+		members := m.Members
+		if len(members) > 0 {
+			member := members[0]
+			length += StrLen(member.MemberId)
+		}
+	} else if version == 4 {
+		length += CompactArrayLen(len(m.Members))
+		for _, member := range m.Members {
+			length += CompactStrLen(member.MemberId)
+			length += CompactNullableStrLen(member.GroupInstanceId)
+			length += LenTaggedField
+		}
+		length += LenTaggedField
+	}
+	return length
+}
+
+func (m *LeaveGroupReq) Bytes(containApiKeyVersion bool) []byte {
+	version := m.ApiVersion
+	bytes := make([]byte, m.BytesLength(containApiKeyVersion))
+	idx := 0
+	if containApiKeyVersion {
+		idx = putApiKey(bytes, idx, LeaveGroup)
+		idx = putApiVersion(bytes, idx, version)
+	}
+	idx = putCorrId(bytes, idx, m.CorrelationId)
+	idx = putClientId(bytes, idx, m.ClientId)
+	if version == 0 {
+		idx = putGroupIdString(bytes, idx, m.GroupId)
+	} else if version == 4 {
+		idx = putTaggedField(bytes, idx)
+		idx = putGroupId(bytes, idx, m.GroupId)
+	}
+	if version == 0 {
+		members := m.Members
+		if len(members) > 0 {
+			member := members[0]
+			idx = putMemberIdString(bytes, idx, member.MemberId)
+		}
+	} else if version == 4 {
+		idx = putCompactArrayLen(bytes, idx, len(m.Members))
+		for _, member := range m.Members {
+			idx = putMemberId(bytes, idx, member.MemberId)
+			idx = putGroupInstanceId(bytes, idx, member.GroupInstanceId)
+			idx = putTaggedField(bytes, idx)
+		}
+		idx = putTaggedField(bytes, idx)
+	}
+	return bytes
+}

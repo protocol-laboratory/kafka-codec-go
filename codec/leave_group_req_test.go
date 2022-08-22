@@ -41,6 +41,34 @@ func TestDecodeLeaveGroupReqV0(t *testing.T) {
 	assert.Nil(t, leaveGroupMember.GroupInstanceId)
 }
 
+func TestCodeLeaveGroupReqV0(t *testing.T) {
+	leaveGroupReq := &LeaveGroupReq{}
+	leaveGroupReq.ApiVersion = 0
+	leaveGroupReq.CorrelationId = 1
+	leaveGroupReq.ClientId = "___TestKafkaConsume_in_go_demo_demo_kafka.test@hezhangjiandeMacBook-Pro.local (github.com/segmentio/kafka-go)"
+	leaveGroupReq.GroupId = "topic"
+	leaveGroupMembers := make([]*LeaveGroupMember, 1)
+	leaveGroupMembers[0] = &LeaveGroupMember{MemberId: "___TestKafkaConsume_in_go_demo_demo_kafka.test@hezhangjiandeMacBook-Pro.local (github.com/segmentio/kafka-go)-a3f5062b-94bc-478d-8ddb-2a2fee6989c8"}
+	leaveGroupReq.Members = leaveGroupMembers
+	codeBytes := leaveGroupReq.Bytes(true)
+	assert.Equal(t, codeBytes, testHex2Bytes(t, "000d000000000001006d5f5f5f546573744b61666b61436f6e73756d655f696e5f676f5f64656d6f5f64656d6f5f6b61666b612e746573744068657a68616e676a69616e64654d6163426f6f6b2d50726f2e6c6f63616c20286769746875622e636f6d2f7365676d656e74696f2f6b61666b612d676f290005746f70696300925f5f5f546573744b61666b61436f6e73756d655f696e5f676f5f64656d6f5f64656d6f5f6b61666b612e746573744068657a68616e676a69616e64654d6163426f6f6b2d50726f2e6c6f63616c20286769746875622e636f6d2f7365676d656e74696f2f6b61666b612d676f292d61336635303632622d393462632d343738642d386464622d326132666565363938396338"))
+}
+
+func TestDecodeAndCodeLeaveGroupReqV0(t *testing.T) {
+	bytes := testHex2Bytes(t, "00000001006d5f5f5f546573744b61666b61436f6e73756d655f696e5f676f5f64656d6f5f64656d6f5f6b61666b612e746573744068657a68616e676a69616e64654d6163426f6f6b2d50726f2e6c6f63616c20286769746875622e636f6d2f7365676d656e74696f2f6b61666b612d676f290005746f70696300925f5f5f546573744b61666b61436f6e73756d655f696e5f676f5f64656d6f5f64656d6f5f6b61666b612e746573744068657a68616e676a69616e64654d6163426f6f6b2d50726f2e6c6f63616c20286769746875622e636f6d2f7365676d656e74696f2f6b61666b612d676f292d61336635303632622d393462632d343738642d386464622d326132666565363938396338")
+	leaveGroupReq, err := DecodeLeaveGroupReq(bytes, 0)
+	assert.Nil(t, err)
+	assert.Equal(t, 1, leaveGroupReq.CorrelationId)
+	assert.Equal(t, "___TestKafkaConsume_in_go_demo_demo_kafka.test@hezhangjiandeMacBook-Pro.local (github.com/segmentio/kafka-go)", leaveGroupReq.ClientId)
+	assert.Equal(t, "topic", leaveGroupReq.GroupId)
+	assert.Len(t, leaveGroupReq.Members, 1)
+	leaveGroupMember := leaveGroupReq.Members[0]
+	assert.Equal(t, "___TestKafkaConsume_in_go_demo_demo_kafka.test@hezhangjiandeMacBook-Pro.local (github.com/segmentio/kafka-go)-a3f5062b-94bc-478d-8ddb-2a2fee6989c8", leaveGroupMember.MemberId)
+	assert.Nil(t, leaveGroupMember.GroupInstanceId)
+	codeBytes := leaveGroupReq.Bytes(false)
+	assert.Equal(t, bytes, codeBytes)
+}
+
 func TestDecodeLeaveGroupReqV4(t *testing.T) {
 	bytes := testHex2Bytes(t, "0000000c002f636f6e73756d65722d38646437623936622d366239342d346139622d623263632d3363623538393863396364662d31002538646437623936622d366239342d346139622d623263632d3363623538393863396364660255636f6e73756d65722d38646437623936622d366239342d346139622d623263632d3363623538393863396364662d312d34333361636236612d653665632d343561612d623738642d366132343963666630376663000000")
 	leaveGroupReq, err := DecodeLeaveGroupReq(bytes, 4)
@@ -52,4 +80,32 @@ func TestDecodeLeaveGroupReqV4(t *testing.T) {
 	leaveGroupMember := leaveGroupReq.Members[0]
 	assert.Equal(t, "consumer-8dd7b96b-6b94-4a9b-b2cc-3cb5898c9cdf-1-433acb6a-e6ec-45aa-b78d-6a249cff07fc", leaveGroupMember.MemberId)
 	assert.Nil(t, leaveGroupMember.GroupInstanceId)
+}
+
+func TestCodeLeaveGroupReqV4(t *testing.T) {
+	leaveGroupReq := &LeaveGroupReq{}
+	leaveGroupReq.ApiVersion = 4
+	leaveGroupReq.CorrelationId = 12
+	leaveGroupReq.ClientId = "consumer-8dd7b96b-6b94-4a9b-b2cc-3cb5898c9cdf-1"
+	leaveGroupReq.GroupId = "8dd7b96b-6b94-4a9b-b2cc-3cb5898c9cdf"
+	leaveGroupMembers := make([]*LeaveGroupMember, 1)
+	leaveGroupMembers[0] = &LeaveGroupMember{MemberId: "consumer-8dd7b96b-6b94-4a9b-b2cc-3cb5898c9cdf-1-433acb6a-e6ec-45aa-b78d-6a249cff07fc"}
+	leaveGroupReq.Members = leaveGroupMembers
+	codeBytes := leaveGroupReq.Bytes(true)
+	assert.Equal(t, codeBytes, testHex2Bytes(t, "000d00040000000c002f636f6e73756d65722d38646437623936622d366239342d346139622d623263632d3363623538393863396364662d31002538646437623936622d366239342d346139622d623263632d3363623538393863396364660255636f6e73756d65722d38646437623936622d366239342d346139622d623263632d3363623538393863396364662d312d34333361636236612d653665632d343561612d623738642d366132343963666630376663000000"))
+}
+
+func TestDecodeAndCodeLeaveGroupReqV4(t *testing.T) {
+	bytes := testHex2Bytes(t, "0000000c002f636f6e73756d65722d38646437623936622d366239342d346139622d623263632d3363623538393863396364662d31002538646437623936622d366239342d346139622d623263632d3363623538393863396364660255636f6e73756d65722d38646437623936622d366239342d346139622d623263632d3363623538393863396364662d312d34333361636236612d653665632d343561612d623738642d366132343963666630376663000000")
+	leaveGroupReq, err := DecodeLeaveGroupReq(bytes, 4)
+	assert.Nil(t, err)
+	assert.Equal(t, 12, leaveGroupReq.CorrelationId)
+	assert.Equal(t, "consumer-8dd7b96b-6b94-4a9b-b2cc-3cb5898c9cdf-1", leaveGroupReq.ClientId)
+	assert.Equal(t, "8dd7b96b-6b94-4a9b-b2cc-3cb5898c9cdf", leaveGroupReq.GroupId)
+	assert.Len(t, leaveGroupReq.Members, 1)
+	leaveGroupMember := leaveGroupReq.Members[0]
+	assert.Equal(t, "consumer-8dd7b96b-6b94-4a9b-b2cc-3cb5898c9cdf-1-433acb6a-e6ec-45aa-b78d-6a249cff07fc", leaveGroupMember.MemberId)
+	assert.Nil(t, leaveGroupMember.GroupInstanceId)
+	codeBytes := leaveGroupReq.Bytes(false)
+	assert.Equal(t, bytes, codeBytes)
 }
