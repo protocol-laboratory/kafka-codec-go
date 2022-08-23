@@ -24,7 +24,7 @@ func readCompactStringNullable(bytes []byte, idx int) (*string, int) {
 	}
 	intLen := int(strLen)
 	s := string(bytes[idx : idx+intLen-1])
-	return &s, idx + intLen
+	return &s, idx + intLen - 1
 }
 
 func putCompactStringNullable(bytes []byte, idx int, str *string) int {

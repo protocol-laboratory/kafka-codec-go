@@ -34,6 +34,8 @@
 
 package codec
 
+import "runtime/debug"
+
 type OffsetFetchResp struct {
 	BaseResp
 	ThrottleTime  int
@@ -52,6 +54,71 @@ type OffsetFetchPartitionResp struct {
 	LeaderEpoch int32
 	Metadata    *string
 	ErrorCode   ErrorCode
+}
+
+func DecodeOffsetFetchResp(bytes []byte, version int16) (resp *OffsetFetchResp, err error) {
+	defer func() {
+		if r := recover(); r != nil {
+			err = PanicToError(r, debug.Stack())
+			resp = nil
+		}
+	}()
+	resp = &OffsetFetchResp{}
+	idx := 0
+	resp.CorrelationId, idx = readCorrId(bytes, idx)
+	if version == 6 || version == 7 {
+		idx = readTaggedField(bytes, idx)
+		resp.ThrottleTime, idx = readThrottleTime(bytes, idx)
+	}
+	var topicRespLen int
+	if version == 1 {
+		topicRespLen, idx = readArrayLen(bytes, idx)
+	} else if version == 6 || version == 7 {
+		topicRespLen, idx = readCompactArrayLen(bytes, idx)
+	}
+	for i := 0; i < topicRespLen; i++ {
+		topic := &OffsetFetchTopicResp{}
+		if version == 1 {
+			topic.Topic, idx = readTopicString(bytes, idx)
+		} else if version == 6 || version == 7 {
+			topic.Topic, idx = readTopic(bytes, idx)
+		}
+		var partitionRespLen int
+		if version == 1 {
+			partitionRespLen, idx = readArrayLen(bytes, idx)
+		} else if version == 6 || version == 7 {
+			partitionRespLen, idx = readCompactArrayLen(bytes, idx)
+		}
+		for i := 0; i < partitionRespLen; i++ {
+			partitionResp := &OffsetFetchPartitionResp{}
+			partitionResp.PartitionId, idx = readPartitionId(bytes, idx)
+			partitionResp.Offset, idx = readOffset(bytes, idx)
+			if version == 6 || version == 7 {
+				partitionResp.LeaderEpoch, idx = readLeaderEpoch(bytes, idx)
+			}
+			if version == 1 {
+				var metadata string
+				metadata, idx = readString(bytes, idx)
+				partitionResp.Metadata = &metadata
+			} else if version == 6 || version == 7 {
+				partitionResp.Metadata, idx = readMetadata(bytes, idx)
+			}
+			partitionResp.ErrorCode, idx = readErrorCode(bytes, idx)
+			if version == 6 || version == 7 {
+				idx = readTaggedField(bytes, idx)
+			}
+			topic.PartitionRespList = append(topic.PartitionRespList, partitionResp)
+		}
+		if version == 6 || version == 7 {
+			idx = readTaggedField(bytes, idx)
+		}
+		resp.TopicRespList = append(resp.TopicRespList, topic)
+	}
+	if version == 6 || version == 7 {
+		resp.ErrorCode, idx = readErrorCode(bytes, idx)
+		idx = readTaggedField(bytes, idx)
+	}
+	return resp, nil
 }
 
 func (o *OffsetFetchResp) BytesLength(version int16) int {

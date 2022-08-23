@@ -55,6 +55,7 @@ const (
 	LenRecordAttributes                   = 1
 	LenReplicaId                          = 4
 	LenRequiredAcks                       = 2
+	LenRequireStableOffset                = 1
 	LenSessionTimeout                     = 8
 	LenStartOffset                        = 8
 	LenTaggedField                        = 1

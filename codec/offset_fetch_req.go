@@ -101,3 +101,96 @@ func DecodeOffsetFetchReq(bytes []byte, version int16) (fetchReq *OffsetFetchReq
 	}
 	return fetchReq, nil
 }
+
+func (m *OffsetFetchReq) BytesLength(containApiKeyVersion bool) int {
+	version := m.ApiVersion
+	length := 0
+	if containApiKeyVersion {
+		length += LenApiKey
+		length += LenApiVersion
+	}
+	length += LenCorrId
+	length += StrLen(m.ClientId)
+	if version == 6 || version == 7 {
+		length += LenTaggedField
+	}
+	if version == 1 {
+		length += StrLen(m.GroupId)
+	} else if version == 6 || version == 7 {
+		length += CompactStrLen(m.GroupId)
+	}
+	if version == 1 {
+		length += LenArray
+	} else if version == 6 || version == 7 {
+		length += CompactArrayLen(len(m.TopicReqList))
+	}
+	for _, topicReq := range m.TopicReqList {
+		if version == 1 {
+			length += StrLen(topicReq.Topic)
+			length += LenArray
+		} else if version == 6 || version == 7 {
+			length += CompactStrLen(topicReq.Topic)
+			length += CompactArrayLen(len(topicReq.PartitionReqList))
+		}
+		for range topicReq.PartitionReqList {
+			length += LenPartitionId
+		}
+		if version == 6 || version == 7 {
+			length += LenTaggedField
+		}
+	}
+	if version == 7 {
+		length += LenRequireStableOffset
+	}
+	if version == 6 || version == 7 {
+		length += LenTaggedField
+	}
+	return length
+}
+
+func (m *OffsetFetchReq) Bytes(containApiKeyVersion bool) []byte {
+	version := m.ApiVersion
+	bytes := make([]byte, m.BytesLength(containApiKeyVersion))
+	idx := 0
+	if containApiKeyVersion {
+		idx = putApiKey(bytes, idx, OffsetFetch)
+		idx = putApiVersion(bytes, idx, version)
+	}
+	idx = putCorrId(bytes, idx, m.CorrelationId)
+	idx = putClientId(bytes, idx, m.ClientId)
+	if version == 6 || version == 7 {
+		idx = putTaggedField(bytes, idx)
+	}
+	if version == 1 {
+		idx = putGroupIdString(bytes, idx, m.GroupId)
+	} else if version == 6 || version == 7 {
+		idx = putGroupId(bytes, idx, m.GroupId)
+	}
+	if version == 1 {
+		idx = putArrayLen(bytes, idx, len(m.TopicReqList))
+	} else if version == 6 || version == 7 {
+		idx = putCompactArrayLen(bytes, idx, len(m.TopicReqList))
+	}
+	for _, topicReq := range m.TopicReqList {
+		if version == 1 {
+			idx = putTopicString(bytes, idx, topicReq.Topic)
+			idx = putArrayLen(bytes, idx, len(topicReq.PartitionReqList))
+		} else if version == 6 || version == 7 {
+			idx = putTopic(bytes, idx, topicReq.Topic)
+			idx = putCompactArrayLen(bytes, idx, len(topicReq.PartitionReqList))
+		}
+		for _, partitionReq := range topicReq.PartitionReqList {
+			idx = putPartitionId(bytes, idx, partitionReq.PartitionId)
+		}
+		if version == 6 || version == 7 {
+			idx = putTaggedField(bytes, idx)
+		}
+	}
+	if version == 7 {
+		idx = putBool(bytes, idx, m.RequireStableOffset)
+	}
+	if version == 6 || version == 7 {
+		idx = putTaggedField(bytes, idx)
+	}
+	return bytes
+}
