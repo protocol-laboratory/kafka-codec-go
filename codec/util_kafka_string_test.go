@@ -28,3 +28,10 @@ func TestReadFindCoordinatorErrorMessage(t *testing.T) {
 	assert.Nil(t, msg)
 	assert.Equal(t, 1, idx)
 }
+
+func TestReadNoNullFindCoordinatorErrorMessage(t *testing.T) {
+	bytes := testHex2Bytes(t, "0d68656c6c6f20776f726c6421")
+	msg, idx := readFindCoordinatorErrorMessage(bytes, 0)
+	assert.Equal(t, "hello world!", *msg)
+	assert.Equal(t, idx, 13)
+}
