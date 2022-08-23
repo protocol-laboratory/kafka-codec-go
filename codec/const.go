@@ -39,6 +39,7 @@ const (
 	LenIncludeTopicAuthorizedOperations   = 1
 	LenIsInternalV1                       = 1
 	LenIsInternalV9                       = 4
+	LenIsolationLevel                     = 1
 	LenLastStableOffset                   = 8
 	LenLeaderEpoch                        = 4
 	LenLeaderId                           = 4

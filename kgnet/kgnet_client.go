@@ -56,6 +56,18 @@ func (k *KafkaLowLevelClient) Produce(req *codec.ProduceReq) (*codec.ProduceResp
 	return resp, nil
 }
 
+func (k *KafkaLowLevelClient) ListOffsets(req *codec.ListOffsetsReq) (*codec.ListOffsetsResp, error) {
+	bytes, err := k.kafkaGnetClient.Send(req.Bytes(true))
+	if err != nil {
+		return nil, err
+	}
+	resp, err := codec.DecodeListOffsetsResp(bytes, req.ApiVersion)
+	if err != nil {
+		return nil, err
+	}
+	return resp, nil
+}
+
 func (k *KafkaLowLevelClient) Metadata(req *codec.MetadataReq) (*codec.MetadataResp, error) {
 	bytes, err := k.kafkaGnetClient.Send(req.Bytes())
 	if err != nil {
