@@ -43,6 +43,22 @@ func readCorrId(bytes []byte, idx int) (int, int) {
 	return readInt(bytes, idx)
 }
 
+func putFetchBytes(bytes []byte, idx int, x int) int {
+	return putInt(bytes, idx, x)
+}
+
+func readFetchBytes(bytes []byte, idx int) (int, int) {
+	return readInt(bytes, idx)
+}
+
+func putFetchSessionId(bytes []byte, idx int, x int) int {
+	return putInt(bytes, idx, x)
+}
+
+func readFetchSessionId(bytes []byte, idx int) (int, int) {
+	return readInt(bytes, idx)
+}
+
 func putGenerationId(bytes []byte, idx int, x int) int {
 	return putInt(bytes, idx, x)
 }
@@ -56,6 +72,14 @@ func putLastOffsetDelta(bytes []byte, idx int, x int) int {
 }
 
 func readLastOffsetDelta(bytes []byte, idx int) (int, int) {
+	return readInt(bytes, idx)
+}
+
+func putMaxWaitTime(bytes []byte, idx int, x int) int {
+	return putInt(bytes, idx, x)
+}
+
+func readMaxWaitTime(bytes []byte, idx int) (int, int) {
 	return readInt(bytes, idx)
 }
 

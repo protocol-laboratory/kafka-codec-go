@@ -75,7 +75,9 @@ func DecodeFetchResp(bytes []byte, version int16) (fetchResp *FetchResp, err err
 			partitionResp.LogStartOffset, idx = readOffset(bytes, idx)
 			// todo skip transaction
 			idx += 4
-			partitionResp.ReplicaId, idx = readReplicaId(bytes, idx)
+			if version == 11 {
+				partitionResp.ReplicaId, idx = readReplicaId(bytes, idx)
+			}
 			var recordBatchLength int
 			recordBatchLength, idx = readInt(bytes, idx)
 			partitionResp.RecordBatch = DecodeRecordBatch(bytes[idx:idx+recordBatchLength-1], version)

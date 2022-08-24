@@ -33,7 +33,10 @@ const (
 	LenCorrId                             = 4
 	LenCrc32                              = 4
 	LenErrorCode                          = 2
+	LenFetchBytes                         = 4
+	LenFetchMaxWaitTime                   = 4
 	LenFetchSessionId                     = 4
+	LenFetchSessionEpoch                  = 4
 	LenGenerationId                       = 4
 	LenIncludeClusterAuthorizedOperations = 1
 	LenIncludeTopicAuthorizedOperations   = 1

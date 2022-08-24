@@ -60,11 +60,11 @@ func DecodeFetchReq(bytes []byte, version int16) (fetchReq *FetchReq, err error)
 	fetchReq.CorrelationId, idx = readCorrId(bytes, idx)
 	fetchReq.ClientId, idx = readClientId(bytes, idx)
 	fetchReq.ReplicaId, idx = readReplicaId(bytes, idx)
-	fetchReq.MaxWaitTime, idx = readInt(bytes, idx)
-	fetchReq.MinBytes, idx = readInt(bytes, idx)
-	fetchReq.MaxBytes, idx = readInt(bytes, idx)
+	fetchReq.MaxWaitTime, idx = readMaxWaitTime(bytes, idx)
+	fetchReq.MinBytes, idx = readFetchBytes(bytes, idx)
+	fetchReq.MaxBytes, idx = readFetchBytes(bytes, idx)
 	fetchReq.IsolationLevel, idx = readIsolationLevel(bytes, idx)
-	fetchReq.FetchSessionId, idx = readInt(bytes, idx)
+	fetchReq.FetchSessionId, idx = readFetchSessionId(bytes, idx)
 	fetchReq.FetchSessionEpoch, idx = readFetchSessionEpoch(bytes, idx)
 	var length int
 	length, idx = readArrayLen(bytes, idx)
@@ -79,12 +79,75 @@ func DecodeFetchReq(bytes []byte, version int16) (fetchReq *FetchReq, err error)
 			partition := &FetchPartitionReq{}
 			partition.PartitionId, idx = readInt(bytes, idx)
 			partition.CurrentLeaderEpoch, idx = readLeaderEpoch(bytes, idx)
-			partition.FetchOffset, idx = readInt64(bytes, idx)
-			partition.LogStartOffset, idx = readInt64(bytes, idx)
+			partition.FetchOffset, idx = readOffset(bytes, idx)
+			partition.LogStartOffset, idx = readOffset(bytes, idx)
 			partition.PartitionMaxBytes, idx = readInt(bytes, idx)
 			topicReq.PartitionReqList[j] = partition
 		}
 		fetchReq.TopicReqList[i] = &topicReq
 	}
 	return fetchReq, nil
+}
+
+func (m *FetchReq) BytesLength(containApiKeyVersion bool) int {
+	length := 0
+	if containApiKeyVersion {
+		length += LenApiKey
+		length += LenApiVersion
+	}
+	length += LenCorrId
+	length += StrLen(m.ClientId)
+	length += LenReplicaId
+	length += LenFetchMaxWaitTime
+	length += LenFetchBytes
+	length += LenFetchBytes
+	length += LenIsolationLevel
+	length += LenFetchSessionId
+	length += LenFetchSessionEpoch
+	length += LenArray
+	for _, topicReq := range m.TopicReqList {
+		length += StrLen(topicReq.Topic)
+		length += LenArray
+		for range topicReq.PartitionReqList {
+			length += LenPartitionId
+			length += LenLeaderEpoch
+			length += LenOffset
+			length += LenOffset
+			length += LenFetchBytes
+		}
+	}
+	return length
+}
+
+func (m *FetchReq) Bytes(containApiKeyVersion bool) []byte {
+	version := m.ApiVersion
+	bytes := make([]byte, m.BytesLength(containApiKeyVersion))
+	idx := 0
+	if containApiKeyVersion {
+		idx = putApiKey(bytes, idx, Fetch)
+		idx = putApiVersion(bytes, idx, version)
+	}
+	idx = putCorrId(bytes, idx, m.CorrelationId)
+	idx = putClientId(bytes, idx, m.ClientId)
+	idx = putReplicaId(bytes, idx, m.ReplicaId)
+	idx = putMaxWaitTime(bytes, idx, m.MaxWaitTime)
+	idx = putFetchBytes(bytes, idx, m.MinBytes)
+	idx = putFetchBytes(bytes, idx, m.MaxBytes)
+	idx = putIsolationLevel(bytes, idx, m.IsolationLevel)
+	idx = putFetchSessionId(bytes, idx, m.FetchSessionId)
+	idx = putFetchSessionEpoch(bytes, idx, m.FetchSessionEpoch)
+	idx = putArrayLen(bytes, idx, len(m.TopicReqList))
+	for _, topicReq := range m.TopicReqList {
+		idx = putTopicString(bytes, idx, topicReq.Topic)
+		idx = putArrayLen(bytes, idx, len(topicReq.PartitionReqList))
+		for _, partitionReq := range topicReq.PartitionReqList {
+			idx = putPartitionId(bytes, idx, partitionReq.PartitionId)
+			idx = putLeaderEpoch(bytes, idx, partitionReq.CurrentLeaderEpoch)
+			idx = putOffset(bytes, idx, partitionReq.FetchOffset)
+			idx = putOffset(bytes, idx, partitionReq.LogStartOffset)
+			idx = putFetchBytes(bytes, idx, partitionReq.PartitionMaxBytes)
+
+		}
+	}
+	return bytes
 }
