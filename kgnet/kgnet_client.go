@@ -92,6 +92,18 @@ func (k *KafkaLowLevelClient) Metadata(req *codec.MetadataReq) (*codec.MetadataR
 	return resp, nil
 }
 
+func (k *KafkaLowLevelClient) OffsetCommit(req *codec.OffsetCommitReq) (*codec.OffsetCommitResp, error) {
+	bytes, err := k.kafkaGnetClient.Send(req.Bytes(true))
+	if err != nil {
+		return nil, err
+	}
+	resp, err := codec.DecodeOffsetCommitResp(bytes, req.ApiVersion)
+	if err != nil {
+		return nil, err
+	}
+	return resp, nil
+}
+
 func (k *KafkaLowLevelClient) OffsetFetch(req *codec.OffsetFetchReq) (*codec.OffsetFetchResp, error) {
 	bytes, err := k.kafkaGnetClient.Send(req.Bytes(true))
 	if err != nil {
