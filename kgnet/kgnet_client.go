@@ -140,6 +140,18 @@ func (k *KafkaLowLevelClient) JoinGroup(req *codec.JoinGroupReq) (*codec.JoinGro
 	return resp, nil
 }
 
+func (k *KafkaLowLevelClient) Heartbeat(req *codec.HeartbeatReq) (*codec.HeartbeatResp, error) {
+	bytes, err := k.kafkaGnetClient.Send(req.Bytes(true))
+	if err != nil {
+		return nil, err
+	}
+	resp, err := codec.DecodeHeartbeatResp(bytes, req.ApiVersion)
+	if err != nil {
+		return nil, err
+	}
+	return resp, nil
+}
+
 func (k *KafkaLowLevelClient) LeaveGroup(req *codec.LeaveGroupReq) (*codec.LeaveGroupResp, error) {
 	bytes, err := k.kafkaGnetClient.Send(req.Bytes(true))
 	if err != nil {

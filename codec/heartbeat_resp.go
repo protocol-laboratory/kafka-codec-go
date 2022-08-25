@@ -17,10 +17,29 @@
 
 package codec
 
+import "runtime/debug"
+
 type HeartbeatResp struct {
 	BaseResp
 	ErrorCode    ErrorCode
 	ThrottleTime int
+}
+
+func DecodeHeartbeatResp(bytes []byte, version int16) (resp *HeartbeatResp, err error) {
+	defer func() {
+		if r := recover(); r != nil {
+			err = PanicToError(r, debug.Stack())
+			resp = nil
+		}
+	}()
+	resp = &HeartbeatResp{}
+	idx := 0
+	resp.CorrelationId, idx = readCorrId(bytes, idx)
+	idx = readTaggedField(bytes, idx)
+	resp.ThrottleTime, idx = readThrottleTime(bytes, idx)
+	resp.ErrorCode, idx = readErrorCode(bytes, idx)
+	idx = readTaggedField(bytes, idx)
+	return resp, nil
 }
 
 func (h *HeartbeatResp) BytesLength(version int16) int {

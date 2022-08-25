@@ -22,6 +22,15 @@ import (
 	"testing"
 )
 
+func TestDecodeHeartbeatRespV4(t *testing.T) {
+	bytes := testHex2Bytes(t, "000000110000000000001b00")
+	resp, err := DecodeHeartbeatResp(bytes, 4)
+	assert.Nil(t, err)
+	assert.Equal(t, resp.CorrelationId, 17)
+	assert.Equal(t, resp.ThrottleTime, 0)
+	assert.Equal(t, resp.ErrorCode, REBALANCE_IN_PROGRESS)
+}
+
 func TestCodeHeartbeatRespV4(t *testing.T) {
 	heartBeatResp := HeartbeatResp{
 		BaseResp: BaseResp{
@@ -43,4 +52,15 @@ func TestCodeHeartbeatRespWithErrV4(t *testing.T) {
 	bytes := heartBeatResp.Bytes(4)
 	expectBytes := testHex2Bytes(t, "000000110000000000001b00")
 	assert.Equal(t, expectBytes, bytes)
+}
+
+func TestDecodeAndCodeHeartbeatRespV4(t *testing.T) {
+	bytes := testHex2Bytes(t, "000000110000000000001b00")
+	resp, err := DecodeHeartbeatResp(bytes, 4)
+	assert.Nil(t, err)
+	assert.Equal(t, resp.CorrelationId, 17)
+	assert.Equal(t, resp.ThrottleTime, 0)
+	assert.Equal(t, resp.ErrorCode, REBALANCE_IN_PROGRESS)
+	codeBytes := resp.Bytes(4)
+	assert.Equal(t, bytes, codeBytes)
 }
