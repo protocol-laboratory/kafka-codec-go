@@ -98,8 +98,8 @@ func DecodeOffsetCommitReq(bytes []byte, version int16) (offsetReq *OffsetCommit
 		topic.PartitionReqList = make([]*OffsetCommitPartitionReq, partitionLength)
 		for j := 0; j < partitionLength; j++ {
 			partition := &OffsetCommitPartitionReq{}
-			partition.PartitionId, idx = readInt(bytes, idx)
-			partition.Offset, idx = readInt64(bytes, idx)
+			partition.PartitionId, idx = readPartitionId(bytes, idx)
+			partition.Offset, idx = readOffset(bytes, idx)
 			if version == 8 {
 				partition.LeaderEpoch, idx = readLeaderEpoch(bytes, idx)
 			}
@@ -122,4 +122,139 @@ func DecodeOffsetCommitReq(bytes []byte, version int16) (offsetReq *OffsetCommit
 		idx = readTaggedField(bytes, idx)
 	}
 	return offsetReq, nil
+}
+
+func (m *OffsetCommitReq) BytesLength(containApiKeyVersion bool) int {
+	version := m.ApiVersion
+	length := 0
+	if containApiKeyVersion {
+		length += LenApiKey
+		length += LenApiVersion
+	}
+	length += LenCorrId
+	length += StrLen(m.ClientId)
+	if version == 8 {
+		length += LenTaggedField
+	}
+	if version == 2 {
+		length += StrLen(m.GroupId)
+	} else if version == 8 {
+		length += CompactStrLen(m.GroupId)
+	}
+	length += LenGenerationId
+	if version == 2 {
+		length += StrLen(m.MemberId)
+	} else if version == 8 {
+		length += CompactStrLen(m.MemberId)
+	}
+	if version == 2 {
+		length += LenTime
+	}
+	if version == 8 {
+		length += CompactNullableStrLen(m.GroupInstanceId)
+	}
+	if version == 2 {
+		length += LenArray
+	} else if version == 8 {
+		length += CompactArrayLen(len(m.TopicReqList))
+	}
+	for _, topicReq := range m.TopicReqList {
+		if version == 2 {
+			length += StrLen(topicReq.Topic)
+			length += LenArray
+		} else if version == 8 {
+			length += CompactStrLen(topicReq.Topic)
+			length += CompactArrayLen(len(topicReq.PartitionReqList))
+		}
+		for _, partitionReq := range topicReq.PartitionReqList {
+			length += LenPartitionId
+			length += LenOffset
+			if version == 8 {
+				length += LenLeaderEpoch
+			}
+			if version == 2 {
+				length += StrLen(partitionReq.Metadata)
+			} else if version == 8 {
+				length += CompactStrLen(partitionReq.Metadata)
+			}
+			if version == 8 {
+				length += LenTaggedField
+			}
+		}
+		if version == 8 {
+			length += LenTaggedField
+		}
+	}
+	if version == 8 {
+		length += LenTaggedField
+	}
+	return length
+}
+
+func (m *OffsetCommitReq) Bytes(containApiKeyVersion bool) []byte {
+	version := m.ApiVersion
+	bytes := make([]byte, m.BytesLength(containApiKeyVersion))
+	idx := 0
+	if containApiKeyVersion {
+		idx = putApiKey(bytes, idx, OffsetCommit)
+		idx = putApiVersion(bytes, idx, version)
+	}
+	idx = putCorrId(bytes, idx, m.CorrelationId)
+	idx = putClientId(bytes, idx, m.ClientId)
+	if version == 8 {
+		idx = putTaggedField(bytes, idx)
+	}
+	if version == 2 {
+		idx = putGroupIdString(bytes, idx, m.GroupId)
+	} else if version == 8 {
+		idx = putGroupId(bytes, idx, m.GroupId)
+	}
+	idx = putGenerationId(bytes, idx, m.GenerationId)
+	if version == 2 {
+		idx = putMemberIdString(bytes, idx, m.MemberId)
+	} else if version == 8 {
+		idx = putMemberId(bytes, idx, m.MemberId)
+	}
+	if version == 2 {
+		idx = putRetentionTime(bytes, idx, m.RetentionTime)
+	}
+	if version == 8 {
+		idx = putGroupInstanceId(bytes, idx, m.GroupInstanceId)
+	}
+	if version == 2 {
+		idx = putArrayLen(bytes, idx, len(m.TopicReqList))
+	} else if version == 8 {
+		idx = putCompactArrayLen(bytes, idx, len(m.TopicReqList))
+	}
+	for _, topicReq := range m.TopicReqList {
+		if version == 2 {
+			idx = putTopicString(bytes, idx, topicReq.Topic)
+			idx = putArrayLen(bytes, idx, len(topicReq.PartitionReqList))
+		} else if version == 8 {
+			idx = putTopic(bytes, idx, topicReq.Topic)
+			idx = putCompactArrayLen(bytes, idx, len(topicReq.PartitionReqList))
+		}
+		for _, partitionReq := range topicReq.PartitionReqList {
+			idx = putPartitionId(bytes, idx, partitionReq.PartitionId)
+			idx = putOffset(bytes, idx, partitionReq.Offset)
+			if version == 8 {
+				idx = putLeaderEpoch(bytes, idx, partitionReq.LeaderEpoch)
+			}
+			if version == 2 {
+				idx = putString(bytes, idx, partitionReq.Metadata)
+			} else if version == 8 {
+				idx = putCompactString(bytes, idx, partitionReq.Metadata)
+			}
+			if version == 8 {
+				idx = putTaggedField(bytes, idx)
+			}
+		}
+		if version == 8 {
+			idx = putTaggedField(bytes, idx)
+		}
+	}
+	if version == 8 {
+		idx = putTaggedField(bytes, idx)
+	}
+	return bytes
 }

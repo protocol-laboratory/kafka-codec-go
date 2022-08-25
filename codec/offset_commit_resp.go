@@ -17,6 +17,8 @@
 
 package codec
 
+import "runtime/debug"
+
 type OffsetCommitResp struct {
 	BaseResp
 	ThrottleTime  int
@@ -31,6 +33,59 @@ type OffsetCommitTopicResp struct {
 type OffsetCommitPartitionResp struct {
 	PartitionId int
 	ErrorCode   ErrorCode
+}
+
+func DecodeOffsetCommitResp(bytes []byte, version int16) (resp *OffsetCommitResp, err error) {
+	defer func() {
+		if r := recover(); r != nil {
+			err = PanicToError(r, debug.Stack())
+			resp = nil
+		}
+	}()
+	resp = &OffsetCommitResp{}
+	idx := 0
+	resp.CorrelationId, idx = readCorrId(bytes, idx)
+	if version == 8 {
+		idx = readTaggedField(bytes, idx)
+		resp.ThrottleTime, idx = readThrottleTime(bytes, idx)
+	}
+	var topicRespLen int
+	if version == 2 {
+		topicRespLen, idx = readArrayLen(bytes, idx)
+	} else if version == 8 {
+		topicRespLen, idx = readCompactArrayLen(bytes, idx)
+	}
+	for i := 0; i < topicRespLen; i++ {
+		topicResp := &OffsetCommitTopicResp{}
+		if version == 2 {
+			topicResp.Topic, idx = readTopicString(bytes, idx)
+		} else if version == 8 {
+			topicResp.Topic, idx = readTopic(bytes, idx)
+		}
+		var partitionRespLen int
+		if version == 2 {
+			partitionRespLen, idx = readArrayLen(bytes, idx)
+		} else if version == 8 {
+			partitionRespLen, idx = readCompactArrayLen(bytes, idx)
+		}
+		for i := 0; i < partitionRespLen; i++ {
+			partitionResp := &OffsetCommitPartitionResp{}
+			partitionResp.PartitionId, idx = readPartitionId(bytes, idx)
+			partitionResp.ErrorCode, idx = readErrorCode(bytes, idx)
+			if version == 8 {
+				idx = readTaggedField(bytes, idx)
+			}
+			topicResp.PartitionRespList = append(topicResp.PartitionRespList, partitionResp)
+		}
+		if version == 8 {
+			idx = readTaggedField(bytes, idx)
+		}
+		resp.TopicRespList = append(resp.TopicRespList, topicResp)
+	}
+	if version == 8 {
+		idx = readTaggedField(bytes, idx)
+	}
+	return resp, nil
 }
 
 func (o *OffsetCommitResp) BytesLength(version int16) int {

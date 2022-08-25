@@ -22,6 +22,23 @@ import (
 	"testing"
 )
 
+func TestDecodeOffsetCommitRespV2(t *testing.T) {
+	expectBytes := testHex2Bytes(t, "00000005000000010005746f70696300000001000000000000")
+	resp, err := DecodeOffsetCommitResp(expectBytes, 2)
+	assert.Nil(t, err)
+	assert.Equal(t, resp.CorrelationId, 5)
+	assert.Equal(t, resp.ThrottleTime, 0)
+	topicRespList := resp.TopicRespList
+	assert.Len(t, topicRespList, 1)
+	topicResp := topicRespList[0]
+	assert.Equal(t, topicResp.Topic, "topic")
+	partitionRespList := topicResp.PartitionRespList
+	assert.Len(t, partitionRespList, 1)
+	partitionResp := partitionRespList[0]
+	assert.Equal(t, partitionResp.PartitionId, 0)
+	assert.Equal(t, partitionResp.ErrorCode, NONE)
+}
+
 func TestCodeOffsetCommitRespV2(t *testing.T) {
 	offsetCommitPartitionResp := &OffsetCommitPartitionResp{}
 	offsetCommitPartitionResp.PartitionId = 0
@@ -40,6 +57,42 @@ func TestCodeOffsetCommitRespV2(t *testing.T) {
 	assert.Equal(t, expectBytes, bytes)
 }
 
+func TestDecodeAndCodeOffsetCommitRespV2(t *testing.T) {
+	expectBytes := testHex2Bytes(t, "00000005000000010005746f70696300000001000000000000")
+	resp, err := DecodeOffsetCommitResp(expectBytes, 2)
+	assert.Nil(t, err)
+	assert.Equal(t, resp.CorrelationId, 5)
+	assert.Equal(t, resp.ThrottleTime, 0)
+	topicRespList := resp.TopicRespList
+	assert.Len(t, topicRespList, 1)
+	topicResp := topicRespList[0]
+	assert.Equal(t, topicResp.Topic, "topic")
+	partitionRespList := topicResp.PartitionRespList
+	assert.Len(t, partitionRespList, 1)
+	partitionResp := partitionRespList[0]
+	assert.Equal(t, partitionResp.PartitionId, 0)
+	assert.Equal(t, partitionResp.ErrorCode, NONE)
+	codeBytes := resp.Bytes(2)
+	assert.Equal(t, expectBytes, codeBytes)
+}
+
+func TestDecodeOffsetCommitRespV8(t *testing.T) {
+	expectBytes := testHex2Bytes(t, "0000000b00000000000207746573742d3502000000000000000000")
+	resp, err := DecodeOffsetCommitResp(expectBytes, 8)
+	assert.Nil(t, err)
+	assert.Equal(t, resp.CorrelationId, 11)
+	assert.Equal(t, resp.ThrottleTime, 0)
+	topicRespList := resp.TopicRespList
+	assert.Len(t, topicRespList, 1)
+	topicResp := topicRespList[0]
+	assert.Equal(t, topicResp.Topic, "test-5")
+	partitionRespList := topicResp.PartitionRespList
+	assert.Len(t, partitionRespList, 1)
+	partitionResp := partitionRespList[0]
+	assert.Equal(t, partitionResp.PartitionId, 0)
+	assert.Equal(t, partitionResp.ErrorCode, NONE)
+}
+
 func TestCodeOffsetCommitRespV8(t *testing.T) {
 	offsetCommitPartitionResp := &OffsetCommitPartitionResp{}
 	offsetCommitPartitionResp.PartitionId = 0
@@ -56,4 +109,23 @@ func TestCodeOffsetCommitRespV8(t *testing.T) {
 	bytes := offsetCommitResp.Bytes(8)
 	expectBytes := testHex2Bytes(t, "0000000b00000000000207746573742d3502000000000000000000")
 	assert.Equal(t, expectBytes, bytes)
+}
+
+func TestDecodeAndCodeOffsetCommitRespV8(t *testing.T) {
+	expectBytes := testHex2Bytes(t, "0000000b00000000000207746573742d3502000000000000000000")
+	resp, err := DecodeOffsetCommitResp(expectBytes, 8)
+	assert.Nil(t, err)
+	assert.Equal(t, resp.CorrelationId, 11)
+	assert.Equal(t, resp.ThrottleTime, 0)
+	topicRespList := resp.TopicRespList
+	assert.Len(t, topicRespList, 1)
+	topicResp := topicRespList[0]
+	assert.Equal(t, topicResp.Topic, "test-5")
+	partitionRespList := topicResp.PartitionRespList
+	assert.Len(t, partitionRespList, 1)
+	partitionResp := partitionRespList[0]
+	assert.Equal(t, partitionResp.PartitionId, 0)
+	assert.Equal(t, partitionResp.ErrorCode, NONE)
+	codeBytes := resp.Bytes(8)
+	assert.Equal(t, expectBytes, codeBytes)
 }
