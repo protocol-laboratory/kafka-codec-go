@@ -22,15 +22,13 @@ import (
 	"testing"
 )
 
-func TestCodeSaslHandshakeAuthRespV2(t *testing.T) {
-	saslHandshakeAuthResp := SaslAuthenticateResp{
-		BaseResp: BaseResp{
-			CorrelationId: 2147483642,
-		},
-	}
-	bytes := saslHandshakeAuthResp.Bytes(2)
-	expectBytes := testHex2Bytes(t, "7ffffffa0000000101000000000000000000")
-	assert.Equal(t, expectBytes, bytes)
+func TestDecodeSaslAuthenticateRespV1(t *testing.T) {
+	bytes := testHex2Bytes(t, "7ffffffa00000000000000000000000000000000")
+	resp, err := DecodeSaslAuthenticateResp(bytes, 1)
+	assert.Nil(t, err)
+	assert.Equal(t, resp.CorrelationId, 2147483642)
+	assert.Equal(t, resp.ErrorCode, NONE)
+	assert.Equal(t, resp.SessionLifetime, int64(0))
 }
 
 func TestCodeSaslHandshakeAuthRespV1(t *testing.T) {
@@ -42,4 +40,53 @@ func TestCodeSaslHandshakeAuthRespV1(t *testing.T) {
 	bytes := saslHandshakeAuthResp.Bytes(1)
 	expectBytes := testHex2Bytes(t, "7ffffffa00000000000000000000000000000000")
 	assert.Equal(t, expectBytes, bytes)
+}
+
+func TestDecodeAndCodeSaslAuthenticateRespV1(t *testing.T) {
+	bytes := testHex2Bytes(t, "7ffffffa00000000000000000000000000000000")
+	resp, err := DecodeSaslAuthenticateResp(bytes, 1)
+	assert.Nil(t, err)
+	assert.Equal(t, resp.CorrelationId, 2147483642)
+	assert.Equal(t, resp.ErrorCode, NONE)
+	assert.Equal(t, resp.SessionLifetime, int64(0))
+	codeBytes := resp.Bytes(1)
+	assert.Equal(t, bytes, codeBytes)
+}
+
+func TestDecodeSaslAuthenticateRespV2(t *testing.T) {
+	bytes := testHex2Bytes(t, "7ffffffa000000010d00736c69636500736c696365000000000000138800")
+	resp, err := DecodeSaslAuthenticateResp(bytes, 2)
+	assert.Nil(t, err)
+	assert.Equal(t, resp.CorrelationId, 2147483642)
+	assert.Equal(t, resp.ErrorCode, NONE)
+	assert.Equal(t, resp.SessionLifetime, int64(5000))
+	authBytes := generateSaslAuthUsernamePwdBytes("slice", "slice")
+	assert.Equal(t, resp.AuthBytes, authBytes)
+}
+
+func TestCodeSaslHandshakeAuthRespV2(t *testing.T) {
+	saslHandshakeAuthResp := SaslAuthenticateResp{
+		BaseResp: BaseResp{
+			CorrelationId: 2147483642,
+		},
+	}
+	saslHandshakeAuthResp.SessionLifetime = 5000
+	authBytes := generateSaslAuthUsernamePwdBytes("slice", "slice")
+	saslHandshakeAuthResp.AuthBytes = authBytes
+	codeBytes := saslHandshakeAuthResp.Bytes(2)
+	expectBytes := testHex2Bytes(t, "7ffffffa000000010d00736c69636500736c696365000000000000138800")
+	assert.Equal(t, expectBytes, codeBytes)
+}
+
+func TestDecodeAndCodeSaslAuthenticateRespV2(t *testing.T) {
+	bytes := testHex2Bytes(t, "7ffffffa000000010d00736c69636500736c696365000000000000138800")
+	resp, err := DecodeSaslAuthenticateResp(bytes, 2)
+	assert.Nil(t, err)
+	assert.Equal(t, resp.CorrelationId, 2147483642)
+	assert.Equal(t, resp.ErrorCode, NONE)
+	assert.Equal(t, resp.SessionLifetime, int64(5000))
+	authBytes := generateSaslAuthUsernamePwdBytes("slice", "slice")
+	assert.Equal(t, resp.AuthBytes, authBytes)
+	codeBytes := resp.Bytes(2)
+	assert.Equal(t, bytes, codeBytes)
 }

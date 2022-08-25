@@ -17,12 +17,45 @@
 
 package codec
 
+import "runtime/debug"
+
 type SaslAuthenticateResp struct {
 	BaseResp
 	ErrorCode       ErrorCode
 	ErrorMessage    string
 	AuthBytes       []byte
 	SessionLifetime int64
+}
+
+func DecodeSaslAuthenticateResp(bytes []byte, version int16) (resp *SaslAuthenticateResp, err error) {
+	defer func() {
+		if r := recover(); r != nil {
+			err = PanicToError(r, debug.Stack())
+			resp = nil
+		}
+	}()
+	resp = &SaslAuthenticateResp{}
+	idx := 0
+	resp.CorrelationId, idx = readCorrId(bytes, idx)
+	if version == 2 {
+		idx = readTaggedField(bytes, idx)
+	}
+	resp.ErrorCode, idx = readErrorCode(bytes, idx)
+	if version == 1 {
+		resp.ErrorMessage, idx = readErrorMessageString(bytes, idx)
+	} else if version == 2 {
+		resp.ErrorMessage, idx = readErrorMessage(bytes, idx)
+	}
+	if version == 1 {
+		resp.AuthBytes, idx = readSaslAuthBytes(bytes, idx)
+	} else if version == 2 {
+		resp.AuthBytes, idx = readSaslAuthBytesCompact(bytes, idx)
+	}
+	resp.SessionLifetime, idx = readSessionLifeTimeout(bytes, idx)
+	if version == 2 {
+		idx = readTaggedField(bytes, idx)
+	}
+	return resp, nil
 }
 
 func (s *SaslAuthenticateResp) BytesLength(version int16) int {
