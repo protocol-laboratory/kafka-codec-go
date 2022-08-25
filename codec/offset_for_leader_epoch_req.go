@@ -71,3 +71,49 @@ func DecodeOffsetForLeaderEpochReq(bytes []byte, version int16) (leaderEpochReq 
 	}
 	return leaderEpochReq, nil
 }
+
+func (o *OffsetForLeaderEpochReq) BytesLength(containApiKeyVersion bool) int {
+	length := 0
+	if containApiKeyVersion {
+		length += LenApiKey
+		length += LenApiVersion
+	}
+	length += LenCorrId
+	length += StrLen(o.ClientId)
+	length += LenReplicaId
+	length += LenArray
+	for _, topicReq := range o.TopicReqList {
+		length += StrLen(topicReq.Topic)
+		length += LenArray
+		for range topicReq.PartitionReqList {
+			length += LenPartitionId
+			length += LenLeaderEpoch
+			length += LenLeaderEpoch
+		}
+	}
+	return length
+}
+
+func (o *OffsetForLeaderEpochReq) Bytes(containApiKeyVersion bool) []byte {
+	version := o.ApiVersion
+	bytes := make([]byte, o.BytesLength(containApiKeyVersion))
+	idx := 0
+	if containApiKeyVersion {
+		idx = putApiKey(bytes, idx, OffsetForLeaderEpoch)
+		idx = putApiVersion(bytes, idx, version)
+	}
+	idx = putCorrId(bytes, idx, o.CorrelationId)
+	idx = putClientId(bytes, idx, o.ClientId)
+	idx = putReplicaId(bytes, idx, o.ReplicaId)
+	idx = putArrayLen(bytes, idx, len(o.TopicReqList))
+	for _, topicReq := range o.TopicReqList {
+		idx = putTopicString(bytes, idx, topicReq.Topic)
+		idx = putArrayLen(bytes, idx, len(topicReq.PartitionReqList))
+		for _, partitionReq := range topicReq.PartitionReqList {
+			idx = putPartitionId(bytes, idx, partitionReq.PartitionId)
+			idx = putLeaderEpoch(bytes, idx, partitionReq.CurrentLeaderEpoch)
+			idx = putLeaderEpoch(bytes, idx, partitionReq.LeaderEpoch)
+		}
+	}
+	return bytes
+}

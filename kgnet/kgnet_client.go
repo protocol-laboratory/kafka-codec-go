@@ -188,6 +188,18 @@ func (k *KafkaLowLevelClient) ApiVersions(req *codec.ApiReq) (*codec.ApiResp, er
 	return resp, nil
 }
 
+func (k *KafkaLowLevelClient) OffsetForLeaderEpoch(req *codec.OffsetForLeaderEpochReq) (*codec.OffsetForLeaderEpochResp, error) {
+	bytes, err := k.kafkaGnetClient.Send(req.Bytes(true))
+	if err != nil {
+		return nil, err
+	}
+	resp, err := codec.DecodeOffsetForLeaderEpochResp(bytes, req.ApiVersion)
+	if err != nil {
+		return nil, err
+	}
+	return resp, nil
+}
+
 func (k *KafkaLowLevelClient) Close() {
 	k.kafkaGnetClient.Close()
 }
