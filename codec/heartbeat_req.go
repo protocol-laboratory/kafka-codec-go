@@ -49,3 +49,39 @@ func DecodeHeartbeatReq(bytes []byte, version int16) (heartBeatReq *HeartbeatReq
 	idx = readTaggedField(bytes, idx)
 	return heartBeatReq, nil
 }
+
+func (m *HeartbeatReq) BytesLength(containApiKeyVersion bool) int {
+	length := 0
+	if containApiKeyVersion {
+		length += LenApiKey
+		length += LenApiVersion
+	}
+	length += LenCorrId
+	length += StrLen(m.ClientId)
+	length += LenTaggedField
+	length += CompactStrLen(m.GroupId)
+	length += LenGenerationId
+	length += CompactStrLen(m.MemberId)
+	length += CompactNullableStrLen(m.GroupInstanceId)
+	length += LenTaggedField
+	return length
+}
+
+func (m *HeartbeatReq) Bytes(containApiKeyVersion bool) []byte {
+	version := m.ApiVersion
+	bytes := make([]byte, m.BytesLength(containApiKeyVersion))
+	idx := 0
+	if containApiKeyVersion {
+		idx = putApiKey(bytes, idx, Heartbeat)
+		idx = putApiVersion(bytes, idx, version)
+	}
+	idx = putCorrId(bytes, idx, m.CorrelationId)
+	idx = putClientId(bytes, idx, m.ClientId)
+	idx = putTaggedField(bytes, idx)
+	idx = putGroupId(bytes, idx, m.GroupId)
+	idx = putGenerationId(bytes, idx, m.GenerationId)
+	idx = putMemberId(bytes, idx, m.MemberId)
+	idx = putGroupInstanceId(bytes, idx, m.GroupInstanceId)
+	idx = putTaggedField(bytes, idx)
+	return bytes
+}
