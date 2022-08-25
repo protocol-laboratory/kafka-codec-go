@@ -124,41 +124,41 @@ func DecodeOffsetCommitReq(bytes []byte, version int16) (offsetReq *OffsetCommit
 	return offsetReq, nil
 }
 
-func (m *OffsetCommitReq) BytesLength(containApiKeyVersion bool) int {
-	version := m.ApiVersion
+func (o *OffsetCommitReq) BytesLength(containApiKeyVersion bool) int {
+	version := o.ApiVersion
 	length := 0
 	if containApiKeyVersion {
 		length += LenApiKey
 		length += LenApiVersion
 	}
 	length += LenCorrId
-	length += StrLen(m.ClientId)
+	length += StrLen(o.ClientId)
 	if version == 8 {
 		length += LenTaggedField
 	}
 	if version == 2 {
-		length += StrLen(m.GroupId)
+		length += StrLen(o.GroupId)
 	} else if version == 8 {
-		length += CompactStrLen(m.GroupId)
+		length += CompactStrLen(o.GroupId)
 	}
 	length += LenGenerationId
 	if version == 2 {
-		length += StrLen(m.MemberId)
+		length += StrLen(o.MemberId)
 	} else if version == 8 {
-		length += CompactStrLen(m.MemberId)
+		length += CompactStrLen(o.MemberId)
 	}
 	if version == 2 {
 		length += LenTime
 	}
 	if version == 8 {
-		length += CompactNullableStrLen(m.GroupInstanceId)
+		length += CompactNullableStrLen(o.GroupInstanceId)
 	}
 	if version == 2 {
 		length += LenArray
 	} else if version == 8 {
-		length += CompactArrayLen(len(m.TopicReqList))
+		length += CompactArrayLen(len(o.TopicReqList))
 	}
-	for _, topicReq := range m.TopicReqList {
+	for _, topicReq := range o.TopicReqList {
 		if version == 2 {
 			length += StrLen(topicReq.Topic)
 			length += LenArray
@@ -191,42 +191,42 @@ func (m *OffsetCommitReq) BytesLength(containApiKeyVersion bool) int {
 	return length
 }
 
-func (m *OffsetCommitReq) Bytes(containApiKeyVersion bool) []byte {
-	version := m.ApiVersion
-	bytes := make([]byte, m.BytesLength(containApiKeyVersion))
+func (o *OffsetCommitReq) Bytes(containApiKeyVersion bool) []byte {
+	version := o.ApiVersion
+	bytes := make([]byte, o.BytesLength(containApiKeyVersion))
 	idx := 0
 	if containApiKeyVersion {
 		idx = putApiKey(bytes, idx, OffsetCommit)
 		idx = putApiVersion(bytes, idx, version)
 	}
-	idx = putCorrId(bytes, idx, m.CorrelationId)
-	idx = putClientId(bytes, idx, m.ClientId)
+	idx = putCorrId(bytes, idx, o.CorrelationId)
+	idx = putClientId(bytes, idx, o.ClientId)
 	if version == 8 {
 		idx = putTaggedField(bytes, idx)
 	}
 	if version == 2 {
-		idx = putGroupIdString(bytes, idx, m.GroupId)
+		idx = putGroupIdString(bytes, idx, o.GroupId)
 	} else if version == 8 {
-		idx = putGroupId(bytes, idx, m.GroupId)
+		idx = putGroupId(bytes, idx, o.GroupId)
 	}
-	idx = putGenerationId(bytes, idx, m.GenerationId)
+	idx = putGenerationId(bytes, idx, o.GenerationId)
 	if version == 2 {
-		idx = putMemberIdString(bytes, idx, m.MemberId)
+		idx = putMemberIdString(bytes, idx, o.MemberId)
 	} else if version == 8 {
-		idx = putMemberId(bytes, idx, m.MemberId)
+		idx = putMemberId(bytes, idx, o.MemberId)
 	}
 	if version == 2 {
-		idx = putRetentionTime(bytes, idx, m.RetentionTime)
+		idx = putRetentionTime(bytes, idx, o.RetentionTime)
 	}
 	if version == 8 {
-		idx = putGroupInstanceId(bytes, idx, m.GroupInstanceId)
+		idx = putGroupInstanceId(bytes, idx, o.GroupInstanceId)
 	}
 	if version == 2 {
-		idx = putArrayLen(bytes, idx, len(m.TopicReqList))
+		idx = putArrayLen(bytes, idx, len(o.TopicReqList))
 	} else if version == 8 {
-		idx = putCompactArrayLen(bytes, idx, len(m.TopicReqList))
+		idx = putCompactArrayLen(bytes, idx, len(o.TopicReqList))
 	}
-	for _, topicReq := range m.TopicReqList {
+	for _, topicReq := range o.TopicReqList {
 		if version == 2 {
 			idx = putTopicString(bytes, idx, topicReq.Topic)
 			idx = putArrayLen(bytes, idx, len(topicReq.PartitionReqList))
