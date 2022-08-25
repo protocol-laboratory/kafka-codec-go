@@ -41,3 +41,29 @@ func DecodeSaslHandshakeReq(bytes []byte, version int16) (saslHandshakeReq *Sasl
 	req.SaslMechanism, idx = readSaslMechanism(bytes, idx)
 	return req, nil
 }
+
+func (s *SaslHandshakeReq) BytesLength(containApiKeyVersion bool) int {
+	length := 0
+	if containApiKeyVersion {
+		length += LenApiKey
+		length += LenApiVersion
+	}
+	length += LenCorrId
+	length += StrLen(s.ClientId)
+	length += StrLen(s.SaslMechanism)
+	return length
+}
+
+func (s *SaslHandshakeReq) Bytes(containApiKeyVersion bool) []byte {
+	version := s.ApiVersion
+	bytes := make([]byte, s.BytesLength(containApiKeyVersion))
+	idx := 0
+	if containApiKeyVersion {
+		idx = putApiKey(bytes, idx, SaslHandshake)
+		idx = putApiVersion(bytes, idx, version)
+	}
+	idx = putCorrId(bytes, idx, s.CorrelationId)
+	idx = putClientId(bytes, idx, s.ClientId)
+	idx = putSaslMechanism(bytes, idx, s.SaslMechanism)
+	return bytes
+}
