@@ -22,6 +22,25 @@ import (
 	"testing"
 )
 
+func TestDecodeOffsetForLeaderEpochRespV3(t *testing.T) {
+	bytes := testHex2Bytes(t, "00000009000000000000000100096c742d746573742d3100000001000000000000000000000000000000000006")
+	resp, err := DecodeOffsetForLeaderEpochResp(bytes, 3)
+	assert.Nil(t, err)
+	assert.Equal(t, resp.CorrelationId, 9)
+	assert.Equal(t, resp.ThrottleTime, 0)
+	topicRespList := resp.TopicRespList
+	assert.Len(t, topicRespList, 1)
+	topicResp := topicRespList[0]
+	assert.Equal(t, topicResp.Topic, "lt-test-1")
+	partitionRespList := topicResp.PartitionRespList
+	assert.Len(t, partitionRespList, 1)
+	partitionResp := partitionRespList[0]
+	assert.Equal(t, partitionResp.PartitionId, 0)
+	assert.Equal(t, partitionResp.LeaderEpoch, int32(0))
+	assert.Equal(t, partitionResp.Offset, int64(6))
+	assert.Equal(t, partitionResp.ErrorCode, NONE)
+}
+
 func TestCodeOffsetForLeaderEpochRespV3(t *testing.T) {
 	offsetLeaderEpochResp := OffsetForLeaderEpochResp{
 		BaseResp: BaseResp{
@@ -40,4 +59,25 @@ func TestCodeOffsetForLeaderEpochRespV3(t *testing.T) {
 	bytes := offsetLeaderEpochResp.Bytes(3)
 	expectBytes := testHex2Bytes(t, "00000009000000000000000100096c742d746573742d3100000001000000000000000000000000000000000006")
 	assert.Equal(t, expectBytes, bytes)
+}
+
+func TestDecodeAndCodeOffsetForLeaderEpochRespV3(t *testing.T) {
+	bytes := testHex2Bytes(t, "00000009000000000000000100096c742d746573742d3100000001000000000000000000000000000000000006")
+	resp, err := DecodeOffsetForLeaderEpochResp(bytes, 3)
+	assert.Nil(t, err)
+	assert.Equal(t, resp.CorrelationId, 9)
+	assert.Equal(t, resp.ThrottleTime, 0)
+	topicRespList := resp.TopicRespList
+	assert.Len(t, topicRespList, 1)
+	topicResp := topicRespList[0]
+	assert.Equal(t, topicResp.Topic, "lt-test-1")
+	partitionRespList := topicResp.PartitionRespList
+	assert.Len(t, partitionRespList, 1)
+	partitionResp := partitionRespList[0]
+	assert.Equal(t, partitionResp.PartitionId, 0)
+	assert.Equal(t, partitionResp.LeaderEpoch, int32(0))
+	assert.Equal(t, partitionResp.Offset, int64(6))
+	assert.Equal(t, partitionResp.ErrorCode, NONE)
+	codeBytes := resp.Bytes(3)
+	assert.Equal(t, bytes, codeBytes)
 }

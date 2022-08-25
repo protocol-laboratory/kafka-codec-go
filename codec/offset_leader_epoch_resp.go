@@ -17,6 +17,8 @@
 
 package codec
 
+import "runtime/debug"
+
 type OffsetForLeaderEpochResp struct {
 	BaseResp
 	ThrottleTime  int
@@ -33,6 +35,37 @@ type OffsetForLeaderEpochPartitionResp struct {
 	PartitionId int
 	LeaderEpoch int32
 	Offset      int64
+}
+
+func DecodeOffsetForLeaderEpochResp(bytes []byte, version int16) (resp *OffsetForLeaderEpochResp, err error) {
+	defer func() {
+		if r := recover(); r != nil {
+			err = PanicToError(r, debug.Stack())
+			resp = nil
+		}
+	}()
+	resp = &OffsetForLeaderEpochResp{}
+	idx := 0
+	resp.CorrelationId, idx = readCorrId(bytes, idx)
+	resp.ThrottleTime, idx = readThrottleTime(bytes, idx)
+	var topicRespLen int
+	topicRespLen, idx = readArrayLen(bytes, idx)
+	for i := 0; i < topicRespLen; i++ {
+		topicResp := &OffsetForLeaderEpochTopicResp{}
+		topicResp.Topic, idx = readTopicString(bytes, idx)
+		var partitionLen int
+		partitionLen, idx = readArrayLen(bytes, idx)
+		for i := 0; i < partitionLen; i++ {
+			partitionResp := &OffsetForLeaderEpochPartitionResp{}
+			partitionResp.ErrorCode, idx = readErrorCode(bytes, idx)
+			partitionResp.PartitionId, idx = readPartitionId(bytes, idx)
+			partitionResp.LeaderEpoch, idx = readLeaderEpoch(bytes, idx)
+			partitionResp.Offset, idx = readOffset(bytes, idx)
+			topicResp.PartitionRespList = append(topicResp.PartitionRespList, partitionResp)
+		}
+		resp.TopicRespList = append(resp.TopicRespList, topicResp)
+	}
+	return resp, nil
 }
 
 func (o *OffsetForLeaderEpochResp) BytesLength(version int16) int {
