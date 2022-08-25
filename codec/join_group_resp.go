@@ -37,39 +37,39 @@ type Member struct {
 	Metadata        string
 }
 
-func DecodeJoinGroupResp(bytes []byte, version int16) (jResp *JoinGroupResp, err error) {
+func DecodeJoinGroupResp(bytes []byte, version int16) (resp *JoinGroupResp, err error) {
 	defer func() {
 		if r := recover(); r != nil {
 			err = PanicToError(r, debug.Stack())
-			jResp = nil
+			resp = nil
 		}
 	}()
-	jResp = &JoinGroupResp{}
+	resp = &JoinGroupResp{}
 	idx := 0
-	jResp.CorrelationId, idx = readCorrId(bytes, idx)
+	resp.CorrelationId, idx = readCorrId(bytes, idx)
 	if version == 6 || version == 7 {
 		idx = readTaggedField(bytes, idx)
-		jResp.ThrottleTime, idx = readThrottleTime(bytes, idx)
+		resp.ThrottleTime, idx = readThrottleTime(bytes, idx)
 	}
-	jResp.ErrorCode, idx = readErrorCode(bytes, idx)
-	jResp.GenerationId, idx = readGenerationId(bytes, idx)
+	resp.ErrorCode, idx = readErrorCode(bytes, idx)
+	resp.GenerationId, idx = readGenerationId(bytes, idx)
 	if version == 7 {
-		jResp.ProtocolType, idx = readProtocolTypeNullable(bytes, idx)
+		resp.ProtocolType, idx = readProtocolTypeNullable(bytes, idx)
 	}
 	if version == 1 {
-		jResp.ProtocolName, idx = readProtocolNameString(bytes, idx)
+		resp.ProtocolName, idx = readProtocolNameString(bytes, idx)
 	} else if version == 6 || version == 7 {
-		jResp.ProtocolName, idx = readProtocolName(bytes, idx)
+		resp.ProtocolName, idx = readProtocolName(bytes, idx)
 	}
 	if version == 1 {
-		jResp.LeaderId, idx = readGroupLeaderIdString(bytes, idx)
+		resp.LeaderId, idx = readGroupLeaderIdString(bytes, idx)
 	} else if version == 6 || version == 7 {
-		jResp.LeaderId, idx = readGroupLeaderId(bytes, idx)
+		resp.LeaderId, idx = readGroupLeaderId(bytes, idx)
 	}
 	if version == 1 {
-		jResp.MemberId, idx = readMemberIdString(bytes, idx)
+		resp.MemberId, idx = readMemberIdString(bytes, idx)
 	} else if version == 6 || version == 7 {
-		jResp.MemberId, idx = readMemberId(bytes, idx)
+		resp.MemberId, idx = readMemberId(bytes, idx)
 	}
 	var membersLen int
 	if version == 1 {
@@ -97,12 +97,12 @@ func DecodeJoinGroupResp(bytes []byte, version int16) (jResp *JoinGroupResp, err
 		if version == 6 || version == 7 {
 			idx = readTaggedField(bytes, idx)
 		}
-		jResp.Members = append(jResp.Members, member)
+		resp.Members = append(resp.Members, member)
 	}
 	if version == 6 || version == 7 {
 		idx = readTaggedField(bytes, idx)
 	}
-	return jResp, nil
+	return resp, nil
 }
 
 func (j *JoinGroupResp) BytesLength(version int16) int {

@@ -102,34 +102,34 @@ func DecodeJoinGroupReq(bytes []byte, version int16) (joinGroupReq *JoinGroupReq
 	return joinGroupReq, nil
 }
 
-func (m *JoinGroupReq) BytesLength(containApiKeyVersion bool) int {
-	version := m.ApiVersion
+func (j *JoinGroupReq) BytesLength(containApiKeyVersion bool) int {
+	version := j.ApiVersion
 	length := 0
 	if containApiKeyVersion {
 		length += LenApiKey
 		length += LenApiVersion
 	}
 	length += LenCorrId
-	length += StrLen(m.ClientId)
+	length += StrLen(j.ClientId)
 	if version == 1 {
-		length += StrLen(m.GroupId)
+		length += StrLen(j.GroupId)
 	} else if version == 6 {
 		length += LenTaggedField
-		length += CompactStrLen(m.GroupId)
+		length += CompactStrLen(j.GroupId)
 	}
 	length += LenTimeout
 	length += LenTimeout
 	if version == 1 {
-		length += StrLen(m.MemberId)
-		length += StrLen(m.ProtocolType)
+		length += StrLen(j.MemberId)
+		length += StrLen(j.ProtocolType)
 		length += LenArray
 	} else if version == 6 {
-		length += CompactStrLen(m.MemberId)
-		length += CompactNullableStrLen(m.GroupInstanceId)
-		length += CompactStrLen(m.ProtocolType)
-		length += CompactArrayLen(len(m.GroupProtocols))
+		length += CompactStrLen(j.MemberId)
+		length += CompactNullableStrLen(j.GroupInstanceId)
+		length += CompactStrLen(j.ProtocolType)
+		length += CompactArrayLen(len(j.GroupProtocols))
 	}
-	for _, groupProtocol := range m.GroupProtocols {
+	for _, groupProtocol := range j.GroupProtocols {
 		if version == 1 {
 			length += StrLen(groupProtocol.ProtocolName)
 			length += StrLen(groupProtocol.ProtocolMetadata)
@@ -145,35 +145,35 @@ func (m *JoinGroupReq) BytesLength(containApiKeyVersion bool) int {
 	return length
 }
 
-func (m *JoinGroupReq) Bytes(containApiKeyVersion bool) []byte {
-	version := m.ApiVersion
-	bytes := make([]byte, m.BytesLength(containApiKeyVersion))
+func (j *JoinGroupReq) Bytes(containApiKeyVersion bool) []byte {
+	version := j.ApiVersion
+	bytes := make([]byte, j.BytesLength(containApiKeyVersion))
 	idx := 0
 	if containApiKeyVersion {
 		idx = putApiKey(bytes, idx, JoinGroup)
 		idx = putApiVersion(bytes, idx, version)
 	}
-	idx = putCorrId(bytes, idx, m.CorrelationId)
-	idx = putClientId(bytes, idx, m.ClientId)
+	idx = putCorrId(bytes, idx, j.CorrelationId)
+	idx = putClientId(bytes, idx, j.ClientId)
 	if version == 1 {
-		idx = putGroupIdString(bytes, idx, m.GroupId)
+		idx = putGroupIdString(bytes, idx, j.GroupId)
 	} else if version == 6 {
 		idx = putTaggedField(bytes, idx)
-		idx = putGroupId(bytes, idx, m.GroupId)
+		idx = putGroupId(bytes, idx, j.GroupId)
 	}
-	idx = putInt(bytes, idx, m.SessionTimeout)
-	idx = putInt(bytes, idx, m.RebalanceTimeout)
+	idx = putInt(bytes, idx, j.SessionTimeout)
+	idx = putInt(bytes, idx, j.RebalanceTimeout)
 	if version == 1 {
-		idx = putMemberIdString(bytes, idx, m.MemberId)
-		idx = putProtocolTypeString(bytes, idx, m.ProtocolType)
-		idx = putArrayLen(bytes, idx, len(m.GroupProtocols))
+		idx = putMemberIdString(bytes, idx, j.MemberId)
+		idx = putProtocolTypeString(bytes, idx, j.ProtocolType)
+		idx = putArrayLen(bytes, idx, len(j.GroupProtocols))
 	} else if version == 6 {
-		idx = putMemberId(bytes, idx, m.MemberId)
-		idx = putGroupInstanceId(bytes, idx, m.GroupInstanceId)
-		idx = putProtocolType(bytes, idx, m.ProtocolType)
-		idx = putCompactArrayLen(bytes, idx, len(m.GroupProtocols))
+		idx = putMemberId(bytes, idx, j.MemberId)
+		idx = putGroupInstanceId(bytes, idx, j.GroupInstanceId)
+		idx = putProtocolType(bytes, idx, j.ProtocolType)
+		idx = putCompactArrayLen(bytes, idx, len(j.GroupProtocols))
 	}
-	for _, groupProtocol := range m.GroupProtocols {
+	for _, groupProtocol := range j.GroupProtocols {
 		if version == 1 {
 			idx = putProtocolNameString(bytes, idx, groupProtocol.ProtocolName)
 			idx = putString(bytes, idx, groupProtocol.ProtocolMetadata)

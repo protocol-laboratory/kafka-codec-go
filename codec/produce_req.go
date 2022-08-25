@@ -78,19 +78,19 @@ func DecodeProduceReq(bytes []byte, version int16) (produceReq *ProduceReq, err 
 	return produceReq, nil
 }
 
-func (m *ProduceReq) BytesLength(containApiKeyVersion bool) int {
+func (p *ProduceReq) BytesLength(containApiKeyVersion bool) int {
 	length := 0
 	if containApiKeyVersion {
 		length += LenApiKey
 		length += LenApiVersion
 	}
 	length += LenCorrId
-	length += StrLen(m.ClientId)
+	length += StrLen(p.ClientId)
 	length += LenTransactionalId
 	length += LenRequiredAcks
 	length += LenTimeout
 	length += LenArray
-	for _, topicReq := range m.TopicReqList {
+	for _, topicReq := range p.TopicReqList {
 		length += StrLen(topicReq.Topic)
 		length += LenArray
 		for _, partitionReq := range topicReq.PartitionReqList {
@@ -101,21 +101,21 @@ func (m *ProduceReq) BytesLength(containApiKeyVersion bool) int {
 	return length
 }
 
-func (m *ProduceReq) Bytes(containApiKeyVersion bool) []byte {
-	version := m.ApiVersion
-	bytes := make([]byte, m.BytesLength(containApiKeyVersion))
+func (p *ProduceReq) Bytes(containApiKeyVersion bool) []byte {
+	version := p.ApiVersion
+	bytes := make([]byte, p.BytesLength(containApiKeyVersion))
 	idx := 0
 	if containApiKeyVersion {
 		idx = putApiKey(bytes, idx, Produce)
 		idx = putApiVersion(bytes, idx, version)
 	}
-	idx = putCorrId(bytes, idx, m.CorrelationId)
-	idx = putClientId(bytes, idx, m.ClientId)
-	idx = putTransactionId(bytes, idx, m.TransactionId)
-	idx = putRequiredAcks(bytes, idx, m.RequiredAcks)
-	idx = putInt(bytes, idx, m.Timeout)
-	idx = putArrayLen(bytes, idx, len(m.TopicReqList))
-	for _, topicReq := range m.TopicReqList {
+	idx = putCorrId(bytes, idx, p.CorrelationId)
+	idx = putClientId(bytes, idx, p.ClientId)
+	idx = putTransactionId(bytes, idx, p.TransactionId)
+	idx = putRequiredAcks(bytes, idx, p.RequiredAcks)
+	idx = putInt(bytes, idx, p.Timeout)
+	idx = putArrayLen(bytes, idx, len(p.TopicReqList))
+	for _, topicReq := range p.TopicReqList {
 		idx = putTopicString(bytes, idx, topicReq.Topic)
 		idx = putArrayLen(bytes, idx, len(topicReq.PartitionReqList))
 		for _, partitionReq := range topicReq.PartitionReqList {

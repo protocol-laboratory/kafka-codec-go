@@ -50,38 +50,38 @@ func DecodeHeartbeatReq(bytes []byte, version int16) (heartBeatReq *HeartbeatReq
 	return heartBeatReq, nil
 }
 
-func (m *HeartbeatReq) BytesLength(containApiKeyVersion bool) int {
+func (h *HeartbeatReq) BytesLength(containApiKeyVersion bool) int {
 	length := 0
 	if containApiKeyVersion {
 		length += LenApiKey
 		length += LenApiVersion
 	}
 	length += LenCorrId
-	length += StrLen(m.ClientId)
+	length += StrLen(h.ClientId)
 	length += LenTaggedField
-	length += CompactStrLen(m.GroupId)
+	length += CompactStrLen(h.GroupId)
 	length += LenGenerationId
-	length += CompactStrLen(m.MemberId)
-	length += CompactNullableStrLen(m.GroupInstanceId)
+	length += CompactStrLen(h.MemberId)
+	length += CompactNullableStrLen(h.GroupInstanceId)
 	length += LenTaggedField
 	return length
 }
 
-func (m *HeartbeatReq) Bytes(containApiKeyVersion bool) []byte {
-	version := m.ApiVersion
-	bytes := make([]byte, m.BytesLength(containApiKeyVersion))
+func (h *HeartbeatReq) Bytes(containApiKeyVersion bool) []byte {
+	version := h.ApiVersion
+	bytes := make([]byte, h.BytesLength(containApiKeyVersion))
 	idx := 0
 	if containApiKeyVersion {
 		idx = putApiKey(bytes, idx, Heartbeat)
 		idx = putApiVersion(bytes, idx, version)
 	}
-	idx = putCorrId(bytes, idx, m.CorrelationId)
-	idx = putClientId(bytes, idx, m.ClientId)
+	idx = putCorrId(bytes, idx, h.CorrelationId)
+	idx = putClientId(bytes, idx, h.ClientId)
 	idx = putTaggedField(bytes, idx)
-	idx = putGroupId(bytes, idx, m.GroupId)
-	idx = putGenerationId(bytes, idx, m.GenerationId)
-	idx = putMemberId(bytes, idx, m.MemberId)
-	idx = putGroupInstanceId(bytes, idx, m.GroupInstanceId)
+	idx = putGroupId(bytes, idx, h.GroupId)
+	idx = putGenerationId(bytes, idx, h.GenerationId)
+	idx = putMemberId(bytes, idx, h.MemberId)
+	idx = putGroupInstanceId(bytes, idx, h.GroupInstanceId)
 	idx = putTaggedField(bytes, idx)
 	return bytes
 }

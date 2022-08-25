@@ -45,16 +45,16 @@ type RecordError struct {
 	BatchIndexErrorMessage *string
 }
 
-func DecodeProduceResp(bytes []byte, version int16) (produceResp *ProduceResp, err error) {
+func DecodeProduceResp(bytes []byte, version int16) (resp *ProduceResp, err error) {
 	defer func() {
 		if r := recover(); r != nil {
 			err = PanicToError(r, debug.Stack())
-			produceResp = nil
+			resp = nil
 		}
 	}()
-	produceResp = &ProduceResp{}
+	resp = &ProduceResp{}
 	idx := 0
-	produceResp.CorrelationId, idx = readCorrId(bytes, idx)
+	resp.CorrelationId, idx = readCorrId(bytes, idx)
 	var topicLength int
 	topicLength, idx = readArrayLen(bytes, idx)
 	for i := 0; i < topicLength; i++ {
@@ -71,10 +71,10 @@ func DecodeProduceResp(bytes []byte, version int16) (produceResp *ProduceResp, e
 			producePartitionResp.LogStartOffset, idx = readLogStartOffset(bytes, idx)
 			produceTopicResp.PartitionRespList = append(produceTopicResp.PartitionRespList, producePartitionResp)
 		}
-		produceResp.TopicRespList = append(produceResp.TopicRespList, produceTopicResp)
+		resp.TopicRespList = append(resp.TopicRespList, produceTopicResp)
 	}
-	produceResp.ThrottleTime, idx = readThrottleTime(bytes, idx)
-	return produceResp, nil
+	resp.ThrottleTime, idx = readThrottleTime(bytes, idx)
+	return resp, nil
 }
 
 func (p *ProduceResp) BytesLength(version int16) int {

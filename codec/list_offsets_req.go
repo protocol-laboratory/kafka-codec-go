@@ -100,15 +100,15 @@ func DecodeListOffsetsReq(bytes []byte, version int16) (offsetReq *ListOffsetsRe
 	return offsetReq, nil
 }
 
-func (m *ListOffsetsReq) BytesLength(containApiKeyVersion bool) int {
-	version := m.ApiVersion
+func (l *ListOffsetsReq) BytesLength(containApiKeyVersion bool) int {
+	version := l.ApiVersion
 	length := 0
 	if containApiKeyVersion {
 		length += LenApiKey
 		length += LenApiVersion
 	}
 	length += LenCorrId
-	length += StrLen(m.ClientId)
+	length += StrLen(l.ClientId)
 	length += LenReplicaId
 	if version == 5 || version == 6 {
 		length += LenIsolationLevel
@@ -117,9 +117,9 @@ func (m *ListOffsetsReq) BytesLength(containApiKeyVersion bool) int {
 		length += LenArray
 	} else if version == 6 {
 		length += LenTaggedField
-		length += CompactArrayLen(len(m.TopicReqList))
+		length += CompactArrayLen(len(l.TopicReqList))
 	}
-	for _, topicReq := range m.TopicReqList {
+	for _, topicReq := range l.TopicReqList {
 		if version == 1 || version == 5 {
 			length += StrLen(topicReq.Topic)
 		} else if version == 6 {
@@ -150,27 +150,27 @@ func (m *ListOffsetsReq) BytesLength(containApiKeyVersion bool) int {
 	return length
 }
 
-func (m *ListOffsetsReq) Bytes(containApiKeyVersion bool) []byte {
-	version := m.ApiVersion
-	bytes := make([]byte, m.BytesLength(containApiKeyVersion))
+func (l *ListOffsetsReq) Bytes(containApiKeyVersion bool) []byte {
+	version := l.ApiVersion
+	bytes := make([]byte, l.BytesLength(containApiKeyVersion))
 	idx := 0
 	if containApiKeyVersion {
 		idx = putApiKey(bytes, idx, ListOffsets)
 		idx = putApiVersion(bytes, idx, version)
 	}
-	idx = putCorrId(bytes, idx, m.CorrelationId)
-	idx = putClientId(bytes, idx, m.ClientId)
-	idx = putReplicaId(bytes, idx, m.ReplicaId)
+	idx = putCorrId(bytes, idx, l.CorrelationId)
+	idx = putClientId(bytes, idx, l.ClientId)
+	idx = putReplicaId(bytes, idx, l.ReplicaId)
 	if version == 5 || version == 6 {
-		idx = putIsolationLevel(bytes, idx, m.IsolationLevel)
+		idx = putIsolationLevel(bytes, idx, l.IsolationLevel)
 	}
 	if version == 1 || version == 5 {
-		idx = putArrayLen(bytes, idx, len(m.TopicReqList))
+		idx = putArrayLen(bytes, idx, len(l.TopicReqList))
 	} else if version == 6 {
 		idx = putTaggedField(bytes, idx)
-		idx = putCompactArrayLen(bytes, idx, len(m.TopicReqList))
+		idx = putCompactArrayLen(bytes, idx, len(l.TopicReqList))
 	}
-	for _, topicReq := range m.TopicReqList {
+	for _, topicReq := range l.TopicReqList {
 		if version == 1 || version == 5 {
 			idx = putTopicString(bytes, idx, topicReq.Topic)
 		} else if version == 6 {

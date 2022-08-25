@@ -89,14 +89,14 @@ func DecodeFetchReq(bytes []byte, version int16) (fetchReq *FetchReq, err error)
 	return fetchReq, nil
 }
 
-func (m *FetchReq) BytesLength(containApiKeyVersion bool) int {
+func (f *FetchReq) BytesLength(containApiKeyVersion bool) int {
 	length := 0
 	if containApiKeyVersion {
 		length += LenApiKey
 		length += LenApiVersion
 	}
 	length += LenCorrId
-	length += StrLen(m.ClientId)
+	length += StrLen(f.ClientId)
 	length += LenReplicaId
 	length += LenFetchMaxWaitTime
 	length += LenFetchBytes
@@ -105,7 +105,7 @@ func (m *FetchReq) BytesLength(containApiKeyVersion bool) int {
 	length += LenFetchSessionId
 	length += LenFetchSessionEpoch
 	length += LenArray
-	for _, topicReq := range m.TopicReqList {
+	for _, topicReq := range f.TopicReqList {
 		length += StrLen(topicReq.Topic)
 		length += LenArray
 		for range topicReq.PartitionReqList {
@@ -119,25 +119,25 @@ func (m *FetchReq) BytesLength(containApiKeyVersion bool) int {
 	return length
 }
 
-func (m *FetchReq) Bytes(containApiKeyVersion bool) []byte {
-	version := m.ApiVersion
-	bytes := make([]byte, m.BytesLength(containApiKeyVersion))
+func (f *FetchReq) Bytes(containApiKeyVersion bool) []byte {
+	version := f.ApiVersion
+	bytes := make([]byte, f.BytesLength(containApiKeyVersion))
 	idx := 0
 	if containApiKeyVersion {
 		idx = putApiKey(bytes, idx, Fetch)
 		idx = putApiVersion(bytes, idx, version)
 	}
-	idx = putCorrId(bytes, idx, m.CorrelationId)
-	idx = putClientId(bytes, idx, m.ClientId)
-	idx = putReplicaId(bytes, idx, m.ReplicaId)
-	idx = putMaxWaitTime(bytes, idx, m.MaxWaitTime)
-	idx = putFetchBytes(bytes, idx, m.MinBytes)
-	idx = putFetchBytes(bytes, idx, m.MaxBytes)
-	idx = putIsolationLevel(bytes, idx, m.IsolationLevel)
-	idx = putFetchSessionId(bytes, idx, m.FetchSessionId)
-	idx = putFetchSessionEpoch(bytes, idx, m.FetchSessionEpoch)
-	idx = putArrayLen(bytes, idx, len(m.TopicReqList))
-	for _, topicReq := range m.TopicReqList {
+	idx = putCorrId(bytes, idx, f.CorrelationId)
+	idx = putClientId(bytes, idx, f.ClientId)
+	idx = putReplicaId(bytes, idx, f.ReplicaId)
+	idx = putMaxWaitTime(bytes, idx, f.MaxWaitTime)
+	idx = putFetchBytes(bytes, idx, f.MinBytes)
+	idx = putFetchBytes(bytes, idx, f.MaxBytes)
+	idx = putIsolationLevel(bytes, idx, f.IsolationLevel)
+	idx = putFetchSessionId(bytes, idx, f.FetchSessionId)
+	idx = putFetchSessionEpoch(bytes, idx, f.FetchSessionEpoch)
+	idx = putArrayLen(bytes, idx, len(f.TopicReqList))
+	for _, topicReq := range f.TopicReqList {
 		idx = putTopicString(bytes, idx, topicReq.Topic)
 		idx = putArrayLen(bytes, idx, len(topicReq.PartitionReqList))
 		for _, partitionReq := range topicReq.PartitionReqList {

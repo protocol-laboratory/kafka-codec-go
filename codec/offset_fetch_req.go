@@ -102,29 +102,29 @@ func DecodeOffsetFetchReq(bytes []byte, version int16) (fetchReq *OffsetFetchReq
 	return fetchReq, nil
 }
 
-func (m *OffsetFetchReq) BytesLength(containApiKeyVersion bool) int {
-	version := m.ApiVersion
+func (o *OffsetFetchReq) BytesLength(containApiKeyVersion bool) int {
+	version := o.ApiVersion
 	length := 0
 	if containApiKeyVersion {
 		length += LenApiKey
 		length += LenApiVersion
 	}
 	length += LenCorrId
-	length += StrLen(m.ClientId)
+	length += StrLen(o.ClientId)
 	if version == 6 || version == 7 {
 		length += LenTaggedField
 	}
 	if version == 1 {
-		length += StrLen(m.GroupId)
+		length += StrLen(o.GroupId)
 	} else if version == 6 || version == 7 {
-		length += CompactStrLen(m.GroupId)
+		length += CompactStrLen(o.GroupId)
 	}
 	if version == 1 {
 		length += LenArray
 	} else if version == 6 || version == 7 {
-		length += CompactArrayLen(len(m.TopicReqList))
+		length += CompactArrayLen(len(o.TopicReqList))
 	}
-	for _, topicReq := range m.TopicReqList {
+	for _, topicReq := range o.TopicReqList {
 		if version == 1 {
 			length += StrLen(topicReq.Topic)
 			length += LenArray
@@ -148,30 +148,30 @@ func (m *OffsetFetchReq) BytesLength(containApiKeyVersion bool) int {
 	return length
 }
 
-func (m *OffsetFetchReq) Bytes(containApiKeyVersion bool) []byte {
-	version := m.ApiVersion
-	bytes := make([]byte, m.BytesLength(containApiKeyVersion))
+func (o *OffsetFetchReq) Bytes(containApiKeyVersion bool) []byte {
+	version := o.ApiVersion
+	bytes := make([]byte, o.BytesLength(containApiKeyVersion))
 	idx := 0
 	if containApiKeyVersion {
 		idx = putApiKey(bytes, idx, OffsetFetch)
 		idx = putApiVersion(bytes, idx, version)
 	}
-	idx = putCorrId(bytes, idx, m.CorrelationId)
-	idx = putClientId(bytes, idx, m.ClientId)
+	idx = putCorrId(bytes, idx, o.CorrelationId)
+	idx = putClientId(bytes, idx, o.ClientId)
 	if version == 6 || version == 7 {
 		idx = putTaggedField(bytes, idx)
 	}
 	if version == 1 {
-		idx = putGroupIdString(bytes, idx, m.GroupId)
+		idx = putGroupIdString(bytes, idx, o.GroupId)
 	} else if version == 6 || version == 7 {
-		idx = putGroupId(bytes, idx, m.GroupId)
+		idx = putGroupId(bytes, idx, o.GroupId)
 	}
 	if version == 1 {
-		idx = putArrayLen(bytes, idx, len(m.TopicReqList))
+		idx = putArrayLen(bytes, idx, len(o.TopicReqList))
 	} else if version == 6 || version == 7 {
-		idx = putCompactArrayLen(bytes, idx, len(m.TopicReqList))
+		idx = putCompactArrayLen(bytes, idx, len(o.TopicReqList))
 	}
-	for _, topicReq := range m.TopicReqList {
+	for _, topicReq := range o.TopicReqList {
 		if version == 1 {
 			idx = putTopicString(bytes, idx, topicReq.Topic)
 			idx = putArrayLen(bytes, idx, len(topicReq.PartitionReqList))
@@ -187,7 +187,7 @@ func (m *OffsetFetchReq) Bytes(containApiKeyVersion bool) []byte {
 		}
 	}
 	if version == 7 {
-		idx = putBool(bytes, idx, m.RequireStableOffset)
+		idx = putBool(bytes, idx, o.RequireStableOffset)
 	}
 	if version == 6 || version == 7 {
 		idx = putTaggedField(bytes, idx)
