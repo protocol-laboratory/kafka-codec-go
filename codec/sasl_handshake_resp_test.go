@@ -22,6 +22,17 @@ import (
 	"testing"
 )
 
+func TestDecodeSaslHandshakeRespV1(t *testing.T) {
+	bytes := testHex2Bytes(t, "7ffffff90000000000010005504c41494e")
+	resp, err := DecodeSaslHandshakeResp(bytes, 1)
+	assert.Nil(t, err)
+	assert.Equal(t, resp.CorrelationId, 2147483641)
+	assert.Equal(t, resp.ErrorCode, NONE)
+	mechanisms := resp.EnableMechanisms
+	assert.Len(t, mechanisms, 1)
+	assert.Equal(t, mechanisms[0].SaslMechanism, "PLAIN")
+}
+
 func TestCodeSaslHandshakeRespV1(t *testing.T) {
 	saslHandshakeResp := SaslHandshakeResp{
 		BaseResp: BaseResp{
@@ -33,4 +44,17 @@ func TestCodeSaslHandshakeRespV1(t *testing.T) {
 	bytes := saslHandshakeResp.Bytes(1)
 	expectBytes := testHex2Bytes(t, "7ffffff90000000000010005504c41494e")
 	assert.Equal(t, expectBytes, bytes)
+}
+
+func TestDecodeAndCodeSaslHandshakeRespV1(t *testing.T) {
+	bytes := testHex2Bytes(t, "7ffffff90000000000010005504c41494e")
+	resp, err := DecodeSaslHandshakeResp(bytes, 1)
+	assert.Nil(t, err)
+	assert.Equal(t, resp.CorrelationId, 2147483641)
+	assert.Equal(t, resp.ErrorCode, NONE)
+	mechanisms := resp.EnableMechanisms
+	assert.Len(t, mechanisms, 1)
+	assert.Equal(t, mechanisms[0].SaslMechanism, "PLAIN")
+	codeBytes := resp.Bytes(1)
+	assert.Equal(t, bytes, codeBytes)
 }

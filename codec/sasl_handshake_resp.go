@@ -17,6 +17,8 @@
 
 package codec
 
+import "runtime/debug"
+
 type SaslHandshakeResp struct {
 	BaseResp
 	ErrorCode        ErrorCode
@@ -25,6 +27,27 @@ type SaslHandshakeResp struct {
 
 type EnableMechanism struct {
 	SaslMechanism string
+}
+
+func DecodeSaslHandshakeResp(bytes []byte, version int16) (resp *SaslHandshakeResp, err error) {
+	defer func() {
+		if r := recover(); r != nil {
+			err = PanicToError(r, debug.Stack())
+			resp = nil
+		}
+	}()
+	resp = &SaslHandshakeResp{}
+	idx := 0
+	resp.CorrelationId, idx = readCorrId(bytes, idx)
+	resp.ErrorCode, idx = readErrorCode(bytes, idx)
+	var enableMechanismsLen int
+	enableMechanismsLen, idx = readArrayLen(bytes, idx)
+	for i := 0; i < enableMechanismsLen; i++ {
+		saslMechanism := &EnableMechanism{}
+		saslMechanism.SaslMechanism, idx = readSaslMechanism(bytes, idx)
+		resp.EnableMechanisms = append(resp.EnableMechanisms, saslMechanism)
+	}
+	return resp, nil
 }
 
 func (s *SaslHandshakeResp) BytesLength(version int16) int {

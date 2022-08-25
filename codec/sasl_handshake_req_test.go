@@ -36,3 +36,24 @@ func TestDecodeSaslHandshakeReqV1(t *testing.T) {
 	assert.Equal(t, "consumer-3ac23a7f-4c36-40d9-99d4-acda47d0a48d-1", saslHandshakeReq.ClientId)
 	assert.Equal(t, "PLAIN", saslHandshakeReq.SaslMechanism)
 }
+
+func TestCodeSaslHandshakeReqV1(t *testing.T) {
+	saslHandshakeReq := &SaslHandshakeReq{}
+	saslHandshakeReq.ApiVersion = 1
+	saslHandshakeReq.CorrelationId = 2147483641
+	saslHandshakeReq.ClientId = "consumer-3ac23a7f-4c36-40d9-99d4-acda47d0a48d-1"
+	saslHandshakeReq.SaslMechanism = "PLAIN"
+	codeBytes := saslHandshakeReq.Bytes(true)
+	assert.Equal(t, codeBytes, testHex2Bytes(t, "001100017ffffff9002f636f6e73756d65722d33616332336137662d346333362d343064392d393964342d6163646134376430613438642d310005504c41494e"))
+}
+
+func TestDecodeAndCodeSaslHandshakeReqV1(t *testing.T) {
+	bytes := testHex2Bytes(t, "7ffffff9002f636f6e73756d65722d33616332336137662d346333362d343064392d393964342d6163646134376430613438642d310005504c41494e")
+	saslHandshakeReq, err := DecodeSaslHandshakeReq(bytes, 1)
+	assert.Nil(t, err)
+	assert.Equal(t, 2147483641, saslHandshakeReq.CorrelationId)
+	assert.Equal(t, "consumer-3ac23a7f-4c36-40d9-99d4-acda47d0a48d-1", saslHandshakeReq.ClientId)
+	assert.Equal(t, "PLAIN", saslHandshakeReq.SaslMechanism)
+	codeBytes := saslHandshakeReq.Bytes(false)
+	assert.Equal(t, bytes, codeBytes)
+}
