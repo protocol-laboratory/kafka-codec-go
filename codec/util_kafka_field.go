@@ -17,7 +17,16 @@
 
 package codec
 
-func readSaslAuthBytes(bytes []byte, idx int) (string, string) {
+func generateSaslAuthUsernamePwdBytes(username string, password string) []byte {
+	idx := 1
+	bytes := make([]byte, len(username)+len(password)+2)
+	copy(bytes[idx:idx+len(username)], username)
+	idx += len(username) + 1
+	copy(bytes[idx:idx+len(password)], password)
+	return bytes
+}
+
+func readSaslUsernamePwdByAuthBytes(bytes []byte, idx int) (string, string) {
 	usernameIdx := idx
 	totalLength := idx + len(bytes)
 	for i := idx + 1; i < totalLength; i++ {

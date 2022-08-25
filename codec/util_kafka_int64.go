@@ -55,6 +55,10 @@ func putSessionLifeTimeout(bytes []byte, idx int, ms int64) int {
 	return putInt64(bytes, idx, ms)
 }
 
+func readSessionLifeTimeout(bytes []byte, idx int) (int64, int) {
+	return readInt64(bytes, idx)
+}
+
 func putTime(bytes []byte, idx int, x int64) int {
 	return putInt64(bytes, idx, x)
 }

@@ -200,6 +200,18 @@ func (k *KafkaLowLevelClient) OffsetForLeaderEpoch(req *codec.OffsetForLeaderEpo
 	return resp, nil
 }
 
+func (k *KafkaLowLevelClient) SaslAuthenticate(req *codec.SaslAuthenticateReq) (*codec.SaslAuthenticateResp, error) {
+	bytes, err := k.kafkaGnetClient.Send(req.Bytes(true))
+	if err != nil {
+		return nil, err
+	}
+	resp, err := codec.DecodeSaslAuthenticateResp(bytes, req.ApiVersion)
+	if err != nil {
+		return nil, err
+	}
+	return resp, nil
+}
+
 func (k *KafkaLowLevelClient) Close() {
 	k.kafkaGnetClient.Close()
 }

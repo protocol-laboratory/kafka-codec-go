@@ -24,7 +24,17 @@ import (
 
 func TestReadSaslAuthBytes(t *testing.T) {
 	bytes := testHex2Bytes(t, "00616c69636500707764")
-	username, pwd := readSaslAuthBytes(bytes, 0)
+	username, pwd := readSaslUsernamePwdByAuthBytes(bytes, 0)
 	assert.Equal(t, "alice", username)
 	assert.Equal(t, "pwd", pwd)
+}
+
+func TestGenerateSaskAuthBytes(t *testing.T) {
+	bytes := generateSaslAuthUsernamePwdBytes("alice", "pwd")
+	assert.Equal(t, testHex2Bytes(t, "00616c69636500707764"), bytes)
+}
+
+func TestGenerateNullSaskAuthBytes(t *testing.T) {
+	bytes := generateSaslAuthUsernamePwdBytes("", "")
+	assert.Equal(t, testHex2Bytes(t, "0000"), bytes)
 }
