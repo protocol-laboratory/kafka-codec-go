@@ -63,6 +63,44 @@ func TestCodeProduceRespV7(t *testing.T) {
 	assert.Equal(t, expectBytes, bytes)
 }
 
+func TestDecodeAndCodeProduceRespV7(t *testing.T) {
+	produceRespBytes := testHex2Bytes(t, "00000002000000010005746f706963000000010000000000000000000000000000ffffffffffffffff000000000000000000000000")
+	resp, err := DecodeProduceResp(produceRespBytes, 7)
+	assert.Nil(t, err)
+	assert.Equal(t, resp.CorrelationId, 2)
+	assert.Equal(t, len(resp.TopicRespList), 1)
+	topicResp := resp.TopicRespList[0]
+	assert.Equal(t, topicResp.Topic, "topic")
+	codeBytes := resp.Bytes(7)
+	assert.Equal(t, produceRespBytes, codeBytes)
+}
+
+func TestDecodeProduceRespV8(t *testing.T) {
+	bytes := testHex2Bytes(t, "00000004000000010005746f706963000000010000000000000000000000000000ffffffffffffffff00000000000000000000000100000000000a74657374206572726f72000e74657374206572726f72206d736700000000")
+	resp, err := DecodeProduceResp(bytes, 8)
+	assert.Nil(t, err)
+	assert.Equal(t, resp.CorrelationId, 4)
+	assert.Equal(t, resp.ThrottleTime, 0)
+	topicRespList := resp.TopicRespList
+	assert.Len(t, topicRespList, 1)
+	topicResp := topicRespList[0]
+	assert.Equal(t, topicResp.Topic, "topic")
+	partitionRespList := topicResp.PartitionRespList
+	assert.Len(t, partitionRespList, 1)
+	partitionResp := partitionRespList[0]
+	assert.Equal(t, partitionResp.PartitionId, 0)
+	assert.Equal(t, partitionResp.ErrorCode, NONE)
+	assert.Equal(t, partitionResp.Offset, int64(0))
+	assert.Equal(t, partitionResp.Time, int64(-1))
+	assert.Equal(t, partitionResp.LogStartOffset, int64(0))
+	assert.Equal(t, *partitionResp.ErrorMessage, "test error msg")
+	recordErrorList := partitionResp.RecordErrorList
+	assert.Len(t, recordErrorList, 1)
+	recordError := recordErrorList[0]
+	assert.Equal(t, recordError.BatchIndex, int32(0))
+	assert.Equal(t, *recordError.BatchIndexErrorMessage, "test error")
+}
+
 func TestCodeProduceRespV8(t *testing.T) {
 	produceResp := ProduceResp{
 		BaseResp: BaseResp{
@@ -84,14 +122,24 @@ func TestCodeProduceRespV8(t *testing.T) {
 	assert.Equal(t, expectBytes, bytes)
 }
 
-func TestDecodeAndCodeProduceRespV7(t *testing.T) {
-	produceRespBytes := testHex2Bytes(t, "00000002000000010005746f706963000000010000000000000000000000000000ffffffffffffffff000000000000000000000000")
-	resp, err := DecodeProduceResp(produceRespBytes, 7)
+func TestDecodeAndCodeProduceRespV8(t *testing.T) {
+	bytes := testHex2Bytes(t, "00000004000000010005746f706963000000010000000000000000000000000000ffffffffffffffff00000000000000000000000100000000000a74657374206572726f72000e74657374206572726f72206d736700000000")
+	resp, err := DecodeProduceResp(bytes, 8)
 	assert.Nil(t, err)
-	assert.Equal(t, resp.CorrelationId, 2)
-	assert.Equal(t, len(resp.TopicRespList), 1)
-	topicResp := resp.TopicRespList[0]
+	assert.Equal(t, resp.CorrelationId, 4)
+	assert.Equal(t, resp.ThrottleTime, 0)
+	topicRespList := resp.TopicRespList
+	assert.Len(t, topicRespList, 1)
+	topicResp := topicRespList[0]
 	assert.Equal(t, topicResp.Topic, "topic")
-	codeBytes := resp.Bytes(7)
-	assert.Equal(t, produceRespBytes, codeBytes)
+	partitionRespList := topicResp.PartitionRespList
+	assert.Len(t, partitionRespList, 1)
+	partitionResp := partitionRespList[0]
+	assert.Equal(t, partitionResp.PartitionId, 0)
+	assert.Equal(t, partitionResp.ErrorCode, NONE)
+	assert.Equal(t, partitionResp.Offset, int64(0))
+	assert.Equal(t, partitionResp.Time, int64(-1))
+	assert.Equal(t, partitionResp.LogStartOffset, int64(0))
+	codeBytes := resp.Bytes(8)
+	assert.Equal(t, bytes, codeBytes)
 }

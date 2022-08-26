@@ -69,11 +69,24 @@ func DecodeProduceResp(bytes []byte, version int16) (resp *ProduceResp, err erro
 			producePartitionResp.Offset, idx = readOffset(bytes, idx)
 			producePartitionResp.Time, idx = readTime(bytes, idx)
 			producePartitionResp.LogStartOffset, idx = readLogStartOffset(bytes, idx)
+			if version == 8 {
+				var recordErrorLen int
+				recordErrorLen, idx = readArrayLen(bytes, idx)
+				for k := 0; k < recordErrorLen; k++ {
+					recordError := &RecordError{}
+					recordError.BatchIndex, idx = readBatchIndex(bytes, idx)
+					recordError.BatchIndexErrorMessage, idx = readNullableString(bytes, idx)
+					producePartitionResp.RecordErrorList = append(producePartitionResp.RecordErrorList, recordError)
+				}
+				producePartitionResp.ErrorMessage, idx = readNullableString(bytes, idx)
+			}
 			produceTopicResp.PartitionRespList = append(produceTopicResp.PartitionRespList, producePartitionResp)
 		}
 		resp.TopicRespList = append(resp.TopicRespList, produceTopicResp)
 	}
-	resp.ThrottleTime, idx = readThrottleTime(bytes, idx)
+	if version == 7 || version == 8 {
+		resp.ThrottleTime, idx = readThrottleTime(bytes, idx)
+	}
 	return resp, nil
 }
 

@@ -32,14 +32,8 @@ func DecodeRecord(bytes []byte, version int16) *Record {
 	record.RecordAttributes, idx = readRecordAttributes(bytes, idx)
 	record.RelativeTimestamp, idx = readRelativeTimestamp(bytes, idx)
 	record.RelativeOffset, idx = readRelativeOffset(bytes, idx)
-	keyLength, idx := readVarint(bytes, idx)
-	if keyLength >= 0 {
-		record.Key = bytes[idx : idx+keyLength]
-		idx += keyLength
-	}
-	valueLength, idx := readVarint(bytes, idx)
-	record.Value = bytes[idx : idx+valueLength]
-	idx += valueLength
+	record.Key, idx = readVCompactBytes(bytes, idx)
+	record.Value, idx = readVCompactBytes(bytes, idx)
 	return record
 }
 
@@ -60,7 +54,7 @@ func (r *Record) Bytes() []byte {
 	idx = putRecordAttributes(bytes, idx, 0)
 	idx = putRelativeTimestamp(bytes, idx, r.RelativeTimestamp)
 	idx = putRelativeOffset(bytes, idx, r.RelativeOffset)
-	idx = putCompactBytes(bytes, idx, r.Key)
+	idx = putVCompactBytes(bytes, idx, r.Key)
 	idx = putVCompactBytes(bytes, idx, r.Value)
 	idx = putCompactNullableBytes(bytes, idx, r.Headers)
 	return bytes

@@ -92,8 +92,7 @@ func (r *RecordBatch) Bytes() []byte {
 	idx = putOffset(bytes, idx, r.Offset)
 	idx = putMessageSize(bytes, idx, r.RecordBatchMessageLength())
 	idx = putLeaderEpoch(bytes, idx, r.LeaderEpoch)
-	bytes[idx] = r.MagicByte
-	idx++
+	idx = putMagicByte(bytes, idx, r.MagicByte)
 	crc32Start := idx
 	// crc32后面计算
 	idx += 4
