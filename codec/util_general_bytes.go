@@ -50,9 +50,21 @@ func putCompactNullableBytes(bytes []byte, idx int, content []byte) int {
 }
 
 func putVCompactBytes(bytes []byte, idx int, authBytes []byte) int {
+	if authBytes == nil {
+		return putVarint(bytes, idx, -1)
+	}
 	idx = putVarint(bytes, idx, len(authBytes))
 	copy(bytes[idx:], authBytes)
 	return idx + len(authBytes)
+}
+
+func readVCompactBytes(bytes []byte, idx int) ([]byte, int) {
+	var length int
+	length, idx = readVarint(bytes, idx)
+	if length < 0 {
+		return nil, idx
+	}
+	return bytes[idx : idx+length], idx + length
 }
 
 func BytesLen(bytes []byte) int {
