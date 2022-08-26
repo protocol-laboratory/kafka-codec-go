@@ -22,16 +22,16 @@ func readBytes(bytes []byte, idx int) ([]byte, int) {
 	return bytes[idx : idx+length], idx + length
 }
 
-func readCompactBytes(bytes []byte, idx int) ([]byte, int) {
-	auxUInt32, offset := readUVarint(bytes, idx)
-	intLen := int(auxUInt32)
-	return bytes[offset : idx+intLen], idx + intLen
-}
-
 func putBytes(bytes []byte, idx int, authBytes []byte) int {
 	idx = putInt(bytes, idx, len(authBytes))
 	copy(bytes[idx:], authBytes)
 	return idx + len(authBytes)
+}
+
+func readCompactBytes(bytes []byte, idx int) ([]byte, int) {
+	auxUInt32, offset := readUVarint(bytes, idx)
+	intLen := int(auxUInt32)
+	return bytes[offset : idx+intLen], idx + intLen
 }
 
 func putCompactBytes(bytes []byte, idx int, compactBytes []byte) int {
