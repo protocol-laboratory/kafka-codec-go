@@ -87,6 +87,10 @@ func putHostString(bytes []byte, idx int, str string) int {
 	return putString(bytes, idx, str)
 }
 
+func readHostString(bytes []byte, idx int) (string, int) {
+	return readString(bytes, idx)
+}
+
 func putHost(bytes []byte, idx int, str string) int {
 	return putCompactString(bytes, idx, str)
 }

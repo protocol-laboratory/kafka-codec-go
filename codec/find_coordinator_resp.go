@@ -39,14 +39,24 @@ func DecodeFindCoordinatorResp(bytes []byte, version int16) (fResp *FindCoordina
 	fResp = &FindCoordinatorResp{}
 	idx := 0
 	fResp.CorrelationId, idx = readCorrId(bytes, idx)
-	idx = readTaggedField(bytes, idx)
-	fResp.ThrottleTime, idx = readThrottleTime(bytes, idx)
+	if version == 3 {
+		idx = readTaggedField(bytes, idx)
+		fResp.ThrottleTime, idx = readThrottleTime(bytes, idx)
+	}
 	fResp.ErrorCode, idx = readErrorCode(bytes, idx)
-	fResp.ErrorMessage, idx = readFindCoordinatorErrorMessage(bytes, idx)
+	if version == 3 {
+		fResp.ErrorMessage, idx = readFindCoordinatorErrorMessage(bytes, idx)
+	}
 	fResp.NodeId, idx = readNodeId(bytes, idx)
-	fResp.Host, idx = readHost(bytes, idx)
+	if version == 0 {
+		fResp.Host, idx = readHostString(bytes, idx)
+	} else if version == 3 {
+		fResp.Host, idx = readHost(bytes, idx)
+	}
 	fResp.Port, idx = readInt(bytes, idx)
-	idx = readTaggedField(bytes, idx)
+	if version == 3 {
+		idx = readTaggedField(bytes, idx)
+	}
 	return fResp, nil
 }
 
