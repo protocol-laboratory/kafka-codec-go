@@ -22,12 +22,12 @@ import (
 	"testing"
 )
 
-func TestDecodeFindCoordinatorRespV3(t *testing.T) {
-	bytes := testHex2Bytes(t, "000000000000000000000000000000000a6c6f63616c686f73740000238400")
-	resp, err := DecodeFindCoordinatorResp(bytes, 3)
+func TestDecodeFindCoordinatorRespV0(t *testing.T) {
+	bytes := testHex2Bytes(t, "0000000100000000000100096c6f63616c686f737400002384")
+	resp, err := DecodeFindCoordinatorResp(bytes, 0)
 	assert.Nil(t, err)
-	assert.Equal(t, resp.CorrelationId, 0)
-	var nodeId int32 = 0
+	assert.Equal(t, resp.CorrelationId, 1)
+	var nodeId int32 = 1
 	assert.Equal(t, resp.NodeId, nodeId)
 	assert.Equal(t, resp.Host, "localhost")
 	assert.Equal(t, resp.Port, 9092)
@@ -42,6 +42,30 @@ func TestCodeFindCoordinatorRespV0(t *testing.T) {
 	bytes := findCoordinatorResp.Bytes(0)
 	expectBytes := testHex2Bytes(t, "0000000100000000000100096c6f63616c686f737400002384")
 	assert.Equal(t, expectBytes, bytes)
+}
+
+func TestDecodeAndCodeFindCoordinatorRespV0(t *testing.T) {
+	bytes := testHex2Bytes(t, "0000000100000000000100096c6f63616c686f737400002384")
+	resp, err := DecodeFindCoordinatorResp(bytes, 0)
+	assert.Nil(t, err)
+	assert.Equal(t, resp.CorrelationId, 1)
+	var nodeId int32 = 1
+	assert.Equal(t, resp.NodeId, nodeId)
+	assert.Equal(t, resp.Host, "localhost")
+	assert.Equal(t, resp.Port, 9092)
+	codeBytes := resp.Bytes(0)
+	assert.Equal(t, bytes, codeBytes)
+}
+
+func TestDecodeFindCoordinatorRespV3(t *testing.T) {
+	bytes := testHex2Bytes(t, "000000000000000000000000000000000a6c6f63616c686f73740000238400")
+	resp, err := DecodeFindCoordinatorResp(bytes, 3)
+	assert.Nil(t, err)
+	assert.Equal(t, resp.CorrelationId, 0)
+	var nodeId int32 = 0
+	assert.Equal(t, resp.NodeId, nodeId)
+	assert.Equal(t, resp.Host, "localhost")
+	assert.Equal(t, resp.Port, 9092)
 }
 
 func TestCodeFindCoordinatorRespV3(t *testing.T) {

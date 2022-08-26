@@ -59,6 +59,7 @@ func DecodeFindCoordinatorReq(bytes []byte, version int16) (findCoordinatorReq *
 }
 
 func (f *FindCoordinatorReq) BytesLength(containApiKeyVersion bool) int {
+	version := f.ApiVersion
 	length := 0
 	if containApiKeyVersion {
 		length += LenApiKey
@@ -66,10 +67,18 @@ func (f *FindCoordinatorReq) BytesLength(containApiKeyVersion bool) int {
 	}
 	length += LenCorrId
 	length += StrLen(f.ClientId)
-	length += LenTaggedField
-	length += CompactStrLen(f.Key)
-	length += LenCoordinatorType
-	length += LenTaggedField
+	if version == 3 {
+		length += LenTaggedField
+	}
+	if version == 0 {
+		length += StrLen(f.Key)
+	} else if version == 3 {
+		length += CompactStrLen(f.Key)
+	}
+	if version == 3 {
+		length += LenCoordinatorType
+		length += LenTaggedField
+	}
 	return length
 }
 
@@ -83,9 +92,17 @@ func (f *FindCoordinatorReq) Bytes(containApiKeyVersion bool) []byte {
 	}
 	idx = putCorrId(bytes, idx, f.CorrelationId)
 	idx = putClientId(bytes, idx, f.ClientId)
-	idx = putTaggedField(bytes, idx)
-	idx = putCoordinatorKey(bytes, idx, f.Key)
-	idx = putCoordinatorType(bytes, idx, f.KeyType)
-	idx = putTaggedField(bytes, idx)
+	if version == 3 {
+		idx = putTaggedField(bytes, idx)
+	}
+	if version == 0 {
+		idx = putString(bytes, idx, f.Key)
+	} else if version == 3 {
+		idx = putCoordinatorKey(bytes, idx, f.Key)
+	}
+	if version == 3 {
+		idx = putCoordinatorType(bytes, idx, f.KeyType)
+		idx = putTaggedField(bytes, idx)
+	}
 	return bytes
 }

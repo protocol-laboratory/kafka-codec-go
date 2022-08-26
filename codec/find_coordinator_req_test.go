@@ -39,6 +39,27 @@ func TestDecodeFindCoordinatorReqV0(t *testing.T) {
 	assert.Equal(t, expectKeyType, findCoordinatorReq.KeyType)
 }
 
+func TestCodeFindCoordinatorReqV0(t *testing.T) {
+	findCoordinatorReq := &FindCoordinatorReq{}
+	findCoordinatorReq.ApiVersion = 0
+	findCoordinatorReq.CorrelationId = 1
+	findCoordinatorReq.ClientId = "___TestKafkaConsume_in_go_demo_demo_kafka.test@hezhangjiandeMacBook-Pro.local (github.com/segmentio/kafka-go)"
+	findCoordinatorReq.Key = "topic"
+	codeBytes := findCoordinatorReq.Bytes(true)
+	assert.Equal(t, codeBytes, testHex2Bytes(t, "000a000000000001006d5f5f5f546573744b61666b61436f6e73756d655f696e5f676f5f64656d6f5f64656d6f5f6b61666b612e746573744068657a68616e676a69616e64654d6163426f6f6b2d50726f2e6c6f63616c20286769746875622e636f6d2f7365676d656e74696f2f6b61666b612d676f290005746f706963"))
+}
+
+func TestDecodeAndCodeFindCoordinatorReqV0(t *testing.T) {
+	bytes := testHex2Bytes(t, "00000001006d5f5f5f546573744b61666b61436f6e73756d655f696e5f676f5f64656d6f5f64656d6f5f6b61666b612e746573744068657a68616e676a69616e64654d6163426f6f6b2d50726f2e6c6f63616c20286769746875622e636f6d2f7365676d656e74696f2f6b61666b612d676f290005746f706963")
+	findCoordinatorReq, err := DecodeFindCoordinatorReq(bytes, 0)
+	assert.Nil(t, err)
+	assert.Equal(t, 1, findCoordinatorReq.CorrelationId)
+	assert.Equal(t, "___TestKafkaConsume_in_go_demo_demo_kafka.test@hezhangjiandeMacBook-Pro.local (github.com/segmentio/kafka-go)", findCoordinatorReq.ClientId)
+	assert.Equal(t, "topic", findCoordinatorReq.Key)
+	codeBytes := findCoordinatorReq.Bytes(false)
+	assert.Equal(t, bytes, codeBytes)
+}
+
 func TestDecodeFindCoordinatorReqV3(t *testing.T) {
 	bytes := testHex2Bytes(t, "00000000002f636f6e73756d65722d37336664633964612d306439322d346537622d613761372d6563323636663637633137312d31002537336664633964612d306439322d346537622d613761372d6563323636663637633137310000")
 	findCoordinatorReq, err := DecodeFindCoordinatorReq(bytes, 3)
