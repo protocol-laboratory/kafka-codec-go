@@ -22,10 +22,10 @@ func readBytes(bytes []byte, idx int) ([]byte, int) {
 	return bytes[idx : idx+length], idx + length
 }
 
-func putBytes(bytes []byte, idx int, authBytes []byte) int {
-	idx = putInt(bytes, idx, len(authBytes))
-	copy(bytes[idx:], authBytes)
-	return idx + len(authBytes)
+func putBytes(bytes []byte, idx int, srcBytes []byte) int {
+	idx = putInt(bytes, idx, len(srcBytes))
+	copy(bytes[idx:], srcBytes)
+	return idx + len(srcBytes)
 }
 
 func readCompactBytes(bytes []byte, idx int) ([]byte, int) {
