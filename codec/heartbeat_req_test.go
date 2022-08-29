@@ -40,7 +40,7 @@ func TestDecodeHeartbeatReqV4(t *testing.T) {
 	assert.Nil(t, req.GroupInstanceId)
 }
 
-func TestCodeHeartbeatReqV4(t *testing.T) {
+func TestEncodeHeartbeatReqV4(t *testing.T) {
 	heartbeatReq := &HeartbeatReq{}
 	heartbeatReq.ApiVersion = 4
 	heartbeatReq.CorrelationId = 125

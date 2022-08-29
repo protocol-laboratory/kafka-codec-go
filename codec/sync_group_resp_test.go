@@ -31,7 +31,7 @@ func TestDecodeSyncGroupRespV0(t *testing.T) {
 	assert.Equal(t, resp.MemberAssignment, string(testHex2Bytes(t, "0001000000010005746f7069630000000100000000ffffffff")))
 }
 
-func TestCodeSyncGroupRespV0(t *testing.T) {
+func TestEncodeSyncGroupRespV0(t *testing.T) {
 	syncGroupResp := SyncGroupResp{
 		BaseResp: BaseResp{
 			CorrelationId: 3,
@@ -64,7 +64,7 @@ func TestDecodeSyncGroupRespV4(t *testing.T) {
 	assert.Equal(t, resp.MemberAssignment, string(testHex2Bytes(t, "0001000000010006746573742d350000000100000000ffffffff")))
 }
 
-func TestCodeSyncGroupRespV4(t *testing.T) {
+func TestEncodeSyncGroupRespV4(t *testing.T) {
 	syncGroupResp := SyncGroupResp{
 		BaseResp: BaseResp{
 			CorrelationId: 6,
@@ -97,7 +97,7 @@ func TestDecodeSyncGroupRespV5(t *testing.T) {
 	assert.Equal(t, resp.MemberAssignment, string(testHex2Bytes(t, "000100000001000c68706354657374546f7069630000000100000002ffffffff")))
 }
 
-func TestCodeSyncGroupRespV5(t *testing.T) {
+func TestEncodeSyncGroupRespV5(t *testing.T) {
 	syncGroupResp := SyncGroupResp{
 		BaseResp: BaseResp{
 			CorrelationId: 67,

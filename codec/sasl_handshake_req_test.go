@@ -37,7 +37,7 @@ func TestDecodeSaslHandshakeReqV1(t *testing.T) {
 	assert.Equal(t, "PLAIN", saslHandshakeReq.SaslMechanism)
 }
 
-func TestCodeSaslHandshakeReqV1(t *testing.T) {
+func TestEncodeSaslHandshakeReqV1(t *testing.T) {
 	saslHandshakeReq := &SaslHandshakeReq{}
 	saslHandshakeReq.ApiVersion = 1
 	saslHandshakeReq.CorrelationId = 2147483641

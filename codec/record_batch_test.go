@@ -22,7 +22,7 @@ import (
 	"testing"
 )
 
-func TestCodeRecordBatch(t *testing.T) {
+func TestEncodeRecordBatch(t *testing.T) {
 	r := &RecordBatch{}
 	r.Offset = 0
 	r.MessageSize = 64

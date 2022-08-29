@@ -38,7 +38,7 @@ func TestDecodeJoinGroupRespV1(t *testing.T) {
 	assert.Equal(t, member.Metadata, string(testHex2Bytes(t, "0001000000010005746f706963ffffffff")))
 }
 
-func TestCodeJoinGroupRespV1(t *testing.T) {
+func TestEncodeJoinGroupRespV1(t *testing.T) {
 	member := &Member{}
 	member.MemberId = "___TestKafkaConsume_in_go_demo_demo_kafka.test@hezhangjiandeMacBook-Pro.local (github.com/segmentio/kafka-go)-a3f5062b-94bc-478d-8ddb-2a2fee6989c8"
 	member.Metadata = string(testHex2Bytes(t, "0001000000010005746f706963ffffffff"))
@@ -85,7 +85,7 @@ func TestDecodeJoinGroupRespV6(t *testing.T) {
 	assert.Equal(t, member.Metadata, string(testHex2Bytes(t, "0001000000010006746573742d35ffffffff00000000")))
 }
 
-func TestCodeJoinGroupRespV6(t *testing.T) {
+func TestEncodeJoinGroupRespV6(t *testing.T) {
 	member := &Member{}
 	member.MemberId = "consumer-8dd7b96b-6b94-4a9b-b2cc-3cb5898c9cdf-1-433acb6a-e6ec-45aa-b78d-6a249cff07fc"
 	member.Metadata = string(testHex2Bytes(t, "0001000000010006746573742d35ffffffff00000000"))

@@ -45,7 +45,7 @@ func TestDecodeListOffsetsReqV1(t *testing.T) {
 	assert.Equal(t, int64(-1), offsetPartition.Time)
 }
 
-func TestCodeListOffsetsReqV1(t *testing.T) {
+func TestEncodeListOffsetsReqV1(t *testing.T) {
 	listOffsetsReq := &ListOffsetsReq{}
 	listOffsetsReq.ApiVersion = 1
 	listOffsetsReq.CorrelationId = 4
@@ -98,7 +98,7 @@ func TestDecodeListOffsetsReqV5(t *testing.T) {
 	assert.Equal(t, int64(-2), offsetPartition.Time)
 }
 
-func TestCodeListOffsetsReqV5(t *testing.T) {
+func TestEncodeListOffsetsReqV5(t *testing.T) {
 	listOffsetsReq := &ListOffsetsReq{}
 	listOffsetsReq.ApiVersion = 5
 	listOffsetsReq.CorrelationId = 8
@@ -152,7 +152,7 @@ func TestDecodeListOffsetsReqV6(t *testing.T) {
 	assert.Equal(t, int64(-1), offsetPartition.Time)
 }
 
-func TestCodeListOffsetsReqV6(t *testing.T) {
+func TestEncodeListOffsetsReqV6(t *testing.T) {
 	listOffsetsReq := &ListOffsetsReq{}
 	listOffsetsReq.ApiVersion = 6
 	listOffsetsReq.CorrelationId = 7

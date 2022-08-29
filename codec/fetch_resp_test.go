@@ -66,7 +66,7 @@ func TestDecodeFetchRespV10(t *testing.T) {
 	assert.Nil(t, record.Headers)
 }
 
-func TestCodeFetchRespV10(t *testing.T) {
+func TestEncodeFetchRespV10(t *testing.T) {
 	record := &Record{}
 	record.RecordAttributes = 0
 	record.RelativeTimestamp = 0
@@ -148,7 +148,7 @@ func TestDecodeFetchRespV11(t *testing.T) {
 	assert.Equal(t, "ShootHzj", string(record.Value))
 }
 
-func TestCodeFetchRespV11(t *testing.T) {
+func TestEncodeFetchRespV11(t *testing.T) {
 	record := &Record{}
 	record.RecordAttributes = 0
 	record.RelativeTimestamp = 0

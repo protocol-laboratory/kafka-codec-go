@@ -42,7 +42,7 @@ func TestDecodeSyncGroupReqV0(t *testing.T) {
 	assert.Equal(t, "___TestKafkaConsume_in_go_demo_demo_kafka.test@hezhangjiandeMacBook-Pro.local (github.com/segmentio/kafka-go)-a3f5062b-94bc-478d-8ddb-2a2fee6989c8", groupAssignment.MemberId)
 }
 
-func TestCodeSyncGroupReqV0(t *testing.T) {
+func TestEncodeSyncGroupReqV0(t *testing.T) {
 	syncGroupReq := &SyncGroupReq{}
 	syncGroupReq.ApiVersion = 0
 	syncGroupReq.CorrelationId = 3
@@ -89,7 +89,7 @@ func TestDecodeSyncGroupReqV4(t *testing.T) {
 	assert.Equal(t, "consumer-8dd7b96b-6b94-4a9b-b2cc-3cb5898c9cdf-1-433acb6a-e6ec-45aa-b78d-6a249cff07fc", groupAssignment.MemberId)
 }
 
-func TestCodeSyncGroupReqV4(t *testing.T) {
+func TestEncodeSyncGroupReqV4(t *testing.T) {
 	syncGroupReq := &SyncGroupReq{}
 	syncGroupReq.ApiVersion = 4
 	syncGroupReq.CorrelationId = 6
@@ -135,7 +135,7 @@ func TestDecodeSyncGroupReqV5(t *testing.T) {
 	assert.Equal(t, syncGroupReq.ProtocolName, "range")
 }
 
-func TestCodeSyncGroupReqV5(t *testing.T) {
+func TestEncodeSyncGroupReqV5(t *testing.T) {
 	syncGroupReq := &SyncGroupReq{}
 	syncGroupReq.ApiVersion = 5
 	syncGroupReq.CorrelationId = 67

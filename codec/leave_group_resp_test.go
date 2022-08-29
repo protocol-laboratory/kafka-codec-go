@@ -30,7 +30,7 @@ func TestDecodeLeaveGroupRespV0(t *testing.T) {
 	assert.Equal(t, resp.ErrorCode, NONE)
 }
 
-func TestCodeLeaveGroupRespV0(t *testing.T) {
+func TestEncodeLeaveGroupRespV0(t *testing.T) {
 	leaveGroupResp := LeaveGroupResp{
 		BaseResp: BaseResp{
 			CorrelationId: 1,
@@ -64,7 +64,7 @@ func TestDecodeLeaveGroupRespV4(t *testing.T) {
 	assert.Equal(t, member.MemberId, "consumer-8dd7b96b-6b94-4a9b-b2cc-3cb5898c9cdf-1-433acb6a-e6ec-45aa-b78d-6a249cff07fc")
 }
 
-func TestCodeLeaveGroupRespV4(t *testing.T) {
+func TestEncodeLeaveGroupRespV4(t *testing.T) {
 	leaveGroupMember := &LeaveGroupMember{}
 	leaveGroupMember.MemberId = "consumer-8dd7b96b-6b94-4a9b-b2cc-3cb5898c9cdf-1-433acb6a-e6ec-45aa-b78d-6a249cff07fc"
 	leaveGroupResp := LeaveGroupResp{

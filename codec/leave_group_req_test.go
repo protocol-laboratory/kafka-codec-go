@@ -41,7 +41,7 @@ func TestDecodeLeaveGroupReqV0(t *testing.T) {
 	assert.Nil(t, leaveGroupMember.GroupInstanceId)
 }
 
-func TestCodeLeaveGroupReqV0(t *testing.T) {
+func TestEncodeLeaveGroupReqV0(t *testing.T) {
 	leaveGroupReq := &LeaveGroupReq{}
 	leaveGroupReq.ApiVersion = 0
 	leaveGroupReq.CorrelationId = 1
@@ -82,7 +82,7 @@ func TestDecodeLeaveGroupReqV4(t *testing.T) {
 	assert.Nil(t, leaveGroupMember.GroupInstanceId)
 }
 
-func TestCodeLeaveGroupReqV4(t *testing.T) {
+func TestEncodeLeaveGroupReqV4(t *testing.T) {
 	leaveGroupReq := &LeaveGroupReq{}
 	leaveGroupReq.ApiVersion = 4
 	leaveGroupReq.CorrelationId = 12

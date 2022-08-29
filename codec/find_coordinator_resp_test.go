@@ -33,7 +33,7 @@ func TestDecodeFindCoordinatorRespV0(t *testing.T) {
 	assert.Equal(t, resp.Port, 9092)
 }
 
-func TestCodeFindCoordinatorRespV0(t *testing.T) {
+func TestEncodeFindCoordinatorRespV0(t *testing.T) {
 	findCoordinatorResp := FindCoordinatorResp{}
 	findCoordinatorResp.CorrelationId = 1
 	findCoordinatorResp.NodeId = 1
@@ -68,7 +68,7 @@ func TestDecodeFindCoordinatorRespV3(t *testing.T) {
 	assert.Equal(t, resp.Port, 9092)
 }
 
-func TestCodeFindCoordinatorRespV3(t *testing.T) {
+func TestEncodeFindCoordinatorRespV3(t *testing.T) {
 	findCoordinatorResp := FindCoordinatorResp{}
 	findCoordinatorResp.CorrelationId = 0
 	findCoordinatorResp.NodeId = 0

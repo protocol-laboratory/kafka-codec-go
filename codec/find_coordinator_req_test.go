@@ -39,7 +39,7 @@ func TestDecodeFindCoordinatorReqV0(t *testing.T) {
 	assert.Equal(t, expectKeyType, findCoordinatorReq.KeyType)
 }
 
-func TestCodeFindCoordinatorReqV0(t *testing.T) {
+func TestEncodeFindCoordinatorReqV0(t *testing.T) {
 	findCoordinatorReq := &FindCoordinatorReq{}
 	findCoordinatorReq.ApiVersion = 0
 	findCoordinatorReq.CorrelationId = 1
@@ -71,7 +71,7 @@ func TestDecodeFindCoordinatorReqV3(t *testing.T) {
 	assert.Equal(t, expectKeyType, findCoordinatorReq.KeyType)
 }
 
-func TestCodeFindCoordinatorReqV3(t *testing.T) {
+func TestEncodeFindCoordinatorReqV3(t *testing.T) {
 	findCoordinatorReq := &FindCoordinatorReq{}
 	findCoordinatorReq.ApiVersion = 3
 	findCoordinatorReq.CorrelationId = 0

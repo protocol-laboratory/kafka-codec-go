@@ -54,7 +54,7 @@ func TestDecodeApiVersionReqV3(t *testing.T) {
 	assert.Equal(t, "2.4.0", apiReq.ClientSoftwareVersion)
 }
 
-func TestCodeApiVersionReqV3(t *testing.T) {
+func TestEncodeApiVersionReqV3(t *testing.T) {
 	apiReq := &ApiReq{}
 	apiReq.ApiVersion = 3
 	apiReq.CorrelationId = 1

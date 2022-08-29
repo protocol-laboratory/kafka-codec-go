@@ -33,7 +33,7 @@ func TestDecodeSaslHandshakeRespV1(t *testing.T) {
 	assert.Equal(t, mechanisms[0].SaslMechanism, "PLAIN")
 }
 
-func TestCodeSaslHandshakeRespV1(t *testing.T) {
+func TestEncodeSaslHandshakeRespV1(t *testing.T) {
 	saslHandshakeResp := SaslHandshakeResp{
 		BaseResp: BaseResp{
 			CorrelationId: 2147483641,

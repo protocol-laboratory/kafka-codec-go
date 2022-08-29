@@ -44,7 +44,7 @@ func TestDecodeOffsetFetchReqV1(t *testing.T) {
 	assert.False(t, fetchReq.RequireStableOffset)
 }
 
-func TestCodeOffsetFetchReqV1(t *testing.T) {
+func TestEncodeOffsetFetchReqV1(t *testing.T) {
 	offsetFetchReq := &OffsetFetchReq{}
 	offsetFetchReq.ApiVersion = 1
 	offsetFetchReq.CorrelationId = 4
@@ -94,7 +94,7 @@ func TestDecodeOffsetFetchReqV6(t *testing.T) {
 	assert.False(t, fetchReq.RequireStableOffset)
 }
 
-func TestCodeOffsetFetchReqV6(t *testing.T) {
+func TestEncodeOffsetFetchReqV6(t *testing.T) {
 	offsetFetchReq := &OffsetFetchReq{}
 	offsetFetchReq.ApiVersion = 6
 	offsetFetchReq.CorrelationId = 11
@@ -144,7 +144,7 @@ func TestDecodeOffsetFetchReqV7(t *testing.T) {
 	assert.True(t, fetchReq.RequireStableOffset)
 }
 
-func TestCodeOffsetFetchReqV7(t *testing.T) {
+func TestEncodeOffsetFetchReqV7(t *testing.T) {
 	offsetFetchReq := &OffsetFetchReq{}
 	offsetFetchReq.ApiVersion = 7
 	offsetFetchReq.CorrelationId = 11

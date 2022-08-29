@@ -70,7 +70,7 @@ func TestDecodeMetadataV9(t *testing.T) {
 	assert.False(t, metadataTopicReq.IncludeTopicAuthorizedOperations)
 }
 
-func TestCodeMetadataReqV9(t *testing.T) {
+func TestEncodeMetadataReqV9(t *testing.T) {
 	metadataReq := &MetadataReq{}
 	metadataReq.ApiVersion = 9
 	metadataReq.CorrelationId = 2
