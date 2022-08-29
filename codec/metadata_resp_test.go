@@ -51,7 +51,7 @@ func TestDecodeMetadataRespV9(t *testing.T) {
 	assert.Len(t, partitionMetadata.OfflineReplicas, 0)
 }
 
-func TestCodeMetadataRespV1(t *testing.T) {
+func TestEncodeMetadataRespV1(t *testing.T) {
 	metadataResp := MetadataResp{}
 	metadataResp.CorrelationId = 2
 	metadataResp.BrokerMetadataList = make([]*BrokerMetadata, 1)
@@ -76,7 +76,7 @@ func TestCodeMetadataRespV1(t *testing.T) {
 	assert.Equal(t, expectBytes, bytes)
 }
 
-func TestCodeMetadataRespV8(t *testing.T) {
+func TestEncodeMetadataRespV8(t *testing.T) {
 	metadataResp := MetadataResp{}
 	metadataResp.CorrelationId = 1
 	metadataResp.BrokerMetadataList = make([]*BrokerMetadata, 1)
@@ -101,7 +101,7 @@ func TestCodeMetadataRespV8(t *testing.T) {
 	assert.Equal(t, expectBytes, bytes)
 }
 
-func TestCodeMetadataRespV9(t *testing.T) {
+func TestEncodeMetadataRespV9(t *testing.T) {
 	metadataResp := MetadataResp{}
 	metadataResp.CorrelationId = 2
 	metadataResp.BrokerMetadataList = make([]*BrokerMetadata, 1)

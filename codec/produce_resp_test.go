@@ -42,7 +42,7 @@ func TestDecodeProduceRespV7(t *testing.T) {
 	assert.Equal(t, partitionResp.LogStartOffset, logStartOffset)
 }
 
-func TestCodeProduceRespV7(t *testing.T) {
+func TestEncodeProduceRespV7(t *testing.T) {
 	produceResp := ProduceResp{
 		BaseResp: BaseResp{
 			CorrelationId: 2,
@@ -101,7 +101,7 @@ func TestDecodeProduceRespV8(t *testing.T) {
 	assert.Equal(t, *recordError.BatchIndexErrorMessage, "test error")
 }
 
-func TestCodeProduceRespV8(t *testing.T) {
+func TestEncodeProduceRespV8(t *testing.T) {
 	produceResp := ProduceResp{
 		BaseResp: BaseResp{
 			CorrelationId: 4,

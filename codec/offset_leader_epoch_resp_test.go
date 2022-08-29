@@ -41,7 +41,7 @@ func TestDecodeOffsetForLeaderEpochRespV3(t *testing.T) {
 	assert.Equal(t, partitionResp.ErrorCode, NONE)
 }
 
-func TestCodeOffsetForLeaderEpochRespV3(t *testing.T) {
+func TestEncodeOffsetForLeaderEpochRespV3(t *testing.T) {
 	offsetLeaderEpochResp := OffsetForLeaderEpochResp{
 		BaseResp: BaseResp{
 			CorrelationId: 9,

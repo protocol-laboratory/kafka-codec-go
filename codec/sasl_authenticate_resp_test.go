@@ -31,7 +31,7 @@ func TestDecodeSaslAuthenticateRespV1(t *testing.T) {
 	assert.Equal(t, resp.SessionLifetime, int64(0))
 }
 
-func TestCodeSaslHandshakeAuthRespV1(t *testing.T) {
+func TestEncodeSaslHandshakeAuthRespV1(t *testing.T) {
 	saslHandshakeAuthResp := SaslAuthenticateResp{
 		BaseResp: BaseResp{
 			CorrelationId: 2147483642,
@@ -64,7 +64,7 @@ func TestDecodeSaslAuthenticateRespV2(t *testing.T) {
 	assert.Equal(t, resp.AuthBytes, authBytes)
 }
 
-func TestCodeSaslHandshakeAuthRespV2(t *testing.T) {
+func TestEncodeSaslHandshakeAuthRespV2(t *testing.T) {
 	saslHandshakeAuthResp := SaslAuthenticateResp{
 		BaseResp: BaseResp{
 			CorrelationId: 2147483642,

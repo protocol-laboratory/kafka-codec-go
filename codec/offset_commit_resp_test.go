@@ -39,7 +39,7 @@ func TestDecodeOffsetCommitRespV2(t *testing.T) {
 	assert.Equal(t, partitionResp.ErrorCode, NONE)
 }
 
-func TestCodeOffsetCommitRespV2(t *testing.T) {
+func TestEncodeOffsetCommitRespV2(t *testing.T) {
 	offsetCommitPartitionResp := &OffsetCommitPartitionResp{}
 	offsetCommitPartitionResp.PartitionId = 0
 	offsetCommitPartitionResp.ErrorCode = 0
@@ -93,7 +93,7 @@ func TestDecodeOffsetCommitRespV8(t *testing.T) {
 	assert.Equal(t, partitionResp.ErrorCode, NONE)
 }
 
-func TestCodeOffsetCommitRespV8(t *testing.T) {
+func TestEncodeOffsetCommitRespV8(t *testing.T) {
 	offsetCommitPartitionResp := &OffsetCommitPartitionResp{}
 	offsetCommitPartitionResp.PartitionId = 0
 	offsetCommitPartitionResp.ErrorCode = 0

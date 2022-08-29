@@ -43,7 +43,7 @@ func TestDecodeOffsetFetchRespV1(t *testing.T) {
 	assert.Equal(t, *partitionResp.Metadata, "")
 }
 
-func TestCodeOffsetFetchRespV1(t *testing.T) {
+func TestEncodeOffsetFetchRespV1(t *testing.T) {
 	offsetFetchResp := OffsetFetchResp{
 		BaseResp: BaseResp{
 			CorrelationId: 4,
@@ -108,7 +108,7 @@ func TestDecodeOffsetFetchRespV6(t *testing.T) {
 	assert.Equal(t, *partitionResp.Metadata, "")
 }
 
-func TestCodeOffsetFetchRespV6(t *testing.T) {
+func TestEncodeOffsetFetchRespV6(t *testing.T) {
 	offsetFetchResp := OffsetFetchResp{
 		BaseResp: BaseResp{
 			CorrelationId: 7,
@@ -174,7 +174,7 @@ func TestDecodeOffsetFetchRespV7(t *testing.T) {
 	assert.Equal(t, *partitionResp.Metadata, "")
 }
 
-func TestCodeOffsetFetchRespV7(t *testing.T) {
+func TestEncodeOffsetFetchRespV7(t *testing.T) {
 	offsetFetchResp := OffsetFetchResp{
 		BaseResp: BaseResp{
 			CorrelationId: 7,

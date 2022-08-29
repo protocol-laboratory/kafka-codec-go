@@ -38,7 +38,7 @@ func TestDecodeSaslHandshakeAuthReqV1(t *testing.T) {
 	assert.Equal(t, "alice", saslHandshakeAuthReq.Password)
 }
 
-func TestCodeSaslHandshakeAuthReqV1(t *testing.T) {
+func TestEncodeSaslHandshakeAuthReqV1(t *testing.T) {
 	saslHandshakeAuthReq := &SaslAuthenticateReq{}
 	saslHandshakeAuthReq.ApiVersion = 1
 	saslHandshakeAuthReq.CorrelationId = 2147483642
@@ -71,7 +71,7 @@ func TestDecodeSaslHandshakeAuthReqV2(t *testing.T) {
 	assert.Equal(t, "alice", saslHandshakeAuthReq.Password)
 }
 
-func TestCodeSaslHandshakeAuthReqV2(t *testing.T) {
+func TestEncodeSaslHandshakeAuthReqV2(t *testing.T) {
 	saslHandshakeAuthReq := &SaslAuthenticateReq{}
 	saslHandshakeAuthReq.ApiVersion = 2
 	saslHandshakeAuthReq.CorrelationId = 2147483642

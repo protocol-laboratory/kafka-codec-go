@@ -31,7 +31,7 @@ func TestDecodeHeartbeatRespV4(t *testing.T) {
 	assert.Equal(t, resp.ErrorCode, REBALANCE_IN_PROGRESS)
 }
 
-func TestCodeHeartbeatRespV4(t *testing.T) {
+func TestEncodeHeartbeatRespV4(t *testing.T) {
 	heartBeatResp := HeartbeatResp{
 		BaseResp: BaseResp{
 			CorrelationId: 17,
@@ -42,7 +42,7 @@ func TestCodeHeartbeatRespV4(t *testing.T) {
 	assert.Equal(t, expectBytes, bytes)
 }
 
-func TestCodeHeartbeatRespWithErrV4(t *testing.T) {
+func TestEncodeHeartbeatRespWithErrV4(t *testing.T) {
 	heartBeatResp := HeartbeatResp{
 		BaseResp: BaseResp{
 			CorrelationId: 17,

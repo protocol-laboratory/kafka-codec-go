@@ -43,7 +43,7 @@ func TestDecodeListOffsetsRespV1(t *testing.T) {
 	assert.Equal(t, partitionResp.LeaderEpoch, int32(0))
 }
 
-func TestCodeListOffsetsRespV1(t *testing.T) {
+func TestEncodeListOffsetsRespV1(t *testing.T) {
 	listOffsetPartitionResp := &ListOffsetsPartitionResp{}
 	listOffsetPartitionResp.PartitionId = 0
 	listOffsetPartitionResp.ErrorCode = 0
@@ -107,7 +107,7 @@ func TestDecodeListOffsetsRespV5(t *testing.T) {
 	assert.Equal(t, partitionResp.LeaderEpoch, int32(0))
 }
 
-func TestCodeListOffsetsRespV5(t *testing.T) {
+func TestEncodeListOffsetsRespV5(t *testing.T) {
 	listOffsetPartitionResp := &ListOffsetsPartitionResp{}
 	listOffsetPartitionResp.PartitionId = 0
 	listOffsetPartitionResp.ErrorCode = 0
@@ -172,7 +172,7 @@ func TestDecodeListOffsetsRespV6(t *testing.T) {
 	assert.Equal(t, partitionResp.LeaderEpoch, int32(0))
 }
 
-func TestCodeListOffsetsRespV6(t *testing.T) {
+func TestEncodeListOffsetsRespV6(t *testing.T) {
 	listOffsetPartitionResp0 := &ListOffsetsPartitionResp{}
 	listOffsetPartitionResp0.PartitionId = 4
 	listOffsetPartitionResp0.ErrorCode = 0

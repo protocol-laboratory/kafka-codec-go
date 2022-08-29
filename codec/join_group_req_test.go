@@ -47,7 +47,7 @@ func TestDecodeJoinGroupReqV1(t *testing.T) {
 	assert.NotNil(t, groupProtocol2)
 }
 
-func TestCodeJoinGroupReqV1(t *testing.T) {
+func TestEncodeJoinGroupReqV1(t *testing.T) {
 	joinGroupReq := &JoinGroupReq{}
 	joinGroupReq.ApiVersion = 1
 	joinGroupReq.CorrelationId = 1
@@ -93,7 +93,7 @@ func TestDecodeJoinGroupReqV6(t *testing.T) {
 	assert.Equal(t, "range", groupProtocol.ProtocolName)
 }
 
-func TestCodeJoinGroupReqV6(t *testing.T) {
+func TestEncodeJoinGroupReqV6(t *testing.T) {
 	joinGroupReq := &JoinGroupReq{}
 	joinGroupReq.ApiVersion = 6
 	joinGroupReq.CorrelationId = 8

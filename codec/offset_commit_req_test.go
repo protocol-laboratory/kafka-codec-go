@@ -45,7 +45,7 @@ func TestDecodeOffsetCommitReqV2(t *testing.T) {
 	assert.Equal(t, int64(1), offsetPartition.Offset)
 }
 
-func TestCodeOffsetCommitReqV2(t *testing.T) {
+func TestEncodeOffsetCommitReqV2(t *testing.T) {
 	offsetCommitReq := &OffsetCommitReq{}
 	offsetCommitReq.ApiVersion = 2
 	offsetCommitReq.CorrelationId = 5
@@ -97,7 +97,7 @@ func TestDecodeOffsetCommitReqV8(t *testing.T) {
 	assert.Equal(t, int64(1), offsetPartition.Offset)
 }
 
-func TestCodeOffsetCommitReqV8(t *testing.T) {
+func TestEncodeOffsetCommitReqV8(t *testing.T) {
 	offsetCommitReq := &OffsetCommitReq{}
 	offsetCommitReq.ApiVersion = 8
 	offsetCommitReq.CorrelationId = 11

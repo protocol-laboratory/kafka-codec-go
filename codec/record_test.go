@@ -33,7 +33,7 @@ func TestDecodeRecordCase2(t *testing.T) {
 	assert.Nil(t, record.Headers)
 }
 
-func TestCodeRecord(t *testing.T) {
+func TestEncodeRecord(t *testing.T) {
 	record := &Record{}
 	record.RecordAttributes = 0
 	record.RelativeTimestamp = 0
@@ -45,7 +45,7 @@ func TestCodeRecord(t *testing.T) {
 	assert.Equal(t, 1031, record.BytesLength())
 }
 
-func TestCodeRecordCase2(t *testing.T) {
+func TestEncodeRecordCase2(t *testing.T) {
 	record := &Record{}
 	record.RecordAttributes = 0
 	record.RelativeTimestamp = 0
@@ -58,7 +58,7 @@ func TestCodeRecordCase2(t *testing.T) {
 	assert.Equal(t, expectBytes, bytes)
 }
 
-func TestCodeRecordCase3(t *testing.T) {
+func TestEncodeRecordCase3(t *testing.T) {
 	record := &Record{}
 	record.RecordAttributes = 0
 	record.RelativeTimestamp = 0

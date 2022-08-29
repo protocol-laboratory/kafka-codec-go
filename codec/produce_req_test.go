@@ -53,7 +53,7 @@ func TestDecodeProduceReqV7(t *testing.T) {
 	assert.Equal(t, "msg", string(record.Value))
 }
 
-func TestCodeProduceReqV7(t *testing.T) {
+func TestEncodeProduceReqV7(t *testing.T) {
 	produceReq := &ProduceReq{}
 	produceReq.ApiVersion = 7
 	produceReq.CorrelationId = 6
@@ -118,7 +118,7 @@ func TestDecodeProduceReqV8(t *testing.T) {
 	assert.Equal(t, "value", string(record.Value))
 }
 
-func TestCodeProduceReqV8(t *testing.T) {
+func TestEncodeProduceReqV8(t *testing.T) {
 	produceReq := &ProduceReq{}
 	produceReq.ApiVersion = 8
 	produceReq.CorrelationId = 4

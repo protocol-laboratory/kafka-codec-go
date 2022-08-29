@@ -37,7 +37,7 @@ func TestDecodeOffsetForLeaderEpochReqV3(t *testing.T) {
 	assert.Equal(t, int32(0), leaderEpochPartitionReq.LeaderEpoch)
 }
 
-func TestCodeOffsetForLeaderEpochReqV3(t *testing.T) {
+func TestEncodeOffsetForLeaderEpochReqV3(t *testing.T) {
 	offsetForLeaderEpochReq := &OffsetForLeaderEpochReq{}
 	offsetForLeaderEpochReq.ApiVersion = 3
 	offsetForLeaderEpochReq.CorrelationId = 9

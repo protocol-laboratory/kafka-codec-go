@@ -53,7 +53,7 @@ func TestDecodeFetchReqV10(t *testing.T) {
 	assert.Equal(t, 1000063, fetchPartitionReq.PartitionMaxBytes)
 }
 
-func TestCodeFetchReqV10(t *testing.T) {
+func TestEncodeFetchReqV10(t *testing.T) {
 	fetchReq := &FetchReq{}
 	fetchReq.ApiVersion = 10
 	fetchReq.CorrelationId = 6
@@ -124,7 +124,7 @@ func TestDecodeFetchReqV11(t *testing.T) {
 	assert.Equal(t, 1048576, fetchPartitionReq.PartitionMaxBytes)
 }
 
-func TestCodeFetchReqV11(t *testing.T) {
+func TestEncodeFetchReqV11(t *testing.T) {
 	fetchReq := &FetchReq{}
 	fetchReq.ApiVersion = 11
 	fetchReq.CorrelationId = 10
@@ -203,7 +203,7 @@ func TestDecodeFetchReqMultiPartitionV11(t *testing.T) {
 	assert.Equal(t, 1048576, fetchPartitionReq2.PartitionMaxBytes)
 }
 
-func TestCodeFetchReqMultiPartitionV11(t *testing.T) {
+func TestEncodeFetchReqMultiPartitionV11(t *testing.T) {
 	fetchReq := &FetchReq{}
 	fetchReq.ApiVersion = 11
 	fetchReq.CorrelationId = 10
