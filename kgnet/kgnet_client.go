@@ -81,7 +81,7 @@ func (k *KafkaLowLevelClient) ListOffsets(req *codec.ListOffsetsReq) (*codec.Lis
 }
 
 func (k *KafkaLowLevelClient) Metadata(req *codec.MetadataReq) (*codec.MetadataResp, error) {
-	bytes, err := k.kafkaGnetClient.Send(req.Bytes())
+	bytes, err := k.kafkaGnetClient.Send(req.Bytes(true))
 	if err != nil {
 		return nil, err
 	}
