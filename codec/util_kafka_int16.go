@@ -19,24 +19,20 @@ package codec
 
 // This file is for kafka code int16 type. Format method as alpha order.
 
-func putApiKey(bytes []byte, idx int, x ApiCode) int {
-	return putInt16(bytes, idx, int16(x))
-}
-
 func readApiKey(bytes []byte, idx int) (ApiCode, int) {
 	ac, idx := readInt16(bytes, idx)
 	return ApiCode(ac), idx
 }
 
-func putApiMaxVersion(bytes []byte, idx int, x int16) int {
-	return putInt16(bytes, idx, x)
+func putApiKey(bytes []byte, idx int, x ApiCode) int {
+	return putInt16(bytes, idx, int16(x))
 }
 
 func readApiMaxVersion(bytes []byte, idx int) (int16, int) {
 	return readInt16(bytes, idx)
 }
 
-func putApiMinVersion(bytes []byte, idx int, x int16) int {
+func putApiMaxVersion(bytes []byte, idx int, x int16) int {
 	return putInt16(bytes, idx, x)
 }
 
@@ -44,7 +40,7 @@ func readApiMinVersion(bytes []byte, idx int) (int16, int) {
 	return readInt16(bytes, idx)
 }
 
-func putApiVersion(bytes []byte, idx int, x int16) int {
+func putApiMinVersion(bytes []byte, idx int, x int16) int {
 	return putInt16(bytes, idx, x)
 }
 
@@ -52,8 +48,8 @@ func readApiVersion(bytes []byte, idx int) (int16, int) {
 	return readInt16(bytes, idx)
 }
 
-func putErrorCode(bytes []byte, idx int, errorCode ErrorCode) int {
-	return putInt16(bytes, idx, int16(errorCode))
+func putApiVersion(bytes []byte, idx int, x int16) int {
+	return putInt16(bytes, idx, x)
 }
 
 func readErrorCode(bytes []byte, idx int) (ErrorCode, int) {
@@ -61,18 +57,22 @@ func readErrorCode(bytes []byte, idx int) (ErrorCode, int) {
 	return ErrorCode(ec), i
 }
 
-func putProducerEpoch(bytes []byte, idx int, errorCode int16) int {
-	return putInt16(bytes, idx, errorCode)
+func putErrorCode(bytes []byte, idx int, errorCode ErrorCode) int {
+	return putInt16(bytes, idx, int16(errorCode))
 }
 
 func readProducerEpoch(bytes []byte, idx int) (int16, int) {
 	return readInt16(bytes, idx)
 }
 
-func putRequiredAcks(bytes []byte, idx int, x int16) int {
-	return putInt16(bytes, idx, x)
+func putProducerEpoch(bytes []byte, idx int, errorCode int16) int {
+	return putInt16(bytes, idx, errorCode)
 }
 
 func readRequiredAcks(bytes []byte, idx int) (int16, int) {
 	return readInt16(bytes, idx)
+}
+
+func putRequiredAcks(bytes []byte, idx int, x int16) int {
+	return putInt16(bytes, idx, x)
 }

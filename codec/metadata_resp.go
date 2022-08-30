@@ -102,7 +102,7 @@ func DecodeMetadataResp(bytes []byte, version int16) (metadataResp *MetadataResp
 		metadataResp.BrokerMetadataList[i] = brokerMetadata
 	}
 	if version > 1 && version < 9 {
-		metadataResp.ClusterId, idx = readClusterIdNullableString(bytes, idx)
+		metadataResp.ClusterId, idx = readClusterIdStringNullable(bytes, idx)
 	} else if version == 9 {
 		metadataResp.ClusterId, idx = readClusterId(bytes, idx)
 	}
@@ -344,7 +344,7 @@ func (m *MetadataResp) Bytes(version int16) []byte {
 		}
 	}
 	if version > 1 && version < 9 {
-		idx = putClusterIdNullableString(bytes, idx, m.ClusterId)
+		idx = putClusterIdStringNullable(bytes, idx, m.ClusterId)
 	} else if version == 9 {
 		idx = putClusterId(bytes, idx, m.ClusterId)
 	}

@@ -248,6 +248,7 @@ func (k *KafkaGnetClient) run() {
 			err := k.conn.AsyncWrite(req.bytes)
 			if err != nil {
 				req.callback(nil, err)
+				break
 			}
 			k.pendingQueue <- req
 		case <-k.closeCh:
@@ -350,8 +351,8 @@ func newKafkaGnetClient(config GnetClientConfig) (*KafkaGnetClient, error) {
 		config.PendingQueueSize = 1000
 	}
 	k.eventsChan = make(chan *sendRequest, config.SendQueueSize)
-	k.closeCh = make(chan struct{})
 	k.pendingQueue = make(chan *sendRequest, config.PendingQueueSize)
+	k.closeCh = make(chan struct{})
 	go func() {
 		k.run()
 	}()
