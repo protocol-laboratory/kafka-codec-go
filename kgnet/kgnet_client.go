@@ -189,7 +189,7 @@ func (k *KafkaLowLevelClient) SaslHandshake(req *codec.SaslHandshakeReq) (*codec
 }
 
 func (k *KafkaLowLevelClient) ApiVersions(req *codec.ApiReq) (*codec.ApiResp, error) {
-	bytes, err := k.kafkaGnetClient.Send(req.Bytes())
+	bytes, err := k.kafkaGnetClient.Send(req.Bytes(false, true))
 	if err != nil {
 		return nil, err
 	}
