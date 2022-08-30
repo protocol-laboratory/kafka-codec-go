@@ -48,9 +48,17 @@ func DecodeApiReq(bytes []byte, version int16) (apiReq *ApiReq, err error) {
 	return apiReq, nil
 }
 
-func (a *ApiReq) BytesLength() int {
+func (a *ApiReq) BytesLength(containLen bool, containApiKeyVersion bool) int {
 	version := a.ApiVersion
-	length := LenCorrId
+	length := 0
+	if containLen {
+		length += LenLength
+	}
+	if containApiKeyVersion {
+		length += LenApiKey
+		length += LenApiVersion
+	}
+	length += LenCorrId
 	length += StrLen(a.ClientId)
 	if version == 3 {
 		length += LenTaggedField
@@ -63,12 +71,17 @@ func (a *ApiReq) BytesLength() int {
 	return length
 }
 
-func (a *ApiReq) Bytes() []byte {
+func (a *ApiReq) Bytes(containLen bool, containApiKeyVersion bool) []byte {
 	version := a.ApiVersion
-	bytes := make([]byte, a.BytesLength()+4)
+	bytes := make([]byte, a.BytesLength(containLen, containApiKeyVersion))
 	idx := 0
-	idx = putApiKey(bytes, idx, ApiVersions)
-	idx = putApiVersion(bytes, idx, version)
+	if containLen {
+		idx = putInt(bytes, idx, len(bytes)-4)
+	}
+	if containApiKeyVersion {
+		idx = putApiKey(bytes, idx, ApiVersions)
+		idx = putApiVersion(bytes, idx, version)
+	}
 	idx = putCorrId(bytes, idx, a.CorrelationId)
 	idx = putClientId(bytes, idx, a.ClientId)
 	if version == 3 {
