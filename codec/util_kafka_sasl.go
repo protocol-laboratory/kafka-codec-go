@@ -17,18 +17,18 @@
 
 package codec
 
-func putSaslAuthBytes(bytes []byte, idx int, authBytes []byte) int {
-	return putBytes(bytes, idx, authBytes)
-}
-
 func readSaslAuthBytes(bytes []byte, idx int) ([]byte, int) {
 	return readBytes(bytes, idx)
 }
 
-func putSaslAuthBytesCompact(bytes []byte, idx int, authBytes []byte) int {
-	return putCompactBytes(bytes, idx, authBytes)
+func putSaslAuthBytes(bytes []byte, idx int, authBytes []byte) int {
+	return putBytes(bytes, idx, authBytes)
 }
 
 func readSaslAuthBytesCompact(bytes []byte, idx int) ([]byte, int) {
 	return readCompactBytes(bytes, idx)
+}
+
+func putSaslAuthBytesCompact(bytes []byte, idx int, authBytes []byte) int {
+	return putCompactBytes(bytes, idx, authBytes)
 }

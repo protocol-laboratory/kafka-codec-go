@@ -17,17 +17,13 @@
 
 package codec
 
-// This file is for kafka code bytes type. Format method as alpha order.
-
-func putAllowAutoTopicCreation(bytes []byte, idx int, x bool) int {
-	return putBool(bytes, idx, x)
-}
+// This file is for kafka code bool type. Format method as alpha order.
 
 func readAllowAutoTopicCreation(bytes []byte, idx int) (bool, int) {
 	return readBool(bytes, idx)
 }
 
-func putIncludeClusterAuthorizedOperations(bytes []byte, idx int, x bool) int {
+func putAllowAutoTopicCreation(bytes []byte, idx int, x bool) int {
 	return putBool(bytes, idx, x)
 }
 
@@ -35,10 +31,14 @@ func readIncludeClusterAuthorizedOperations(bytes []byte, idx int) (bool, int) {
 	return readBool(bytes, idx)
 }
 
-func putIncludeTopicAuthorizedOperations(bytes []byte, idx int, x bool) int {
+func putIncludeClusterAuthorizedOperations(bytes []byte, idx int, x bool) int {
 	return putBool(bytes, idx, x)
 }
 
 func readIncludeTopicAuthorizedOperations(bytes []byte, idx int) (bool, int) {
 	return readBool(bytes, idx)
+}
+
+func putIncludeTopicAuthorizedOperations(bytes []byte, idx int, x bool) int {
+	return putBool(bytes, idx, x)
 }
