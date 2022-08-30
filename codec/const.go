@@ -46,6 +46,7 @@ const (
 	LenLastStableOffset                   = 8
 	LenLeaderEpoch                        = 4
 	LenLeaderId                           = 4
+	LenLength                             = 4
 	LenMagicByte                          = 1
 	LenMessageSize                        = 4
 	LenNodeId                             = 4
