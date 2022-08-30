@@ -51,6 +51,15 @@ func putClusterIdString(bytes []byte, idx int, str string) int {
 	return putString(bytes, idx, str)
 }
 
+func putClusterIdStringNullable(bytes []byte, idx int, str string) int {
+	return putNullableString(bytes, idx, &str)
+}
+
+func readClusterIdStringNullable(bytes []byte, idx int) (string, int) {
+	clusterId, idx := readNullableString(bytes, idx)
+	return *clusterId, idx
+}
+
 func readCoordinatorKey(bytes []byte, idx int) (string, int) {
 	return readCompactString(bytes, idx)
 }
@@ -217,6 +226,14 @@ func readRack(bytes []byte, idx int) (*string, int) {
 
 func putRack(bytes []byte, idx int, str *string) int {
 	return putCompactStringNullable(bytes, idx, str)
+}
+
+func putRackNullableString(bytes []byte, idx int, str *string) int {
+	return putNullableString(bytes, idx, str)
+}
+
+func readRackNullableString(bytes []byte, idx int) (*string, int) {
+	return readNullableString(bytes, idx)
 }
 
 func readSaslMechanism(bytes []byte, idx int) (string, int) {
