@@ -90,10 +90,10 @@ func (o *OffsetForLeaderEpochResp) Bytes(version int16) []byte {
 	idx := 0
 	idx = putCorrId(bytes, idx, o.CorrelationId)
 	idx = putThrottleTime(bytes, idx, o.ThrottleTime)
-	idx = putArrayLen(bytes, idx, len(o.TopicRespList))
+	idx = putArrayLen(bytes, idx, o.TopicRespList)
 	for _, topic := range o.TopicRespList {
 		idx = putTopicString(bytes, idx, topic.Topic)
-		idx = putArrayLen(bytes, idx, len(topic.PartitionRespList))
+		idx = putArrayLen(bytes, idx, topic.PartitionRespList)
 		for _, partition := range topic.PartitionRespList {
 			idx = putErrorCode(bytes, idx, partition.ErrorCode)
 			idx = putPartitionId(bytes, idx, partition.PartitionId)

@@ -187,7 +187,7 @@ func (j *JoinGroupResp) Bytes(version int16) []byte {
 		idx = putMemberId(bytes, idx, j.MemberId)
 	}
 	if version == 1 {
-		idx = putArrayLen(bytes, idx, len(j.Members))
+		idx = putArrayLen(bytes, idx, j.Members)
 	} else if version == 6 || version == 7 {
 		idx = putCompactArrayLen(bytes, idx, len(j.Members))
 	}

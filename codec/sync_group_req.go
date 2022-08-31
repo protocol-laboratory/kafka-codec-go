@@ -177,7 +177,7 @@ func (s *SyncGroupReq) Bytes(containApiKeyVersion bool) []byte {
 		idx = putProtocolName(bytes, idx, s.ProtocolName)
 	}
 	if version == 0 {
-		idx = putArrayLen(bytes, idx, len(s.GroupAssignments))
+		idx = putArrayLen(bytes, idx, s.GroupAssignments)
 	} else if version == 4 || version == 5 {
 		idx = putCompactArrayLen(bytes, idx, len(s.GroupAssignments))
 	}

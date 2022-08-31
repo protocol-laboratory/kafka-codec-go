@@ -30,8 +30,9 @@ func putInt64(bytes []byte, idx int, x int64) int {
 	return idx + 8
 }
 
+// readInt This value is equivalent to int32. Easy integration with go codesy integration with go code
 func readInt(bytes []byte, idx int) (int, int) {
-	return int(binary.BigEndian.Uint32(bytes[idx:])), idx + 4
+	return int(int32(binary.BigEndian.Uint32(bytes[idx:]))), idx + 4
 }
 
 func putInt(bytes []byte, idx int, x int) int {

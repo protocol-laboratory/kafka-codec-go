@@ -73,6 +73,43 @@ func TestDecodeAndEncodeMetadataV1(t *testing.T) {
 	assert.Equal(t, bytes, codeBytes)
 }
 
+func TestDecodeMetadataReqV5(t *testing.T) {
+	bytes := testHex2Bytes(t, "000000000006736172616d61ffffffff00")
+	metadataTopicReq, err := DecodeMetadataReq(bytes, 5)
+	assert.Nil(t, err)
+	assert.Equal(t, metadataTopicReq.CorrelationId, 0)
+	assert.Equal(t, "sarama", metadataTopicReq.ClientId)
+	assert.Nil(t, metadataTopicReq.Topics)
+	assert.False(t, metadataTopicReq.AllowAutoTopicCreation)
+	assert.False(t, metadataTopicReq.IncludeTopicAuthorizedOperations)
+	assert.False(t, metadataTopicReq.IncludeClusterAuthorizedOperations)
+}
+
+func TestEncodeMetadataReqV5(t *testing.T) {
+	metadataReq := &MetadataReq{}
+	metadataReq.ApiVersion = 5
+	metadataReq.CorrelationId = 0
+	metadataReq.ClientId = "sarama"
+	metadataReq.Topics = nil
+	bytes := metadataReq.Bytes(true)
+	expectBytes := testHex2Bytes(t, "00030005000000000006736172616d61ffffffff00")
+	assert.Equal(t, expectBytes, bytes)
+}
+
+func TestDecodeAndEncodeMetadataReqV5(t *testing.T) {
+	bytes := testHex2Bytes(t, "000000000006736172616d61ffffffff00")
+	metadataTopicReq, err := DecodeMetadataReq(bytes, 5)
+	assert.Nil(t, err)
+	assert.Equal(t, metadataTopicReq.CorrelationId, 0)
+	assert.Equal(t, "sarama", metadataTopicReq.ClientId)
+	assert.Nil(t, metadataTopicReq.Topics)
+	assert.False(t, metadataTopicReq.AllowAutoTopicCreation)
+	assert.False(t, metadataTopicReq.IncludeTopicAuthorizedOperations)
+	assert.False(t, metadataTopicReq.IncludeClusterAuthorizedOperations)
+	codeBytes := metadataTopicReq.Bytes(false)
+	assert.Equal(t, bytes, codeBytes)
+}
+
 func TestDecodeMetadataV8(t *testing.T) {
 	bytes := testHex2Bytes(t, "00000001000a70726f64756365722d3100000001000a746573742d746f706963010000")
 	metadataTopicReq, err := DecodeMetadataReq(bytes, 8)

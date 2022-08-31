@@ -33,3 +33,10 @@ func TestReadInt64Case2(t *testing.T) {
 	res, _ := readInt64(timestampSlice, 0)
 	assert.Equal(t, int64(1625965841631), res)
 }
+
+func TestSignedInt(t *testing.T) {
+	bytes := make([]byte, 4)
+	putInt(bytes, 0, -1)
+	res, _ := readInt(bytes, 0)
+	assert.Equal(t, -1, res)
+}

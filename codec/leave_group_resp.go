@@ -85,8 +85,7 @@ func (l *LeaveGroupResp) Bytes(version int16) []byte {
 		idx = putTaggedField(bytes, idx)
 		idx = putThrottleTime(bytes, idx, l.ThrottleTime)
 		idx = putErrorCode(bytes, idx, 0)
-		bytes[idx] = byte(len(l.Members) + 1)
-		idx++
+		idx = putCompactArrayLen(bytes, idx, len(l.Members))
 		for _, member := range l.Members {
 			idx = putMemberId(bytes, idx, member.MemberId)
 			idx = putGroupInstanceId(bytes, idx, member.GroupInstanceId)

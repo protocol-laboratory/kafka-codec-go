@@ -126,10 +126,10 @@ func (f *FetchResp) Bytes(version int16) []byte {
 	idx = putThrottleTime(bytes, idx, f.ThrottleTime)
 	idx = putErrorCode(bytes, idx, f.ErrorCode)
 	idx = putSessionId(bytes, idx, f.SessionId)
-	idx = putArrayLen(bytes, idx, len(f.TopicRespList))
+	idx = putArrayLen(bytes, idx, f.TopicRespList)
 	for _, t := range f.TopicRespList {
 		idx = putString(bytes, idx, t.Topic)
-		idx = putArrayLen(bytes, idx, len(t.PartitionRespList))
+		idx = putArrayLen(bytes, idx, t.PartitionRespList)
 		for _, p := range t.PartitionRespList {
 			idx = putInt(bytes, idx, p.PartitionIndex)
 			idx = putErrorCode(bytes, idx, p.ErrorCode)

@@ -86,7 +86,7 @@ func (a *ApiResp) Bytes(version int16) []byte {
 	idx = putCorrId(bytes, idx, a.CorrelationId)
 	idx = putErrorCode(bytes, idx, a.ErrorCode)
 	if version < 3 {
-		idx = putArrayLen(bytes, idx, len(a.ApiRespVersions))
+		idx = putArrayLen(bytes, idx, a.ApiRespVersions)
 	}
 	if version == 3 {
 		idx = putCompactArrayLen(bytes, idx, len(a.ApiRespVersions))

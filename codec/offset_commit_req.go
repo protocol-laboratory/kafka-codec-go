@@ -228,14 +228,14 @@ func (o *OffsetCommitReq) Bytes(containApiKeyVersion bool) []byte {
 		idx = putGroupInstanceId(bytes, idx, o.GroupInstanceId)
 	}
 	if version == 2 {
-		idx = putArrayLen(bytes, idx, len(o.TopicReqList))
+		idx = putArrayLen(bytes, idx, o.TopicReqList)
 	} else if version == 8 {
 		idx = putCompactArrayLen(bytes, idx, len(o.TopicReqList))
 	}
 	for _, topicReq := range o.TopicReqList {
 		if version == 2 {
 			idx = putTopicString(bytes, idx, topicReq.Topic)
-			idx = putArrayLen(bytes, idx, len(topicReq.PartitionReqList))
+			idx = putArrayLen(bytes, idx, topicReq.PartitionReqList)
 		} else if version == 8 {
 			idx = putTopic(bytes, idx, topicReq.Topic)
 			idx = putCompactArrayLen(bytes, idx, len(topicReq.PartitionReqList))

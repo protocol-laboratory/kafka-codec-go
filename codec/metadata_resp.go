@@ -319,7 +319,7 @@ func (m *MetadataResp) Bytes(version int16) []byte {
 		idx = putThrottleTime(bytes, idx, 0)
 	}
 	if version < 9 {
-		idx = putArrayLen(bytes, idx, len(m.BrokerMetadataList))
+		idx = putArrayLen(bytes, idx, m.BrokerMetadataList)
 	} else if version == 9 {
 		idx = putCompactArrayLen(bytes, idx, len(m.BrokerMetadataList))
 	}
@@ -349,7 +349,7 @@ func (m *MetadataResp) Bytes(version int16) []byte {
 		idx = putControllerId(bytes, idx, m.ControllerId)
 	}
 	if version < 9 {
-		idx = putArrayLen(bytes, idx, len(m.TopicMetadataList))
+		idx = putArrayLen(bytes, idx, m.TopicMetadataList)
 	} else if version == 9 {
 		idx = putCompactArrayLen(bytes, idx, len(m.TopicMetadataList))
 	}
@@ -364,7 +364,7 @@ func (m *MetadataResp) Bytes(version int16) []byte {
 			idx = putBool(bytes, idx, topicMetadata.IsInternal)
 		}
 		if version < 9 {
-			idx = putArrayLen(bytes, idx, len(topicMetadata.PartitionMetadataList))
+			idx = putArrayLen(bytes, idx, topicMetadata.PartitionMetadataList)
 		} else if version == 9 {
 			idx = putCompactArrayLen(bytes, idx, len(topicMetadata.PartitionMetadataList))
 		}
@@ -376,7 +376,7 @@ func (m *MetadataResp) Bytes(version int16) []byte {
 				idx = putLeaderEpoch(bytes, idx, partitionMetadata.LeaderEpoch)
 			}
 			if version < 9 {
-				idx = putArrayLen(bytes, idx, len(partitionMetadata.Replicas))
+				idx = putArrayLen(bytes, idx, partitionMetadata.Replicas)
 			} else if version == 9 {
 				idx = putCompactArrayLen(bytes, idx, len(partitionMetadata.Replicas))
 			}
@@ -384,7 +384,7 @@ func (m *MetadataResp) Bytes(version int16) []byte {
 				idx = putReplicaId(bytes, idx, replica.ReplicaId)
 			}
 			if version < 9 {
-				idx = putArrayLen(bytes, idx, len(partitionMetadata.CaughtReplicas))
+				idx = putArrayLen(bytes, idx, partitionMetadata.CaughtReplicas)
 			} else if version == 9 {
 				idx = putCompactArrayLen(bytes, idx, len(partitionMetadata.CaughtReplicas))
 			}
@@ -393,7 +393,7 @@ func (m *MetadataResp) Bytes(version int16) []byte {
 			}
 			if version > 4 && version <= 9 {
 				if version < 9 {
-					idx = putArrayLen(bytes, idx, len(partitionMetadata.OfflineReplicas))
+					idx = putArrayLen(bytes, idx, partitionMetadata.OfflineReplicas)
 				} else if version == 9 {
 					idx = putCompactArrayLen(bytes, idx, len(partitionMetadata.OfflineReplicas))
 				}

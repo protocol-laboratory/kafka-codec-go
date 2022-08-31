@@ -131,10 +131,10 @@ func (p *ProduceResp) Bytes(version int16) []byte {
 	bytes := make([]byte, p.BytesLength(version))
 	idx := 0
 	idx = putCorrId(bytes, idx, p.CorrelationId)
-	idx = putArrayLen(bytes, idx, len(p.TopicRespList))
+	idx = putArrayLen(bytes, idx, p.TopicRespList)
 	for _, topic := range p.TopicRespList {
 		idx = putTopicString(bytes, idx, topic.Topic)
-		idx = putArrayLen(bytes, idx, len(topic.PartitionRespList))
+		idx = putArrayLen(bytes, idx, topic.PartitionRespList)
 		for _, partition := range topic.PartitionRespList {
 			idx = putPartitionId(bytes, idx, partition.PartitionId)
 			idx = putErrorCode(bytes, idx, partition.ErrorCode)
@@ -142,7 +142,7 @@ func (p *ProduceResp) Bytes(version int16) []byte {
 			idx = putTime(bytes, idx, partition.Time)
 			idx = putLogStartOffset(bytes, idx, partition.LogStartOffset)
 			if version == 8 {
-				idx = putArrayLen(bytes, idx, len(partition.RecordErrorList))
+				idx = putArrayLen(bytes, idx, partition.RecordErrorList)
 				for _, recordError := range partition.RecordErrorList {
 					idx = putBatchIndex(bytes, idx, recordError.BatchIndex)
 					idx = putNullableString(bytes, idx, recordError.BatchIndexErrorMessage)

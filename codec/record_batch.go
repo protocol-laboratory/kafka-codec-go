@@ -103,7 +103,7 @@ func (r *RecordBatch) Bytes() []byte {
 	idx = putProducerId(bytes, idx, r.ProducerId)
 	idx = putProducerEpoch(bytes, idx, r.ProducerEpoch)
 	idx = putBaseSequence(bytes, idx, r.BaseSequence)
-	idx = putArrayLen(bytes, idx, len(r.Records))
+	idx = putArrayLen(bytes, idx, r.Records)
 	for _, record := range r.Records {
 		idx = putRecord(bytes, idx, record.Bytes())
 	}
