@@ -78,7 +78,10 @@ func (k *KafkaNetClient) Send(bytes []byte) ([]byte, error) {
 		wg.Done()
 	})
 	wg.Wait()
-	return result[4:], err
+	if err != nil {
+		return nil, err
+	}
+	return result[4:], nil
 }
 
 func (k *KafkaNetClient) sendAsync(bytes []byte, callback func([]byte, error)) {
