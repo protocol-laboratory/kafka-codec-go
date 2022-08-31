@@ -268,21 +268,7 @@ func (k *KafkaServer) OnClosed(c gnet.Conn, err error) (action gnet.Action) {
 }
 
 func (k *KafkaServer) Run() error {
-	encoderConfig := gnet.EncoderConfig{
-		ByteOrder:                       binary.BigEndian,
-		LengthFieldLength:               4,
-		LengthAdjustment:                0,
-		LengthIncludesLengthFieldLength: false,
-	}
-	decoderConfig := gnet.DecoderConfig{
-		ByteOrder:           binary.BigEndian,
-		LengthFieldOffset:   0,
-		LengthFieldLength:   4,
-		LengthAdjustment:    0,
-		InitialBytesToStrip: 4,
-	}
-	kfkCodec := gnet.NewLengthFieldBasedFrameCodec(encoderConfig, decoderConfig)
-	return gnet.Serve(k, fmt.Sprintf("tcp://%s:%d", k.gnetConfig.ListenHost, k.gnetConfig.ListenPort), gnet.WithNumEventLoop(k.gnetConfig.EventLoopNum), gnet.WithCodec(kfkCodec))
+	return gnet.Serve(k, fmt.Sprintf("tcp://%s:%d", k.gnetConfig.ListenHost, k.gnetConfig.ListenPort), gnet.WithNumEventLoop(k.gnetConfig.EventLoopNum), gnet.WithCodec(kafkaCodec))
 }
 
 func (k *KafkaServer) Stop(ctx context.Context) error {
