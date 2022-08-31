@@ -21,7 +21,6 @@
 package kgnet
 
 import (
-	"encoding/binary"
 	"fmt"
 	"github.com/panjf2000/gnet"
 	"github.com/protocol-laboratory/kafka-codec-go/codec"
@@ -316,23 +315,9 @@ func (k *KafkaGnetClient) Close() {
 }
 
 func newKafkaGnetClient(config GnetClientConfig) (*KafkaGnetClient, error) {
-	encoderConfig := gnet.EncoderConfig{
-		ByteOrder:                       binary.BigEndian,
-		LengthFieldLength:               4,
-		LengthAdjustment:                0,
-		LengthIncludesLengthFieldLength: false,
-	}
-	decoderConfig := gnet.DecoderConfig{
-		ByteOrder:           binary.BigEndian,
-		LengthFieldOffset:   0,
-		LengthFieldLength:   4,
-		LengthAdjustment:    0,
-		InitialBytesToStrip: 4,
-	}
-	kfkCodec := gnet.NewLengthFieldBasedFrameCodec(encoderConfig, decoderConfig)
 	k := &KafkaGnetClient{}
 	var err error
-	k.networkClient, err = gnet.NewClient(k, gnet.WithCodec(kfkCodec))
+	k.networkClient, err = gnet.NewClient(k, gnet.WithCodec(kafkaCodec))
 	if err != nil {
 		return nil, err
 	}
