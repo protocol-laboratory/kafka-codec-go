@@ -57,11 +57,19 @@ func DecodeProduceResp(bytes []byte, version int16) (resp *ProduceResp, err erro
 	resp.CorrelationId, idx = readCorrId(bytes, idx)
 	var topicLength int
 	topicLength, idx = readArrayLen(bytes, idx)
+	if topicLength > len(bytes) {
+		return nil, InvalidProtocolContent
+	}
+	resp.TopicRespList = make([]*ProduceTopicResp, topicLength)
 	for i := 0; i < topicLength; i++ {
 		produceTopicResp := &ProduceTopicResp{}
 		produceTopicResp.Topic, idx = readTopicString(bytes, idx)
 		var partitionLength int
 		partitionLength, idx = readArrayLen(bytes, idx)
+		if partitionLength > len(bytes) {
+			return nil, InvalidProtocolContent
+		}
+		produceTopicResp.PartitionRespList = make([]*ProducePartitionResp, partitionLength)
 		for j := 0; j < partitionLength; j++ {
 			producePartitionResp := &ProducePartitionResp{}
 			producePartitionResp.PartitionId, idx = readPartitionId(bytes, idx)
@@ -72,17 +80,21 @@ func DecodeProduceResp(bytes []byte, version int16) (resp *ProduceResp, err erro
 			if version == 8 {
 				var recordErrorLen int
 				recordErrorLen, idx = readArrayLen(bytes, idx)
+				if recordErrorLen > len(bytes) {
+					return nil, InvalidProtocolContent
+				}
+				producePartitionResp.RecordErrorList = make([]*RecordError, recordErrorLen)
 				for k := 0; k < recordErrorLen; k++ {
 					recordError := &RecordError{}
 					recordError.BatchIndex, idx = readBatchIndex(bytes, idx)
 					recordError.BatchIndexErrorMessage, idx = readNullableString(bytes, idx)
-					producePartitionResp.RecordErrorList = append(producePartitionResp.RecordErrorList, recordError)
+					producePartitionResp.RecordErrorList[k] = recordError
 				}
 				producePartitionResp.ErrorMessage, idx = readNullableString(bytes, idx)
 			}
-			produceTopicResp.PartitionRespList = append(produceTopicResp.PartitionRespList, producePartitionResp)
+			produceTopicResp.PartitionRespList[j] = producePartitionResp
 		}
-		resp.TopicRespList = append(resp.TopicRespList, produceTopicResp)
+		resp.TopicRespList[i] = produceTopicResp
 	}
 	if version == 7 || version == 8 {
 		resp.ThrottleTime, idx = readThrottleTime(bytes, idx)

@@ -81,7 +81,6 @@ func DecodeMetadataResp(bytes []byte, version int16) (metadataResp *MetadataResp
 	} else if version == 9 {
 		length, idx = readCompactArrayLen(bytes, idx)
 	}
-	metadataResp.BrokerMetadataList = make([]*BrokerMetadata, length)
 	for i := 0; i < length; i++ {
 		brokerMetadata := &BrokerMetadata{}
 		brokerMetadata.NodeId, idx = readNodeId(bytes, idx)
@@ -99,7 +98,7 @@ func DecodeMetadataResp(bytes []byte, version int16) (metadataResp *MetadataResp
 		if version == 9 {
 			idx = readTaggedField(bytes, idx)
 		}
-		metadataResp.BrokerMetadataList[i] = brokerMetadata
+		metadataResp.BrokerMetadataList = append(metadataResp.BrokerMetadataList, brokerMetadata)
 	}
 	if version > 1 && version < 9 {
 		metadataResp.ClusterId, idx = readClusterIdStringNullable(bytes, idx)
@@ -115,7 +114,6 @@ func DecodeMetadataResp(bytes []byte, version int16) (metadataResp *MetadataResp
 	} else if version == 9 {
 		topicLength, idx = readCompactArrayLen(bytes, idx)
 	}
-	metadataResp.TopicMetadataList = make([]*TopicMetadata, topicLength)
 	for i := 0; i < topicLength; i++ {
 		topicMetadata := &TopicMetadata{}
 		topicMetadata.ErrorCode, idx = readErrorCode(bytes, idx)
@@ -133,7 +131,6 @@ func DecodeMetadataResp(bytes []byte, version int16) (metadataResp *MetadataResp
 		} else if version == 9 {
 			partitionLength, idx = readCompactArrayLen(bytes, idx)
 		}
-		topicMetadata.PartitionMetadataList = make([]*PartitionMetadata, partitionLength)
 		for j := 0; j < partitionLength; j++ {
 			partitionMetadata := &PartitionMetadata{}
 			partitionMetadata.ErrorCode, idx = readErrorCode(bytes, idx)
@@ -180,7 +177,7 @@ func DecodeMetadataResp(bytes []byte, version int16) (metadataResp *MetadataResp
 					partitionMetadata.OfflineReplicas[k] = replica
 				}
 			}
-			topicMetadata.PartitionMetadataList[j] = partitionMetadata
+			topicMetadata.PartitionMetadataList = append(topicMetadata.PartitionMetadataList, partitionMetadata)
 			if version == 9 {
 				idx = readTaggedField(bytes, idx)
 			}
@@ -188,7 +185,7 @@ func DecodeMetadataResp(bytes []byte, version int16) (metadataResp *MetadataResp
 		if version > 7 && version <= 9 {
 			topicMetadata.TopicAuthorizedOperation, idx = readTopicAuthorizedOperation(bytes, idx)
 		}
-		metadataResp.TopicMetadataList[i] = topicMetadata
+		metadataResp.TopicMetadataList = append(metadataResp.TopicMetadataList, topicMetadata)
 		if version == 9 {
 			idx = readTaggedField(bytes, idx)
 		}

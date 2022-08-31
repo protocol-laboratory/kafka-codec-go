@@ -57,12 +57,18 @@ func DecodeProduceReq(bytes []byte, version int16) (produceReq *ProduceReq, err 
 	produceReq.Timeout, idx = readInt(bytes, idx)
 	var length int
 	length, idx = readInt(bytes, idx)
+	if length > len(bytes) {
+		return nil, InvalidProtocolContent
+	}
 	produceReq.TopicReqList = make([]*ProduceTopicReq, length)
 	for i := 0; i < length; i++ {
 		topic := &ProduceTopicReq{}
 		topic.Topic, idx = readTopicString(bytes, idx)
 		var partitionLength int
 		partitionLength, idx = readInt(bytes, idx)
+		if partitionLength > len(bytes) {
+			return nil, InvalidProtocolContent
+		}
 		topic.PartitionReqList = make([]*ProducePartitionReq, partitionLength)
 		for j := 0; j < partitionLength; j++ {
 			partition := &ProducePartitionReq{}

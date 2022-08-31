@@ -78,9 +78,8 @@ func DecodeJoinGroupReq(bytes []byte, version int16) (joinGroupReq *JoinGroupReq
 	} else if version == 6 {
 		length, idx = readCompactArrayLen(bytes, idx)
 	}
-	joinGroupReq.GroupProtocols = make([]*GroupProtocol, length)
 	for i := 0; i < length; i++ {
-		groupProtocol := GroupProtocol{}
+		groupProtocol := &GroupProtocol{}
 		if version == 1 {
 			groupProtocol.ProtocolName, idx = readProtocolNameString(bytes, idx)
 		} else if version == 6 {
@@ -94,7 +93,7 @@ func DecodeJoinGroupReq(bytes []byte, version int16) (joinGroupReq *JoinGroupReq
 		if version == 6 {
 			idx = readTaggedField(bytes, idx)
 		}
-		joinGroupReq.GroupProtocols[i] = &groupProtocol
+		joinGroupReq.GroupProtocols = append(joinGroupReq.GroupProtocols, groupProtocol)
 	}
 	if version == 6 {
 		idx = readTaggedField(bytes, idx)

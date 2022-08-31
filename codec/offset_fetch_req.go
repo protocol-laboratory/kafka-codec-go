@@ -63,6 +63,9 @@ func DecodeOffsetFetchReq(bytes []byte, version int16) (fetchReq *OffsetFetchReq
 	} else if version == 6 || version == 7 {
 		length, idx = readCompactArrayLen(bytes, idx)
 	}
+	if length > len(bytes) {
+		return nil, InvalidProtocolContent
+	}
 	fetchReq.TopicReqList = make([]*OffsetFetchTopicReq, length)
 	for i := 0; i < length; i++ {
 		topic := OffsetFetchTopicReq{}
@@ -76,6 +79,9 @@ func DecodeOffsetFetchReq(bytes []byte, version int16) (fetchReq *OffsetFetchReq
 			partitionLen, idx = readArrayLen(bytes, idx)
 		} else if version == 6 || version == 7 {
 			partitionLen, idx = readCompactArrayLen(bytes, idx)
+		}
+		if partitionLen > len(bytes) {
+			return nil, InvalidProtocolContent
 		}
 		topic.PartitionReqList = make([]*OffsetFetchPartitionReq, partitionLen)
 		for j := 0; j < partitionLen; j++ {

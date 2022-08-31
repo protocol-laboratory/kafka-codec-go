@@ -77,9 +77,8 @@ func DecodeSyncGroupReq(bytes []byte, version int16) (groupReq *SyncGroupReq, er
 	} else if version == 4 || version == 5 {
 		groupAssignmentLength, idx = readCompactArrayLen(bytes, idx)
 	}
-	groupReq.GroupAssignments = make([]*GroupAssignment, groupAssignmentLength)
 	for i := 0; i < groupAssignmentLength; i++ {
-		groupAssignment := GroupAssignment{}
+		groupAssignment := &GroupAssignment{}
 		if version == 0 {
 			groupAssignment.MemberId, idx = readMemberIdString(bytes, idx)
 		} else if version == 4 || version == 5 {
@@ -93,7 +92,7 @@ func DecodeSyncGroupReq(bytes []byte, version int16) (groupReq *SyncGroupReq, er
 		if version == 4 || version == 5 {
 			idx = readTaggedField(bytes, idx)
 		}
-		groupReq.GroupAssignments[i] = &groupAssignment
+		groupReq.GroupAssignments = append(groupReq.GroupAssignments, groupAssignment)
 	}
 	if version == 4 || version == 5 {
 		idx = readTaggedField(bytes, idx)

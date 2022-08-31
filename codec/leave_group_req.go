@@ -56,13 +56,12 @@ func DecodeLeaveGroupReq(bytes []byte, version int16) (leaveGroupReq *LeaveGroup
 	if version == 4 {
 		var length int
 		length, idx = readCompactArrayLen(bytes, idx)
-		leaveGroupReq.Members = make([]*LeaveGroupMember, length)
 		for i := 0; i < length; i++ {
-			member := LeaveGroupMember{}
+			member := &LeaveGroupMember{}
 			member.MemberId, idx = readMemberId(bytes, idx)
 			member.GroupInstanceId, idx = readGroupInstanceId(bytes, idx)
 			idx = readTaggedField(bytes, idx)
-			leaveGroupReq.Members[i] = &member
+			leaveGroupReq.Members = append(leaveGroupReq.Members, member)
 		}
 		idx = readTaggedField(bytes, idx)
 	}
