@@ -59,12 +59,18 @@ func DecodeFetchResp(bytes []byte, version int16) (fetchResp *FetchResp, err err
 	fetchResp.ErrorCode, idx = readErrorCode(bytes, idx)
 	fetchResp.SessionId, idx = readSessionId(bytes, idx)
 	topicLen, idx := readArrayLen(bytes, idx)
+	if topicLen > len(bytes) {
+		return nil, InvalidProtocolContent
+	}
 	fetchResp.TopicRespList = make([]*FetchTopicResp, topicLen)
 	for i := 0; i < topicLen; i++ {
 		topicResp := &FetchTopicResp{}
 		topicResp.Topic, idx = readTopicString(bytes, idx)
 		var partitionLen int
 		partitionLen, idx = readArrayLen(bytes, idx)
+		if partitionLen > len(bytes) {
+			return nil, InvalidProtocolContent
+		}
 		topicResp.PartitionRespList = make([]*FetchPartitionResp, partitionLen)
 		for j := 0; j < partitionLen; j++ {
 			partitionResp := &FetchPartitionResp{}

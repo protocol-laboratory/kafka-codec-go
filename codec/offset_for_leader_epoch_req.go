@@ -53,21 +53,20 @@ func DecodeOffsetForLeaderEpochReq(bytes []byte, version int16) (leaderEpochReq 
 	leaderEpochReq.ReplicaId, idx = readReplicaId(bytes, idx)
 	var length int
 	length, idx = readArrayLen(bytes, idx)
-	leaderEpochReq.TopicReqList = make([]*OffsetLeaderEpochTopicReq, length)
 	for i := 0; i < length; i++ {
-		topic := OffsetLeaderEpochTopicReq{}
+		topic := &OffsetLeaderEpochTopicReq{}
 		topic.Topic, idx = readTopicString(bytes, idx)
 		var partitionLen int
 		partitionLen, idx = readArrayLen(bytes, idx)
-		topic.PartitionReqList = make([]*OffsetLeaderEpochPartitionReq, partitionLen)
 		for j := 0; j < partitionLen; j++ {
 			o := &OffsetLeaderEpochPartitionReq{}
 			o.PartitionId, idx = readPartitionId(bytes, idx)
 			o.CurrentLeaderEpoch, idx = readLeaderEpoch(bytes, idx)
 			o.LeaderEpoch, idx = readLeaderEpoch(bytes, idx)
+			topic.PartitionReqList = append(topic.PartitionReqList, o)
 			topic.PartitionReqList[j] = o
 		}
-		leaderEpochReq.TopicReqList[i] = &topic
+		leaderEpochReq.TopicReqList = append(leaderEpochReq.TopicReqList, topic)
 	}
 	return leaderEpochReq, nil
 }

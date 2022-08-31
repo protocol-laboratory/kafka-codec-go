@@ -68,12 +68,18 @@ func DecodeFetchReq(bytes []byte, version int16) (fetchReq *FetchReq, err error)
 	fetchReq.FetchSessionEpoch, idx = readFetchSessionEpoch(bytes, idx)
 	var length int
 	length, idx = readArrayLen(bytes, idx)
+	if length > len(bytes) {
+		return nil, InvalidProtocolContent
+	}
 	fetchReq.TopicReqList = make([]*FetchTopicReq, length)
 	for i := 0; i < length; i++ {
 		topicReq := FetchTopicReq{}
 		topicReq.Topic, idx = readTopicString(bytes, idx)
 		var pLen int
 		pLen, idx = readArrayLen(bytes, idx)
+		if pLen > len(bytes) {
+			return nil, InvalidProtocolContent
+		}
 		topicReq.PartitionReqList = make([]*FetchPartitionReq, pLen)
 		for j := 0; j < pLen; j++ {
 			partition := &FetchPartitionReq{}

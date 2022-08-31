@@ -62,7 +62,6 @@ func DecodeListOffsetsReq(bytes []byte, version int16) (offsetReq *ListOffsetsRe
 		idx = readTaggedField(bytes, idx)
 		length, idx = readCompactArrayLen(bytes, idx)
 	}
-	offsetReq.TopicReqList = make([]*ListOffsetsTopic, length)
 	for i := 0; i < length; i++ {
 		topic := &ListOffsetsTopic{}
 		if version == 1 || version == 5 {
@@ -76,7 +75,6 @@ func DecodeListOffsetsReq(bytes []byte, version int16) (offsetReq *ListOffsetsRe
 		} else if version == 6 {
 			partitionLength, idx = readCompactArrayLen(bytes, idx)
 		}
-		topic.PartitionReqList = make([]*ListOffsetsPartition, partitionLength)
 		for j := 0; j < partitionLength; j++ {
 			partition := &ListOffsetsPartition{}
 			partition.PartitionId, idx = readInt(bytes, idx)
@@ -87,12 +85,12 @@ func DecodeListOffsetsReq(bytes []byte, version int16) (offsetReq *ListOffsetsRe
 			if version == 6 {
 				idx = readTaggedField(bytes, idx)
 			}
-			topic.PartitionReqList[j] = partition
+			topic.PartitionReqList = append(topic.PartitionReqList, partition)
 		}
 		if version == 6 {
 			idx = readTaggedField(bytes, idx)
 		}
-		offsetReq.TopicReqList[i] = topic
+		offsetReq.TopicReqList = append(offsetReq.TopicReqList, topic)
 	}
 	if version == 6 {
 		idx = readTaggedField(bytes, idx)

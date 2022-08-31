@@ -76,6 +76,10 @@ func DecodeOffsetFetchResp(bytes []byte, version int16) (resp *OffsetFetchResp, 
 	} else if version == 6 || version == 7 {
 		topicRespLen, idx = readCompactArrayLen(bytes, idx)
 	}
+	if topicRespLen > len(bytes) {
+		return nil, InvalidProtocolContent
+	}
+	resp.TopicRespList = make([]*OffsetFetchTopicResp, topicRespLen)
 	for i := 0; i < topicRespLen; i++ {
 		topic := &OffsetFetchTopicResp{}
 		if version == 1 {
@@ -89,7 +93,11 @@ func DecodeOffsetFetchResp(bytes []byte, version int16) (resp *OffsetFetchResp, 
 		} else if version == 6 || version == 7 {
 			partitionRespLen, idx = readCompactArrayLen(bytes, idx)
 		}
-		for i := 0; i < partitionRespLen; i++ {
+		if partitionRespLen > len(bytes) {
+			return nil, InvalidProtocolContent
+		}
+		topic.PartitionRespList = make([]*OffsetFetchPartitionResp, partitionRespLen)
+		for j := 0; j < partitionRespLen; j++ {
 			partitionResp := &OffsetFetchPartitionResp{}
 			partitionResp.PartitionId, idx = readPartitionId(bytes, idx)
 			partitionResp.Offset, idx = readOffset(bytes, idx)
@@ -107,12 +115,12 @@ func DecodeOffsetFetchResp(bytes []byte, version int16) (resp *OffsetFetchResp, 
 			if version == 6 || version == 7 {
 				idx = readTaggedField(bytes, idx)
 			}
-			topic.PartitionRespList = append(topic.PartitionRespList, partitionResp)
+			topic.PartitionRespList[j] = partitionResp
 		}
 		if version == 6 || version == 7 {
 			idx = readTaggedField(bytes, idx)
 		}
-		resp.TopicRespList = append(resp.TopicRespList, topic)
+		resp.TopicRespList[i] = topic
 	}
 	if version == 6 || version == 7 {
 		resp.ErrorCode, idx = readErrorCode(bytes, idx)

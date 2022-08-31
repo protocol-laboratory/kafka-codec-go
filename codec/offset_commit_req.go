@@ -81,6 +81,9 @@ func DecodeOffsetCommitReq(bytes []byte, version int16) (offsetReq *OffsetCommit
 	} else if version == 8 {
 		length, idx = readCompactArrayLen(bytes, idx)
 	}
+	if length > len(bytes) {
+		return nil, InvalidProtocolContent
+	}
 	offsetReq.TopicReqList = make([]*OffsetCommitTopicReq, length)
 	for i := 0; i < length; i++ {
 		topic := &OffsetCommitTopicReq{}
@@ -94,6 +97,9 @@ func DecodeOffsetCommitReq(bytes []byte, version int16) (offsetReq *OffsetCommit
 			partitionLength, idx = readArrayLen(bytes, idx)
 		} else if version == 8 {
 			partitionLength, idx = readCompactArrayLen(bytes, idx)
+		}
+		if partitionLength > len(bytes) {
+			return nil, InvalidProtocolContent
 		}
 		topic.PartitionReqList = make([]*OffsetCommitPartitionReq, partitionLength)
 		for j := 0; j < partitionLength; j++ {

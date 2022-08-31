@@ -55,6 +55,10 @@ func DecodeOffsetCommitResp(bytes []byte, version int16) (resp *OffsetCommitResp
 	} else if version == 8 {
 		topicRespLen, idx = readCompactArrayLen(bytes, idx)
 	}
+	if topicRespLen > len(bytes) {
+		return nil, InvalidProtocolContent
+	}
+	resp.TopicRespList = make([]*OffsetCommitTopicResp, topicRespLen)
 	for i := 0; i < topicRespLen; i++ {
 		topicResp := &OffsetCommitTopicResp{}
 		if version == 2 {
@@ -68,19 +72,23 @@ func DecodeOffsetCommitResp(bytes []byte, version int16) (resp *OffsetCommitResp
 		} else if version == 8 {
 			partitionRespLen, idx = readCompactArrayLen(bytes, idx)
 		}
-		for i := 0; i < partitionRespLen; i++ {
+		if partitionRespLen > len(bytes) {
+			return nil, InvalidProtocolContent
+		}
+		topicResp.PartitionRespList = make([]*OffsetCommitPartitionResp, partitionRespLen)
+		for j := 0; j < partitionRespLen; j++ {
 			partitionResp := &OffsetCommitPartitionResp{}
 			partitionResp.PartitionId, idx = readPartitionId(bytes, idx)
 			partitionResp.ErrorCode, idx = readErrorCode(bytes, idx)
 			if version == 8 {
 				idx = readTaggedField(bytes, idx)
 			}
-			topicResp.PartitionRespList = append(topicResp.PartitionRespList, partitionResp)
+			topicResp.PartitionRespList[j] = partitionResp
 		}
 		if version == 8 {
 			idx = readTaggedField(bytes, idx)
 		}
-		resp.TopicRespList = append(resp.TopicRespList, topicResp)
+		resp.TopicRespList[i] = topicResp
 	}
 	if version == 8 {
 		idx = readTaggedField(bytes, idx)
