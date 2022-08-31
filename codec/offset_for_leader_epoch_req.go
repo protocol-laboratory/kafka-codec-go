@@ -104,10 +104,10 @@ func (o *OffsetForLeaderEpochReq) Bytes(containApiKeyVersion bool) []byte {
 	idx = putCorrId(bytes, idx, o.CorrelationId)
 	idx = putClientId(bytes, idx, o.ClientId)
 	idx = putReplicaId(bytes, idx, o.ReplicaId)
-	idx = putArrayLen(bytes, idx, len(o.TopicReqList))
+	idx = putArrayLen(bytes, idx, o.TopicReqList)
 	for _, topicReq := range o.TopicReqList {
 		idx = putTopicString(bytes, idx, topicReq.Topic)
-		idx = putArrayLen(bytes, idx, len(topicReq.PartitionReqList))
+		idx = putArrayLen(bytes, idx, topicReq.PartitionReqList)
 		for _, partitionReq := range topicReq.PartitionReqList {
 			idx = putPartitionId(bytes, idx, partitionReq.PartitionId)
 			idx = putLeaderEpoch(bytes, idx, partitionReq.CurrentLeaderEpoch)

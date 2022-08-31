@@ -163,7 +163,7 @@ func (l *ListOffsetsReq) Bytes(containApiKeyVersion bool) []byte {
 		idx = putIsolationLevel(bytes, idx, l.IsolationLevel)
 	}
 	if version == 1 || version == 5 {
-		idx = putArrayLen(bytes, idx, len(l.TopicReqList))
+		idx = putArrayLen(bytes, idx, l.TopicReqList)
 	} else if version == 6 {
 		idx = putTaggedField(bytes, idx)
 		idx = putCompactArrayLen(bytes, idx, len(l.TopicReqList))
@@ -175,7 +175,7 @@ func (l *ListOffsetsReq) Bytes(containApiKeyVersion bool) []byte {
 			idx = putTopic(bytes, idx, topicReq.Topic)
 		}
 		if version == 1 || version == 5 {
-			idx = putArrayLen(bytes, idx, len(topicReq.PartitionReqList))
+			idx = putArrayLen(bytes, idx, topicReq.PartitionReqList)
 		} else if version == 6 {
 			idx = putCompactArrayLen(bytes, idx, len(topicReq.PartitionReqList))
 		}

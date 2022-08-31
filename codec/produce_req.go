@@ -120,10 +120,10 @@ func (p *ProduceReq) Bytes(containApiKeyVersion bool) []byte {
 	idx = putTransactionId(bytes, idx, p.TransactionId)
 	idx = putRequiredAcks(bytes, idx, p.RequiredAcks)
 	idx = putInt(bytes, idx, p.Timeout)
-	idx = putArrayLen(bytes, idx, len(p.TopicReqList))
+	idx = putArrayLen(bytes, idx, p.TopicReqList)
 	for _, topicReq := range p.TopicReqList {
 		idx = putTopicString(bytes, idx, topicReq.Topic)
-		idx = putArrayLen(bytes, idx, len(topicReq.PartitionReqList))
+		idx = putArrayLen(bytes, idx, topicReq.PartitionReqList)
 		for _, partitionReq := range topicReq.PartitionReqList {
 			idx = putPartitionId(bytes, idx, partitionReq.PartitionId)
 			if partitionReq.RecordBatch != nil {

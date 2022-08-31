@@ -63,7 +63,7 @@ func (s *SaslHandshakeResp) Bytes(version int16) []byte {
 	idx := 0
 	idx = putCorrId(bytes, idx, s.CorrelationId)
 	idx = putErrorCode(bytes, idx, s.ErrorCode)
-	idx = putArrayLen(bytes, idx, len(s.EnableMechanisms))
+	idx = putArrayLen(bytes, idx, s.EnableMechanisms)
 	for _, val := range s.EnableMechanisms {
 		idx = putSaslMechanism(bytes, idx, val.SaslMechanism)
 	}

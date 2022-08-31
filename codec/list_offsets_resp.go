@@ -142,7 +142,7 @@ func (o *ListOffsetsResp) Bytes(version int16) []byte {
 		idx = putThrottleTime(bytes, idx, o.ThrottleTime)
 	}
 	if version == 1 || version == 5 {
-		idx = putArrayLen(bytes, idx, len(o.TopicRespList))
+		idx = putArrayLen(bytes, idx, o.TopicRespList)
 	} else if version == 6 {
 		idx = putTaggedField(bytes, idx)
 		idx = putCompactArrayLen(bytes, idx, len(o.TopicRespList))
@@ -150,7 +150,7 @@ func (o *ListOffsetsResp) Bytes(version int16) []byte {
 	for _, topic := range o.TopicRespList {
 		if version == 1 || version == 5 {
 			idx = putTopicString(bytes, idx, topic.Topic)
-			idx = putArrayLen(bytes, idx, len(topic.PartitionRespList))
+			idx = putArrayLen(bytes, idx, topic.PartitionRespList)
 		} else if version == 6 {
 			idx = putTopic(bytes, idx, topic.Topic)
 			idx = putCompactArrayLen(bytes, idx, len(topic.PartitionRespList))

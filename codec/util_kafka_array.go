@@ -21,8 +21,11 @@ func readArrayLen(bytes []byte, idx int) (int, int) {
 	return readInt(bytes, idx)
 }
 
-func putArrayLen(bytes []byte, idx int, length int) int {
-	return putInt(bytes, idx, length)
+func putArrayLen[T any](bytes []byte, idx int, array []T) int {
+	if array == nil {
+		return putInt(bytes, idx, -1)
+	}
+	return putInt(bytes, idx, len(array))
 }
 
 func readCompactArrayLen(bytes []byte, idx int) (int, int) {

@@ -184,7 +184,7 @@ func (o *OffsetFetchResp) Bytes(version int16) []byte {
 		idx = putThrottleTime(bytes, idx, o.ThrottleTime)
 	}
 	if version == 1 {
-		idx = putArrayLen(bytes, idx, len(o.TopicRespList))
+		idx = putArrayLen(bytes, idx, o.TopicRespList)
 	} else if version == 6 || version == 7 {
 		idx = putCompactArrayLen(bytes, idx, len(o.TopicRespList))
 	}
@@ -195,7 +195,7 @@ func (o *OffsetFetchResp) Bytes(version int16) []byte {
 			idx = putTopic(bytes, idx, topic.Topic)
 		}
 		if version == 1 {
-			idx = putArrayLen(bytes, idx, len(topic.PartitionRespList))
+			idx = putArrayLen(bytes, idx, topic.PartitionRespList)
 		} else if version == 6 || version == 7 {
 			idx = putCompactArrayLen(bytes, idx, len(topic.PartitionRespList))
 		}

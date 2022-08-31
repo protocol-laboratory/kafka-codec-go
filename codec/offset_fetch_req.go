@@ -173,14 +173,14 @@ func (o *OffsetFetchReq) Bytes(containApiKeyVersion bool) []byte {
 		idx = putGroupId(bytes, idx, o.GroupId)
 	}
 	if version == 1 {
-		idx = putArrayLen(bytes, idx, len(o.TopicReqList))
+		idx = putArrayLen(bytes, idx, o.TopicReqList)
 	} else if version == 6 || version == 7 {
 		idx = putCompactArrayLen(bytes, idx, len(o.TopicReqList))
 	}
 	for _, topicReq := range o.TopicReqList {
 		if version == 1 {
 			idx = putTopicString(bytes, idx, topicReq.Topic)
-			idx = putArrayLen(bytes, idx, len(topicReq.PartitionReqList))
+			idx = putArrayLen(bytes, idx, topicReq.PartitionReqList)
 		} else if version == 6 || version == 7 {
 			idx = putTopic(bytes, idx, topicReq.Topic)
 			idx = putCompactArrayLen(bytes, idx, len(topicReq.PartitionReqList))

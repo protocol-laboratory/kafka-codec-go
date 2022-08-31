@@ -142,10 +142,10 @@ func (f *FetchReq) Bytes(containApiKeyVersion bool) []byte {
 	idx = putIsolationLevel(bytes, idx, f.IsolationLevel)
 	idx = putFetchSessionId(bytes, idx, f.FetchSessionId)
 	idx = putFetchSessionEpoch(bytes, idx, f.FetchSessionEpoch)
-	idx = putArrayLen(bytes, idx, len(f.TopicReqList))
+	idx = putArrayLen(bytes, idx, f.TopicReqList)
 	for _, topicReq := range f.TopicReqList {
 		idx = putTopicString(bytes, idx, topicReq.Topic)
-		idx = putArrayLen(bytes, idx, len(topicReq.PartitionReqList))
+		idx = putArrayLen(bytes, idx, topicReq.PartitionReqList)
 		for _, partitionReq := range topicReq.PartitionReqList {
 			idx = putPartitionId(bytes, idx, partitionReq.PartitionId)
 			idx = putLeaderEpoch(bytes, idx, partitionReq.CurrentLeaderEpoch)

@@ -131,7 +131,7 @@ func (m *MetadataReq) Bytes(containApiKeyVersion bool) []byte {
 		idx = putTaggedField(bytes, idx)
 	}
 	if version < 9 {
-		idx = putArrayLen(bytes, idx, len(m.Topics))
+		idx = putArrayLen(bytes, idx, m.Topics)
 	} else if version == 9 {
 		idx = putCompactArrayLen(bytes, idx, len(m.Topics))
 	}

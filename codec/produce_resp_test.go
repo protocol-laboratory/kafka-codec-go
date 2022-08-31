@@ -118,7 +118,7 @@ func TestEncodeProduceRespV8(t *testing.T) {
 	produceTopicResp.PartitionRespList = []*ProducePartitionResp{producePartitionResp}
 	produceResp.TopicRespList = []*ProduceTopicResp{produceTopicResp}
 	bytes := produceResp.Bytes(8)
-	expectBytes := testHex2Bytes(t, "00000004000000010005746f706963000000010000000000000000000000000000ffffffffffffffff000000000000000000000000ffff00000000")
+	expectBytes := testHex2Bytes(t, "00000004000000010005746f706963000000010000000000000000000000000000ffffffffffffffff0000000000000000ffffffffffff00000000")
 	assert.Equal(t, expectBytes, bytes)
 }
 

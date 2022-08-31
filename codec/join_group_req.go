@@ -165,7 +165,7 @@ func (j *JoinGroupReq) Bytes(containApiKeyVersion bool) []byte {
 	if version == 1 {
 		idx = putMemberIdString(bytes, idx, j.MemberId)
 		idx = putProtocolTypeString(bytes, idx, j.ProtocolType)
-		idx = putArrayLen(bytes, idx, len(j.GroupProtocols))
+		idx = putArrayLen(bytes, idx, j.GroupProtocols)
 	} else if version == 6 {
 		idx = putMemberId(bytes, idx, j.MemberId)
 		idx = putGroupInstanceId(bytes, idx, j.GroupInstanceId)
