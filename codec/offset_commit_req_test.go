@@ -57,8 +57,8 @@ func TestEncodeOffsetCommitReqV2(t *testing.T) {
 	partitionReq := &OffsetCommitPartitionReq{0, 1, 0, ""}
 	topicReq := &OffsetCommitTopicReq{"topic", []*OffsetCommitPartitionReq{partitionReq}}
 	offsetCommitReq.TopicReqList = []*OffsetCommitTopicReq{topicReq}
-	encodeBytes := offsetCommitReq.Bytes(true)
-	assert.Equal(t, testHex2Bytes(t, "0008000200000005006d5f5f5f546573744b61666b61436f6e73756d655f696e5f676f5f64656d6f5f64656d6f5f6b61666b612e746573744068657a68616e676a69616e64654d6163426f6f6b2d50726f2e6c6f63616c20286769746875622e636f6d2f7365676d656e74696f2f6b61666b612d676f290005746f7069630000000300925f5f5f546573744b61666b61436f6e73756d655f696e5f676f5f64656d6f5f64656d6f5f6b61666b612e746573744068657a68616e676a69616e64654d6163426f6f6b2d50726f2e6c6f63616c20286769746875622e636f6d2f7365676d656e74696f2f6b61666b612d676f292d61336635303632622d393462632d343738642d386464622d326132666565363938396338ffffffffffffffff000000010005746f706963000000010000000000000000000000010000"), encodeBytes)
+	encodeBytes := offsetCommitReq.Bytes(true, true)
+	assert.Equal(t, testHex2Bytes(t, "0000013b0008000200000005006d5f5f5f546573744b61666b61436f6e73756d655f696e5f676f5f64656d6f5f64656d6f5f6b61666b612e746573744068657a68616e676a69616e64654d6163426f6f6b2d50726f2e6c6f63616c20286769746875622e636f6d2f7365676d656e74696f2f6b61666b612d676f290005746f7069630000000300925f5f5f546573744b61666b61436f6e73756d655f696e5f676f5f64656d6f5f64656d6f5f6b61666b612e746573744068657a68616e676a69616e64654d6163426f6f6b2d50726f2e6c6f63616c20286769746875622e636f6d2f7365676d656e74696f2f6b61666b612d676f292d61336635303632622d393462632d343738642d386464622d326132666565363938396338ffffffffffffffff000000010005746f706963000000010000000000000000000000010000"), encodeBytes)
 }
 
 func TestDecodeAndCodeOffsetCommitReqV2(t *testing.T) {
@@ -76,7 +76,7 @@ func TestDecodeAndCodeOffsetCommitReqV2(t *testing.T) {
 	offsetPartition := offsetTopic.PartitionReqList[0]
 	assert.Equal(t, 0, offsetPartition.PartitionId)
 	assert.Equal(t, int64(1), offsetPartition.Offset)
-	encodeBytes := offsetCommitReq.Bytes(false)
+	encodeBytes := offsetCommitReq.Bytes(false, false)
 	assert.Equal(t, bytes, encodeBytes)
 }
 
@@ -109,7 +109,7 @@ func TestEncodeOffsetCommitReqV8(t *testing.T) {
 	partitionReq := &OffsetCommitPartitionReq{0, 1, 0, ""}
 	topicReq := &OffsetCommitTopicReq{"test-5", []*OffsetCommitPartitionReq{partitionReq}}
 	offsetCommitReq.TopicReqList = []*OffsetCommitTopicReq{topicReq}
-	encodeBytes := offsetCommitReq.Bytes(true)
+	encodeBytes := offsetCommitReq.Bytes(false, true)
 	assert.Equal(t, testHex2Bytes(t, "000800080000000b002f636f6e73756d65722d38646437623936622d366239342d346139622d623263632d3363623538393863396364662d31002538646437623936622d366239342d346139622d623263632d3363623538393863396364660000000155636f6e73756d65722d38646437623936622d366239342d346139622d623263632d3363623538393863396364662d312d34333361636236612d653665632d343561612d623738642d366132343963666630376663000207746573742d35020000000000000000000000010000000001000000"), encodeBytes)
 }
 
@@ -128,6 +128,6 @@ func TestDecodeAndCodeOffsetCommitReqV8(t *testing.T) {
 	offsetPartition := offsetTopic.PartitionReqList[0]
 	assert.Equal(t, 0, offsetPartition.PartitionId)
 	assert.Equal(t, int64(1), offsetPartition.Offset)
-	encodeBytes := offsetCommitReq.Bytes(false)
+	encodeBytes := offsetCommitReq.Bytes(false, false)
 	assert.Equal(t, bytes, encodeBytes)
 }

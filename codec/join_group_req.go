@@ -101,9 +101,12 @@ func DecodeJoinGroupReq(bytes []byte, version int16) (joinGroupReq *JoinGroupReq
 	return joinGroupReq, nil
 }
 
-func (j *JoinGroupReq) BytesLength(containApiKeyVersion bool) int {
+func (j *JoinGroupReq) BytesLength(containLen bool, containApiKeyVersion bool) int {
 	version := j.ApiVersion
 	length := 0
+	if containLen {
+		length += LenLength
+	}
 	if containApiKeyVersion {
 		length += LenApiKey
 		length += LenApiVersion
@@ -144,10 +147,13 @@ func (j *JoinGroupReq) BytesLength(containApiKeyVersion bool) int {
 	return length
 }
 
-func (j *JoinGroupReq) Bytes(containApiKeyVersion bool) []byte {
+func (j *JoinGroupReq) Bytes(containLen bool, containApiKeyVersion bool) []byte {
 	version := j.ApiVersion
-	bytes := make([]byte, j.BytesLength(containApiKeyVersion))
+	bytes := make([]byte, j.BytesLength(containLen, containApiKeyVersion))
 	idx := 0
+	if containLen {
+		idx = putLength(bytes, idx)
+	}
 	if containApiKeyVersion {
 		idx = putApiKey(bytes, idx, JoinGroup)
 		idx = putApiVersion(bytes, idx, version)

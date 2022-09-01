@@ -77,9 +77,12 @@ func DecodeMetadataReq(bytes []byte, version int16) (metadataReq *MetadataReq, e
 	return metadataReq, nil
 }
 
-func (m *MetadataReq) BytesLength(containApiKeyVersion bool) int {
+func (m *MetadataReq) BytesLength(containLen bool, containApiKeyVersion bool) int {
 	version := m.ApiVersion
 	length := 0
+	if containLen {
+		length += LenLength
+	}
 	if containApiKeyVersion {
 		length += LenApiKey
 		length += LenApiVersion
@@ -117,10 +120,13 @@ func (m *MetadataReq) BytesLength(containApiKeyVersion bool) int {
 	return length
 }
 
-func (m *MetadataReq) Bytes(containApiKeyVersion bool) []byte {
+func (m *MetadataReq) Bytes(containLen bool, containApiKeyVersion bool) []byte {
 	version := m.ApiVersion
-	bytes := make([]byte, m.BytesLength(containApiKeyVersion))
+	bytes := make([]byte, m.BytesLength(containLen, containApiKeyVersion))
 	idx := 0
+	if containLen {
+		idx = putLength(bytes, idx)
+	}
 	if containApiKeyVersion {
 		idx = putApiKey(bytes, idx, Metadata)
 		idx = putApiVersion(bytes, idx, version)

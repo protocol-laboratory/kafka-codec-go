@@ -53,9 +53,12 @@ func DecodeSaslAuthenticateReq(bytes []byte, version int16) (authReq *SaslAuthen
 	return authReq, nil
 }
 
-func (s *SaslAuthenticateReq) BytesLength(containApiKeyVersion bool) int {
+func (s *SaslAuthenticateReq) BytesLength(containLen bool, containApiKeyVersion bool) int {
 	version := s.ApiVersion
 	length := 0
+	if containLen {
+		length += LenLength
+	}
 	if containApiKeyVersion {
 		length += LenApiKey
 		length += LenApiVersion
@@ -75,10 +78,13 @@ func (s *SaslAuthenticateReq) BytesLength(containApiKeyVersion bool) int {
 	return length
 }
 
-func (s *SaslAuthenticateReq) Bytes(containApiKeyVersion bool) []byte {
+func (s *SaslAuthenticateReq) Bytes(containLen bool, containApiKeyVersion bool) []byte {
 	version := s.ApiVersion
-	bytes := make([]byte, s.BytesLength(containApiKeyVersion))
+	bytes := make([]byte, s.BytesLength(containLen, containApiKeyVersion))
 	idx := 0
+	if containLen {
+		idx = putLength(bytes, idx)
+	}
 	if containApiKeyVersion {
 		idx = putApiKey(bytes, idx, SaslAuthenticate)
 		idx = putApiVersion(bytes, idx, version)

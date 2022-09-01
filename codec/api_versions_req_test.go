@@ -61,7 +61,7 @@ func TestEncodeApiVersionReqV3(t *testing.T) {
 	apiReq.ClientId = "consumer-a1e12365-ddfa-43fc-826e-9661fb54c274-1"
 	apiReq.ClientSoftwareName = "apache-kafka-java"
 	apiReq.ClientSoftwareVersion = "2.4.0"
-	bytes := apiReq.Bytes(false, true)
-	expectBytes := testHex2Bytes(t, "0012000300000001002f636f6e73756d65722d61316531323336352d646466612d343366632d383236652d3936363166623534633237342d3100126170616368652d6b61666b612d6a61766106322e342e3000")
+	bytes := apiReq.Bytes(true, true)
+	expectBytes := testHex2Bytes(t, "000000530012000300000001002f636f6e73756d65722d61316531323336352d646466612d343366632d383236652d3936363166623534633237342d3100126170616368652d6b61666b612d6a61766106322e342e3000")
 	assert.Equal(t, expectBytes, bytes)
 }

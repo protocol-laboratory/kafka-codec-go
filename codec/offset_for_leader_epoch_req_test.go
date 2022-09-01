@@ -46,8 +46,8 @@ func TestEncodeOffsetForLeaderEpochReqV3(t *testing.T) {
 	partitionReq := &OffsetLeaderEpochPartitionReq{0, 0, 0}
 	topicReq := &OffsetLeaderEpochTopicReq{"lt-test-1", []*OffsetLeaderEpochPartitionReq{partitionReq}}
 	offsetForLeaderEpochReq.TopicReqList = []*OffsetLeaderEpochTopicReq{topicReq}
-	codeBytes := offsetForLeaderEpochReq.Bytes(true)
-	assert.Equal(t, codeBytes, testHex2Bytes(t, "00170003000000090015636f6e73756d65722d6c742d67726f75702d312d31ffffffff0000000100096c742d746573742d3100000001000000000000000000000000"))
+	codeBytes := offsetForLeaderEpochReq.Bytes(true, true)
+	assert.Equal(t, codeBytes, testHex2Bytes(t, "0000004200170003000000090015636f6e73756d65722d6c742d67726f75702d312d31ffffffff0000000100096c742d746573742d3100000001000000000000000000000000"))
 }
 
 func TestDecodeAndCodeOffsetForLeaderEpochReqV3(t *testing.T) {
@@ -63,6 +63,6 @@ func TestDecodeAndCodeOffsetForLeaderEpochReqV3(t *testing.T) {
 	assert.Equal(t, 0, leaderEpochPartitionReq.PartitionId)
 	assert.Equal(t, int32(0), leaderEpochPartitionReq.CurrentLeaderEpoch)
 	assert.Equal(t, int32(0), leaderEpochPartitionReq.LeaderEpoch)
-	codeBytes := leaderEpochReq.Bytes(false)
+	codeBytes := leaderEpochReq.Bytes(false, false)
 	assert.Equal(t, bytes, codeBytes)
 }

@@ -84,8 +84,11 @@ func DecodeProduceReq(bytes []byte, version int16) (produceReq *ProduceReq, err 
 	return produceReq, nil
 }
 
-func (p *ProduceReq) BytesLength(containApiKeyVersion bool) int {
+func (p *ProduceReq) BytesLength(containLen bool, containApiKeyVersion bool) int {
 	length := 0
+	if containLen {
+		length += LenLength
+	}
 	if containApiKeyVersion {
 		length += LenApiKey
 		length += LenApiVersion
@@ -107,10 +110,13 @@ func (p *ProduceReq) BytesLength(containApiKeyVersion bool) int {
 	return length
 }
 
-func (p *ProduceReq) Bytes(containApiKeyVersion bool) []byte {
+func (p *ProduceReq) Bytes(containLen bool, containApiKeyVersion bool) []byte {
 	version := p.ApiVersion
-	bytes := make([]byte, p.BytesLength(containApiKeyVersion))
+	bytes := make([]byte, p.BytesLength(containLen, containApiKeyVersion))
 	idx := 0
+	if containLen {
+		idx = putLength(bytes, idx)
+	}
 	if containApiKeyVersion {
 		idx = putApiKey(bytes, idx, Produce)
 		idx = putApiVersion(bytes, idx, version)

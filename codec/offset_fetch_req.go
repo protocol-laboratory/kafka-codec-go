@@ -108,9 +108,12 @@ func DecodeOffsetFetchReq(bytes []byte, version int16) (fetchReq *OffsetFetchReq
 	return fetchReq, nil
 }
 
-func (o *OffsetFetchReq) BytesLength(containApiKeyVersion bool) int {
+func (o *OffsetFetchReq) BytesLength(containLen bool, containApiKeyVersion bool) int {
 	version := o.ApiVersion
 	length := 0
+	if containLen {
+		length += LenLength
+	}
 	if containApiKeyVersion {
 		length += LenApiKey
 		length += LenApiVersion
@@ -154,10 +157,13 @@ func (o *OffsetFetchReq) BytesLength(containApiKeyVersion bool) int {
 	return length
 }
 
-func (o *OffsetFetchReq) Bytes(containApiKeyVersion bool) []byte {
+func (o *OffsetFetchReq) Bytes(containLen bool, containApiKeyVersion bool) []byte {
 	version := o.ApiVersion
-	bytes := make([]byte, o.BytesLength(containApiKeyVersion))
+	bytes := make([]byte, o.BytesLength(containLen, containApiKeyVersion))
 	idx := 0
+	if containLen {
+		idx = putLength(bytes, idx)
+	}
 	if containApiKeyVersion {
 		idx = putApiKey(bytes, idx, OffsetFetch)
 		idx = putApiVersion(bytes, idx, version)

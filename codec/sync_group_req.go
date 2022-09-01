@@ -100,9 +100,12 @@ func DecodeSyncGroupReq(bytes []byte, version int16) (groupReq *SyncGroupReq, er
 	return groupReq, nil
 }
 
-func (s *SyncGroupReq) BytesLength(containApiKeyVersion bool) int {
+func (s *SyncGroupReq) BytesLength(containLen bool, containApiKeyVersion bool) int {
 	version := s.ApiVersion
 	length := 0
+	if containLen {
+		length += LenLength
+	}
 	if containApiKeyVersion {
 		length += LenApiKey
 		length += LenApiVersion
@@ -149,10 +152,13 @@ func (s *SyncGroupReq) BytesLength(containApiKeyVersion bool) int {
 	return length
 }
 
-func (s *SyncGroupReq) Bytes(containApiKeyVersion bool) []byte {
+func (s *SyncGroupReq) Bytes(containLen bool, containApiKeyVersion bool) []byte {
 	version := s.ApiVersion
-	bytes := make([]byte, s.BytesLength(containApiKeyVersion))
+	bytes := make([]byte, s.BytesLength(containLen, containApiKeyVersion))
 	idx := 0
+	if containLen {
+		idx = putLength(bytes, idx)
+	}
 	if containApiKeyVersion {
 		idx = putApiKey(bytes, idx, SyncGroup)
 		idx = putApiVersion(bytes, idx, version)

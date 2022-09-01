@@ -50,8 +50,11 @@ func DecodeHeartbeatReq(bytes []byte, version int16) (heartBeatReq *HeartbeatReq
 	return heartBeatReq, nil
 }
 
-func (h *HeartbeatReq) BytesLength(containApiKeyVersion bool) int {
+func (h *HeartbeatReq) BytesLength(containLen bool, containApiKeyVersion bool) int {
 	length := 0
+	if containLen {
+		length += LenLength
+	}
 	if containApiKeyVersion {
 		length += LenApiKey
 		length += LenApiVersion
@@ -67,10 +70,13 @@ func (h *HeartbeatReq) BytesLength(containApiKeyVersion bool) int {
 	return length
 }
 
-func (h *HeartbeatReq) Bytes(containApiKeyVersion bool) []byte {
+func (h *HeartbeatReq) Bytes(containLen bool, containApiKeyVersion bool) []byte {
 	version := h.ApiVersion
-	bytes := make([]byte, h.BytesLength(containApiKeyVersion))
+	bytes := make([]byte, h.BytesLength(containLen, containApiKeyVersion))
 	idx := 0
+	if containLen {
+		idx = putLength(bytes, idx)
+	}
 	if containApiKeyVersion {
 		idx = putApiKey(bytes, idx, Heartbeat)
 		idx = putApiVersion(bytes, idx, version)

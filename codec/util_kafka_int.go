@@ -75,6 +75,15 @@ func putLastOffsetDelta(bytes []byte, idx int, x int) int {
 	return putInt(bytes, idx, x)
 }
 
+func readLength(bytes []byte, idx int) (int, int) {
+	return readInt(bytes, idx)
+}
+
+func putLength(bytes []byte, idx int) int {
+	// The four bytes used for the length need to be subtracted
+	return putInt(bytes, idx, len(bytes)-4)
+}
+
 func readMaxWaitTime(bytes []byte, idx int) (int, int) {
 	return readInt(bytes, idx)
 }

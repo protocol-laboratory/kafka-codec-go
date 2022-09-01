@@ -72,8 +72,8 @@ func TestEncodeProduceReqV7(t *testing.T) {
 	producePartitionReq := &ProducePartitionReq{PartitionId: 0, RecordBatch: recordBatch}
 	produceTopicReq.PartitionReqList[0] = producePartitionReq
 	produceReq.TopicReqList[0] = produceTopicReq
-	bytes := produceReq.Bytes(true)
-	expectBytes := testHex2Bytes(t, "0000000700000006000a70726f64756365722d31ffffffff0000753000000001000974657374546f706963000000010000000000000055000000000000000000000049ffffffff020caac8f400000000000000000182aedf5e1500000182aedf5e15ffffffffffffffffffffffffffff000000012e0000000122746573745f6b61666b615f6d73675f303000")
+	bytes := produceReq.Bytes(true, true)
+	expectBytes := testHex2Bytes(t, "0000008c0000000700000006000a70726f64756365722d31ffffffff0000753000000001000974657374546f706963000000010000000000000055000000000000000000000049ffffffff020caac8f400000000000000000182aedf5e1500000182aedf5e15ffffffffffffffffffffffffffff000000012e0000000122746573745f6b61666b615f6d73675f303000")
 	assert.Equal(t, expectBytes, bytes)
 }
 
@@ -83,7 +83,7 @@ func TestDecodeAndCodeProduceReqV7(t *testing.T) {
 	assert.Nil(t, err)
 	assert.Equal(t, 2, produceReq.CorrelationId)
 	assert.Equal(t, "___TestKafkaProduce_in_go_demo_demo_kafka.test@hezhangjiandeMacBook-Pro.local (github.com/segmentio/kafka-go)", produceReq.ClientId)
-	codeBytes := produceReq.Bytes(false)
+	codeBytes := produceReq.Bytes(false, false)
 	assert.Equal(t, bytes, codeBytes)
 }
 
@@ -137,7 +137,7 @@ func TestEncodeProduceReqV8(t *testing.T) {
 	producePartitionReq := &ProducePartitionReq{PartitionId: 0, RecordBatch: recordBatch}
 	produceTopicReq.PartitionReqList[0] = producePartitionReq
 	produceReq.TopicReqList[0] = produceTopicReq
-	bytes := produceReq.Bytes(true)
+	bytes := produceReq.Bytes(false, true)
 	expectBytes := testHex2Bytes(t, "0000000800000004002464646162333263392d663632302d343061322d616662382d313862373636393662653064ffff000100007530000000010005746f70696300000001000000000000004c000000000000000000000040ffffffff02635624670000000000000000017e685832d60000017e685832d6ffffffffffffffffffffffffffff000000011c000000066b65790a76616c756500")
 	assert.Equal(t, expectBytes, bytes)
 }
@@ -155,6 +155,6 @@ func TestDecodeAndCodeProduceReqV8(t *testing.T) {
 	assert.Len(t, topicReq.PartitionReqList, 1)
 	partitionReq := topicReq.PartitionReqList[0]
 	assert.Equal(t, 0, partitionReq.PartitionId)
-	codeBytes := produceReq.Bytes(false)
+	codeBytes := produceReq.Bytes(false, false)
 	assert.Equal(t, bytes, codeBytes)
 }

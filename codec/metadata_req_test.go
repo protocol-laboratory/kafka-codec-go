@@ -52,8 +52,8 @@ func TestCodeMetadataV1(t *testing.T) {
 			Topic: "topic",
 		},
 	}
-	bytes := metadataReq.Bytes(true)
-	expectBytes := testHex2Bytes(t, "0003000100000001006d5f5f5f546573744b61666b6150726f647563655f696e5f676f5f64656d6f5f64656d6f5f6b61666b612e746573744068657a68616e676a69616e64654d6163426f6f6b2d50726f2e6c6f63616c20286769746875622e636f6d2f7365676d656e74696f2f6b61666b612d676f29000000010005746f706963")
+	bytes := metadataReq.Bytes(true, true)
+	expectBytes := testHex2Bytes(t, "000000820003000100000001006d5f5f5f546573744b61666b6150726f647563655f696e5f676f5f64656d6f5f64656d6f5f6b61666b612e746573744068657a68616e676a69616e64654d6163426f6f6b2d50726f2e6c6f63616c20286769746875622e636f6d2f7365676d656e74696f2f6b61666b612d676f29000000010005746f706963")
 	assert.Equal(t, expectBytes, bytes)
 }
 
@@ -69,7 +69,7 @@ func TestDecodeAndEncodeMetadataV1(t *testing.T) {
 	assert.False(t, metadataTopicReq.AllowAutoTopicCreation)
 	assert.False(t, metadataTopicReq.IncludeClusterAuthorizedOperations)
 	assert.False(t, metadataTopicReq.IncludeTopicAuthorizedOperations)
-	codeBytes := metadataTopicReq.Bytes(false)
+	codeBytes := metadataTopicReq.Bytes(false, false)
 	assert.Equal(t, bytes, codeBytes)
 }
 
@@ -91,7 +91,7 @@ func TestEncodeMetadataReqV5(t *testing.T) {
 	metadataReq.CorrelationId = 0
 	metadataReq.ClientId = "sarama"
 	metadataReq.Topics = nil
-	bytes := metadataReq.Bytes(true)
+	bytes := metadataReq.Bytes(false, true)
 	expectBytes := testHex2Bytes(t, "00030005000000000006736172616d61ffffffff00")
 	assert.Equal(t, expectBytes, bytes)
 }
@@ -106,7 +106,7 @@ func TestDecodeAndEncodeMetadataReqV5(t *testing.T) {
 	assert.False(t, metadataTopicReq.AllowAutoTopicCreation)
 	assert.False(t, metadataTopicReq.IncludeTopicAuthorizedOperations)
 	assert.False(t, metadataTopicReq.IncludeClusterAuthorizedOperations)
-	codeBytes := metadataTopicReq.Bytes(false)
+	codeBytes := metadataTopicReq.Bytes(false, false)
 	assert.Equal(t, bytes, codeBytes)
 }
 
@@ -137,7 +137,7 @@ func TestEncodeMetadataReqV8(t *testing.T) {
 	metadataReq.AllowAutoTopicCreation = true
 	metadataReq.IncludeClusterAuthorizedOperations = false
 	metadataReq.IncludeTopicAuthorizedOperations = false
-	bytes := metadataReq.Bytes(true)
+	bytes := metadataReq.Bytes(false, true)
 	expectBytes := testHex2Bytes(t, "0003000800000001000a70726f64756365722d3100000001000a746573742d746f706963010000")
 	assert.Equal(t, expectBytes, bytes)
 }
@@ -154,7 +154,7 @@ func TestDecodeAndEncodeMetadataReqV8(t *testing.T) {
 	assert.True(t, metadataTopicReq.AllowAutoTopicCreation)
 	assert.False(t, metadataTopicReq.IncludeClusterAuthorizedOperations)
 	assert.False(t, metadataTopicReq.IncludeTopicAuthorizedOperations)
-	codeBytes := metadataTopicReq.Bytes(false)
+	codeBytes := metadataTopicReq.Bytes(false, false)
 	assert.Equal(t, bytes, codeBytes)
 }
 
@@ -185,7 +185,7 @@ func TestEncodeMetadataReqV9(t *testing.T) {
 	metadataReq.AllowAutoTopicCreation = true
 	metadataReq.IncludeClusterAuthorizedOperations = false
 	metadataReq.IncludeTopicAuthorizedOperations = false
-	bytes := metadataReq.Bytes(true)
+	bytes := metadataReq.Bytes(false, true)
 	expectBytes := testHex2Bytes(t, "0003000900000002002f636f6e73756d65722d61316531323336352d646466612d343366632d383236652d3936363166623534633237342d31000207746573742d330001000000")
 	assert.Equal(t, expectBytes, bytes)
 }
@@ -202,6 +202,6 @@ func TestDecodeAndEncodeMetadataReqV9(t *testing.T) {
 	assert.True(t, metadataTopicReq.AllowAutoTopicCreation)
 	assert.False(t, metadataTopicReq.IncludeClusterAuthorizedOperations)
 	assert.False(t, metadataTopicReq.IncludeTopicAuthorizedOperations)
-	codeBytes := metadataTopicReq.Bytes(false)
+	codeBytes := metadataTopicReq.Bytes(false, false)
 	assert.Equal(t, bytes, codeBytes)
 }
