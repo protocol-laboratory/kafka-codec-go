@@ -98,9 +98,12 @@ func DecodeListOffsetsReq(bytes []byte, version int16) (offsetReq *ListOffsetsRe
 	return offsetReq, nil
 }
 
-func (l *ListOffsetsReq) BytesLength(containApiKeyVersion bool) int {
+func (l *ListOffsetsReq) BytesLength(containLen bool, containApiKeyVersion bool) int {
 	version := l.ApiVersion
 	length := 0
+	if containLen {
+		length += LenLength
+	}
 	if containApiKeyVersion {
 		length += LenApiKey
 		length += LenApiVersion
@@ -148,10 +151,13 @@ func (l *ListOffsetsReq) BytesLength(containApiKeyVersion bool) int {
 	return length
 }
 
-func (l *ListOffsetsReq) Bytes(containApiKeyVersion bool) []byte {
+func (l *ListOffsetsReq) Bytes(containLen bool, containApiKeyVersion bool) []byte {
 	version := l.ApiVersion
-	bytes := make([]byte, l.BytesLength(containApiKeyVersion))
+	bytes := make([]byte, l.BytesLength(containLen, containApiKeyVersion))
 	idx := 0
+	if containLen {
+		idx = putLength(bytes, idx)
+	}
 	if containApiKeyVersion {
 		idx = putApiKey(bytes, idx, ListOffsets)
 		idx = putApiVersion(bytes, idx, version)

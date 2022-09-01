@@ -45,8 +45,8 @@ func TestEncodeFindCoordinatorReqV0(t *testing.T) {
 	findCoordinatorReq.CorrelationId = 1
 	findCoordinatorReq.ClientId = "___TestKafkaConsume_in_go_demo_demo_kafka.test@hezhangjiandeMacBook-Pro.local (github.com/segmentio/kafka-go)"
 	findCoordinatorReq.Key = "topic"
-	codeBytes := findCoordinatorReq.Bytes(true)
-	assert.Equal(t, codeBytes, testHex2Bytes(t, "000a000000000001006d5f5f5f546573744b61666b61436f6e73756d655f696e5f676f5f64656d6f5f64656d6f5f6b61666b612e746573744068657a68616e676a69616e64654d6163426f6f6b2d50726f2e6c6f63616c20286769746875622e636f6d2f7365676d656e74696f2f6b61666b612d676f290005746f706963"))
+	codeBytes := findCoordinatorReq.Bytes(true, true)
+	assert.Equal(t, codeBytes, testHex2Bytes(t, "0000007e000a000000000001006d5f5f5f546573744b61666b61436f6e73756d655f696e5f676f5f64656d6f5f64656d6f5f6b61666b612e746573744068657a68616e676a69616e64654d6163426f6f6b2d50726f2e6c6f63616c20286769746875622e636f6d2f7365676d656e74696f2f6b61666b612d676f290005746f706963"))
 }
 
 func TestDecodeAndCodeFindCoordinatorReqV0(t *testing.T) {
@@ -56,7 +56,7 @@ func TestDecodeAndCodeFindCoordinatorReqV0(t *testing.T) {
 	assert.Equal(t, 1, findCoordinatorReq.CorrelationId)
 	assert.Equal(t, "___TestKafkaConsume_in_go_demo_demo_kafka.test@hezhangjiandeMacBook-Pro.local (github.com/segmentio/kafka-go)", findCoordinatorReq.ClientId)
 	assert.Equal(t, "topic", findCoordinatorReq.Key)
-	codeBytes := findCoordinatorReq.Bytes(false)
+	codeBytes := findCoordinatorReq.Bytes(false, false)
 	assert.Equal(t, bytes, codeBytes)
 }
 
@@ -78,7 +78,7 @@ func TestEncodeFindCoordinatorReqV3(t *testing.T) {
 	findCoordinatorReq.ClientId = "consumer-testTopic;testGroup-1-1"
 	findCoordinatorReq.Key = "testTopic;testGroup-1"
 	findCoordinatorReq.KeyType = 0
-	bytes := findCoordinatorReq.Bytes(true)
+	bytes := findCoordinatorReq.Bytes(false, true)
 	expectBytes := testHex2Bytes(t, "000a0003000000000020636f6e73756d65722d74657374546f7069633b7465737447726f75702d312d31001674657374546f7069633b7465737447726f75702d310000")
 	assert.Equal(t, expectBytes, bytes)
 }
@@ -90,6 +90,6 @@ func TestDecodeAndCodeFindCoordinatorReqV3(t *testing.T) {
 	assert.Equal(t, 0, findCoordinatorReq.CorrelationId)
 	assert.Equal(t, "consumer-73fdc9da-0d92-4e7b-a7a7-ec266f67c171-1", findCoordinatorReq.ClientId)
 	assert.Equal(t, "73fdc9da-0d92-4e7b-a7a7-ec266f67c171", findCoordinatorReq.Key)
-	codeBytes := findCoordinatorReq.Bytes(false)
+	codeBytes := findCoordinatorReq.Bytes(false, false)
 	assert.Equal(t, bytes, codeBytes)
 }

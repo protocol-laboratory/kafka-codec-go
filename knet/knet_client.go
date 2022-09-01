@@ -55,12 +55,180 @@ type buffer struct {
 	cursor int
 }
 
+func (k *KafkaNetClient) Produce(req *codec.ProduceReq) (*codec.ProduceResp, error) {
+	bytes, err := k.Send(req.Bytes(true, true))
+	if err != nil {
+		return nil, err
+	}
+	resp, err := codec.DecodeProduceResp(bytes, req.ApiVersion)
+	if err != nil {
+		return nil, err
+	}
+	return resp, nil
+}
+
+func (k *KafkaNetClient) Fetch(req *codec.FetchReq) (*codec.FetchResp, error) {
+	bytes, err := k.Send(req.Bytes(true, true))
+	if err != nil {
+		return nil, err
+	}
+	resp, err := codec.DecodeFetchResp(bytes, req.ApiVersion)
+	if err != nil {
+		return nil, err
+	}
+	return resp, nil
+}
+
+func (k *KafkaNetClient) ListOffsets(req *codec.ListOffsetsReq) (*codec.ListOffsetsResp, error) {
+	bytes, err := k.Send(req.Bytes(true, true))
+	if err != nil {
+		return nil, err
+	}
+	resp, err := codec.DecodeListOffsetsResp(bytes, req.ApiVersion)
+	if err != nil {
+		return nil, err
+	}
+	return resp, nil
+}
+
+func (k *KafkaNetClient) Metadata(req *codec.MetadataReq) (*codec.MetadataResp, error) {
+	bytes, err := k.Send(req.Bytes(true, true))
+	if err != nil {
+		return nil, err
+	}
+	resp, err := codec.DecodeMetadataResp(bytes, req.ApiVersion)
+	if err != nil {
+		return nil, err
+	}
+	return resp, nil
+}
+
+func (k *KafkaNetClient) OffsetCommit(req *codec.OffsetCommitReq) (*codec.OffsetCommitResp, error) {
+	bytes, err := k.Send(req.Bytes(true, true))
+	if err != nil {
+		return nil, err
+	}
+	resp, err := codec.DecodeOffsetCommitResp(bytes, req.ApiVersion)
+	if err != nil {
+		return nil, err
+	}
+	return resp, nil
+}
+
+func (k *KafkaNetClient) OffsetFetch(req *codec.OffsetFetchReq) (*codec.OffsetFetchResp, error) {
+	bytes, err := k.Send(req.Bytes(true, true))
+	if err != nil {
+		return nil, err
+	}
+	resp, err := codec.DecodeOffsetFetchResp(bytes, req.ApiVersion)
+	if err != nil {
+		return nil, err
+	}
+	return resp, nil
+}
+
+func (k *KafkaNetClient) FindCoordinator(req *codec.FindCoordinatorReq) (*codec.FindCoordinatorResp, error) {
+	bytes, err := k.Send(req.Bytes(true, true))
+	if err != nil {
+		return nil, err
+	}
+	resp, err := codec.DecodeFindCoordinatorResp(bytes, req.ApiVersion)
+	if err != nil {
+		return nil, err
+	}
+	return resp, nil
+}
+
+func (k *KafkaNetClient) JoinGroup(req *codec.JoinGroupReq) (*codec.JoinGroupResp, error) {
+	bytes, err := k.Send(req.Bytes(true, true))
+	if err != nil {
+		return nil, err
+	}
+	resp, err := codec.DecodeJoinGroupResp(bytes, req.ApiVersion)
+	if err != nil {
+		return nil, err
+	}
+	return resp, nil
+}
+
+func (k *KafkaNetClient) Heartbeat(req *codec.HeartbeatReq) (*codec.HeartbeatResp, error) {
+	bytes, err := k.Send(req.Bytes(true, true))
+	if err != nil {
+		return nil, err
+	}
+	resp, err := codec.DecodeHeartbeatResp(bytes, req.ApiVersion)
+	if err != nil {
+		return nil, err
+	}
+	return resp, nil
+}
+
+func (k *KafkaNetClient) LeaveGroup(req *codec.LeaveGroupReq) (*codec.LeaveGroupResp, error) {
+	bytes, err := k.Send(req.Bytes(true, true))
+	if err != nil {
+		return nil, err
+	}
+	resp, err := codec.DecodeLeaveGroupResp(bytes, req.ApiVersion)
+	if err != nil {
+		return nil, err
+	}
+	return resp, nil
+}
+
+func (k *KafkaNetClient) SyncGroup(req *codec.SyncGroupReq) (*codec.SyncGroupResp, error) {
+	bytes, err := k.Send(req.Bytes(true, true))
+	if err != nil {
+		return nil, err
+	}
+	resp, err := codec.DecodeSyncGroupResp(bytes, req.ApiVersion)
+	if err != nil {
+		return nil, err
+	}
+	return resp, nil
+}
+
+func (k *KafkaNetClient) SaslHandshake(req *codec.SaslHandshakeReq) (*codec.SaslHandshakeResp, error) {
+	bytes, err := k.Send(req.Bytes(true, true))
+	if err != nil {
+		return nil, err
+	}
+	resp, err := codec.DecodeSaslHandshakeResp(bytes, req.ApiVersion)
+	if err != nil {
+		return nil, err
+	}
+	return resp, nil
+}
+
 func (k *KafkaNetClient) ApiVersions(req *codec.ApiReq) (*codec.ApiResp, error) {
 	bytes, err := k.Send(req.Bytes(true, true))
 	if err != nil {
 		return nil, err
 	}
 	resp, err := codec.DecodeApiResp(bytes, req.ApiVersion)
+	if err != nil {
+		return nil, err
+	}
+	return resp, nil
+}
+
+func (k *KafkaNetClient) OffsetForLeaderEpoch(req *codec.OffsetForLeaderEpochReq) (*codec.OffsetForLeaderEpochResp, error) {
+	bytes, err := k.Send(req.Bytes(true, true))
+	if err != nil {
+		return nil, err
+	}
+	resp, err := codec.DecodeOffsetForLeaderEpochResp(bytes, req.ApiVersion)
+	if err != nil {
+		return nil, err
+	}
+	return resp, nil
+}
+
+func (k *KafkaNetClient) SaslAuthenticate(req *codec.SaslAuthenticateReq) (*codec.SaslAuthenticateResp, error) {
+	bytes, err := k.Send(req.Bytes(true, true))
+	if err != nil {
+		return nil, err
+	}
+	resp, err := codec.DecodeSaslAuthenticateResp(bytes, req.ApiVersion)
 	if err != nil {
 		return nil, err
 	}

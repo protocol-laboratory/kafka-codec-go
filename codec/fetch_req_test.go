@@ -75,8 +75,8 @@ func TestEncodeFetchReqV10(t *testing.T) {
 	partitionReq := &FetchPartitionReq{0, -1, 0, 0, 0, 1000063}
 	topicReq := &FetchTopicReq{"topic", []*FetchPartitionReq{partitionReq}}
 	fetchReq.TopicReqList = []*FetchTopicReq{topicReq}
-	codeBytes := fetchReq.Bytes(true)
-	assert.Equal(t, testHex2Bytes(t, "0001000a00000006006d5f5f5f546573744b61666b61436f6e73756d655f696e5f676f5f64656d6f5f64656d6f5f6b61666b612e746573744068657a68616e676a69616e64654d6163426f6f6b2d50726f2e6c6f63616c20286769746875622e636f6d2f7365676d656e74696f2f6b61666b612d676f29ffffffff0000232600000001000f427f0000000000ffffffff000000010005746f7069630000000100000000ffffffff00000000000000000000000000000000000f427f"), codeBytes)
+	codeBytes := fetchReq.Bytes(true, true)
+	assert.Equal(t, testHex2Bytes(t, "000000bb0001000a00000006006d5f5f5f546573744b61666b61436f6e73756d655f696e5f676f5f64656d6f5f64656d6f5f6b61666b612e746573744068657a68616e676a69616e64654d6163426f6f6b2d50726f2e6c6f63616c20286769746875622e636f6d2f7365676d656e74696f2f6b61666b612d676f29ffffffff0000232600000001000f427f0000000000ffffffff000000010005746f7069630000000100000000ffffffff00000000000000000000000000000000000f427f"), codeBytes)
 }
 
 func TestDecodeAndCodeFetchReqV10(t *testing.T) {
@@ -102,7 +102,7 @@ func TestDecodeAndCodeFetchReqV10(t *testing.T) {
 	assert.Equal(t, int64(0), fetchPartitionReq.FetchOffset)
 	assert.Equal(t, int64(0), fetchPartitionReq.LogStartOffset)
 	assert.Equal(t, 1000063, fetchPartitionReq.PartitionMaxBytes)
-	codeBytes := fetchReq.Bytes(false)
+	codeBytes := fetchReq.Bytes(false, false)
 	assert.Equal(t, bytes, codeBytes)
 }
 
@@ -146,7 +146,7 @@ func TestEncodeFetchReqV11(t *testing.T) {
 	partitionReq := &FetchPartitionReq{0, 0, 0, 0, -1, 1048576}
 	topicReq := &FetchTopicReq{"test-5", []*FetchPartitionReq{partitionReq}}
 	fetchReq.TopicReqList = []*FetchTopicReq{topicReq}
-	codeBytes := fetchReq.Bytes(true)
+	codeBytes := fetchReq.Bytes(false, true)
 	assert.Equal(t, testHex2Bytes(t, "0001000b0000000a002f636f6e73756d65722d38646437623936622d366239342d346139622d623263632d3363623538393863396364662d31ffffffff000001f40000000103200000000000000000000000000000010006746573742d350000000100000000000000000000000000000000ffffffffffffffff00100000"), codeBytes)
 }
 
@@ -173,7 +173,7 @@ func TestDecodeAndCodeFetchReqV11(t *testing.T) {
 	assert.Equal(t, 0, fetchPartitionReq.LastFetchedEpoch)
 	assert.Equal(t, int64(-1), fetchPartitionReq.LogStartOffset)
 	assert.Equal(t, 1048576, fetchPartitionReq.PartitionMaxBytes)
-	codeBytes := fetchReq.Bytes(false)
+	codeBytes := fetchReq.Bytes(false, false)
 	assert.Equal(t, bytes, codeBytes)
 }
 
@@ -226,7 +226,7 @@ func TestEncodeFetchReqMultiPartitionV11(t *testing.T) {
 	partitionReq2 := &FetchPartitionReq{0, 0, 2500, 0, -1, 1048576}
 	topicReq := &FetchTopicReq{"test", []*FetchPartitionReq{partitionReq1, partitionReq2}}
 	fetchReq.TopicReqList = []*FetchTopicReq{topicReq}
-	codeBytes := fetchReq.Bytes(true)
+	codeBytes := fetchReq.Bytes(false, true)
 	assert.Equal(t, testHex2Bytes(t, "0001000b0000000a002f636f6e73756d65722d32393561656562302d633564342d343161632d386339302d3237656538363632383066322d31ffffffff000001f40000000103200000000000000000000000000000010004746573740000000200000001000000000000000000000960ffffffffffffffff00100000000000000000000000000000000009c4ffffffffffffffff00100000"), codeBytes)
 }
 
@@ -261,6 +261,6 @@ func TestDecodeAndCodeFetchReqMultiPartitionV11(t *testing.T) {
 	assert.Equal(t, 0, fetchPartitionReq2.LastFetchedEpoch)
 	assert.Equal(t, int64(-1), fetchPartitionReq2.LogStartOffset)
 	assert.Equal(t, 1048576, fetchPartitionReq2.PartitionMaxBytes)
-	codeBytes := fetchReq.Bytes(false)
+	codeBytes := fetchReq.Bytes(false, false)
 	assert.Equal(t, bytes, codeBytes)
 }

@@ -44,7 +44,7 @@ type KafkaLowLevelClient struct {
 }
 
 func (k *KafkaLowLevelClient) Produce(req *codec.ProduceReq) (*codec.ProduceResp, error) {
-	bytes, err := k.kafkaGnetClient.Send(req.Bytes(true))
+	bytes, err := k.kafkaGnetClient.Send(req.Bytes(false, true))
 	if err != nil {
 		return nil, err
 	}
@@ -56,7 +56,7 @@ func (k *KafkaLowLevelClient) Produce(req *codec.ProduceReq) (*codec.ProduceResp
 }
 
 func (k *KafkaLowLevelClient) Fetch(req *codec.FetchReq) (*codec.FetchResp, error) {
-	bytes, err := k.kafkaGnetClient.Send(req.Bytes(true))
+	bytes, err := k.kafkaGnetClient.Send(req.Bytes(false, true))
 	if err != nil {
 		return nil, err
 	}
@@ -68,7 +68,7 @@ func (k *KafkaLowLevelClient) Fetch(req *codec.FetchReq) (*codec.FetchResp, erro
 }
 
 func (k *KafkaLowLevelClient) ListOffsets(req *codec.ListOffsetsReq) (*codec.ListOffsetsResp, error) {
-	bytes, err := k.kafkaGnetClient.Send(req.Bytes(true))
+	bytes, err := k.kafkaGnetClient.Send(req.Bytes(false, true))
 	if err != nil {
 		return nil, err
 	}
@@ -80,7 +80,7 @@ func (k *KafkaLowLevelClient) ListOffsets(req *codec.ListOffsetsReq) (*codec.Lis
 }
 
 func (k *KafkaLowLevelClient) Metadata(req *codec.MetadataReq) (*codec.MetadataResp, error) {
-	bytes, err := k.kafkaGnetClient.Send(req.Bytes(true))
+	bytes, err := k.kafkaGnetClient.Send(req.Bytes(false, true))
 	if err != nil {
 		return nil, err
 	}
@@ -92,7 +92,7 @@ func (k *KafkaLowLevelClient) Metadata(req *codec.MetadataReq) (*codec.MetadataR
 }
 
 func (k *KafkaLowLevelClient) OffsetCommit(req *codec.OffsetCommitReq) (*codec.OffsetCommitResp, error) {
-	bytes, err := k.kafkaGnetClient.Send(req.Bytes(true))
+	bytes, err := k.kafkaGnetClient.Send(req.Bytes(false, true))
 	if err != nil {
 		return nil, err
 	}
@@ -104,7 +104,7 @@ func (k *KafkaLowLevelClient) OffsetCommit(req *codec.OffsetCommitReq) (*codec.O
 }
 
 func (k *KafkaLowLevelClient) OffsetFetch(req *codec.OffsetFetchReq) (*codec.OffsetFetchResp, error) {
-	bytes, err := k.kafkaGnetClient.Send(req.Bytes(true))
+	bytes, err := k.kafkaGnetClient.Send(req.Bytes(false, true))
 	if err != nil {
 		return nil, err
 	}
@@ -116,7 +116,7 @@ func (k *KafkaLowLevelClient) OffsetFetch(req *codec.OffsetFetchReq) (*codec.Off
 }
 
 func (k *KafkaLowLevelClient) FindCoordinator(req *codec.FindCoordinatorReq) (*codec.FindCoordinatorResp, error) {
-	bytes, err := k.kafkaGnetClient.Send(req.Bytes(true))
+	bytes, err := k.kafkaGnetClient.Send(req.Bytes(false, true))
 	if err != nil {
 		return nil, err
 	}
@@ -128,7 +128,7 @@ func (k *KafkaLowLevelClient) FindCoordinator(req *codec.FindCoordinatorReq) (*c
 }
 
 func (k *KafkaLowLevelClient) JoinGroup(req *codec.JoinGroupReq) (*codec.JoinGroupResp, error) {
-	bytes, err := k.kafkaGnetClient.Send(req.Bytes(true))
+	bytes, err := k.kafkaGnetClient.Send(req.Bytes(false, true))
 	if err != nil {
 		return nil, err
 	}
@@ -140,7 +140,7 @@ func (k *KafkaLowLevelClient) JoinGroup(req *codec.JoinGroupReq) (*codec.JoinGro
 }
 
 func (k *KafkaLowLevelClient) Heartbeat(req *codec.HeartbeatReq) (*codec.HeartbeatResp, error) {
-	bytes, err := k.kafkaGnetClient.Send(req.Bytes(true))
+	bytes, err := k.kafkaGnetClient.Send(req.Bytes(false, true))
 	if err != nil {
 		return nil, err
 	}
@@ -152,7 +152,7 @@ func (k *KafkaLowLevelClient) Heartbeat(req *codec.HeartbeatReq) (*codec.Heartbe
 }
 
 func (k *KafkaLowLevelClient) LeaveGroup(req *codec.LeaveGroupReq) (*codec.LeaveGroupResp, error) {
-	bytes, err := k.kafkaGnetClient.Send(req.Bytes(true))
+	bytes, err := k.kafkaGnetClient.Send(req.Bytes(false, true))
 	if err != nil {
 		return nil, err
 	}
@@ -164,7 +164,7 @@ func (k *KafkaLowLevelClient) LeaveGroup(req *codec.LeaveGroupReq) (*codec.Leave
 }
 
 func (k *KafkaLowLevelClient) SyncGroup(req *codec.SyncGroupReq) (*codec.SyncGroupResp, error) {
-	bytes, err := k.kafkaGnetClient.Send(req.Bytes(true))
+	bytes, err := k.kafkaGnetClient.Send(req.Bytes(false, true))
 	if err != nil {
 		return nil, err
 	}
@@ -176,7 +176,7 @@ func (k *KafkaLowLevelClient) SyncGroup(req *codec.SyncGroupReq) (*codec.SyncGro
 }
 
 func (k *KafkaLowLevelClient) SaslHandshake(req *codec.SaslHandshakeReq) (*codec.SaslHandshakeResp, error) {
-	bytes, err := k.kafkaGnetClient.Send(req.Bytes(true))
+	bytes, err := k.kafkaGnetClient.Send(req.Bytes(false, true))
 	if err != nil {
 		return nil, err
 	}
@@ -200,7 +200,7 @@ func (k *KafkaLowLevelClient) ApiVersions(req *codec.ApiReq) (*codec.ApiResp, er
 }
 
 func (k *KafkaLowLevelClient) OffsetForLeaderEpoch(req *codec.OffsetForLeaderEpochReq) (*codec.OffsetForLeaderEpochResp, error) {
-	bytes, err := k.kafkaGnetClient.Send(req.Bytes(true))
+	bytes, err := k.kafkaGnetClient.Send(req.Bytes(false, true))
 	if err != nil {
 		return nil, err
 	}
@@ -212,7 +212,7 @@ func (k *KafkaLowLevelClient) OffsetForLeaderEpoch(req *codec.OffsetForLeaderEpo
 }
 
 func (k *KafkaLowLevelClient) SaslAuthenticate(req *codec.SaslAuthenticateReq) (*codec.SaslAuthenticateResp, error) {
-	bytes, err := k.kafkaGnetClient.Send(req.Bytes(true))
+	bytes, err := k.kafkaGnetClient.Send(req.Bytes(false, true))
 	if err != nil {
 		return nil, err
 	}

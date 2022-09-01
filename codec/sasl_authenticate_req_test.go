@@ -45,7 +45,7 @@ func TestEncodeSaslHandshakeAuthReqV1(t *testing.T) {
 	saslHandshakeAuthReq.ClientId = "consumer-3ac23a7f-4c36-40d9-99d4-acda47d0a48d-1"
 	saslHandshakeAuthReq.Username = "alice"
 	saslHandshakeAuthReq.Password = "alice"
-	codeBytes := saslHandshakeAuthReq.Bytes(true)
+	codeBytes := saslHandshakeAuthReq.Bytes(false, true)
 	assert.Equal(t, codeBytes, testHex2Bytes(t, "002400017ffffffa002f636f6e73756d65722d33616332336137662d346333362d343064392d393964342d6163646134376430613438642d310000000c00616c69636500616c696365"))
 }
 
@@ -57,7 +57,7 @@ func TestDecodeAndCodeSaslHandshakeAuthReqV1(t *testing.T) {
 	assert.Equal(t, "consumer-3ac23a7f-4c36-40d9-99d4-acda47d0a48d-1", saslHandshakeAuthReq.ClientId)
 	assert.Equal(t, "alice", saslHandshakeAuthReq.Username)
 	assert.Equal(t, "alice", saslHandshakeAuthReq.Password)
-	codeBytes := saslHandshakeAuthReq.Bytes(false)
+	codeBytes := saslHandshakeAuthReq.Bytes(false, false)
 	assert.Equal(t, bytes, codeBytes)
 }
 
@@ -78,8 +78,8 @@ func TestEncodeSaslHandshakeAuthReqV2(t *testing.T) {
 	saslHandshakeAuthReq.ClientId = "consumer-3ac23a7f-4c36-40d9-99d4-acda47d0a48d-1"
 	saslHandshakeAuthReq.Username = "alice"
 	saslHandshakeAuthReq.Password = "alice"
-	codeBytes := saslHandshakeAuthReq.Bytes(true)
-	assert.Equal(t, codeBytes, testHex2Bytes(t, "002400027ffffffa002f636f6e73756d65722d33616332336137662d346333362d343064392d393964342d6163646134376430613438642d31000d00616c69636500616c69636500"))
+	codeBytes := saslHandshakeAuthReq.Bytes(true, true)
+	assert.Equal(t, codeBytes, testHex2Bytes(t, "00000048002400027ffffffa002f636f6e73756d65722d33616332336137662d346333362d343064392d393964342d6163646134376430613438642d31000d00616c69636500616c69636500"))
 }
 
 func TestDecodeAndCodeSaslHandshakeAuthReqV2(t *testing.T) {
@@ -90,6 +90,6 @@ func TestDecodeAndCodeSaslHandshakeAuthReqV2(t *testing.T) {
 	assert.Equal(t, "consumer-3ac23a7f-4c36-40d9-99d4-acda47d0a48d-1", saslHandshakeAuthReq.ClientId)
 	assert.Equal(t, "alice", saslHandshakeAuthReq.Username)
 	assert.Equal(t, "alice", saslHandshakeAuthReq.Password)
-	codeBytes := saslHandshakeAuthReq.Bytes(false)
+	codeBytes := saslHandshakeAuthReq.Bytes(false, false)
 	assert.Equal(t, bytes, codeBytes)
 }

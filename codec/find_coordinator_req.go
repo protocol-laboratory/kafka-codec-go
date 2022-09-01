@@ -58,9 +58,12 @@ func DecodeFindCoordinatorReq(bytes []byte, version int16) (findCoordinatorReq *
 	return findCoordinatorReq, nil
 }
 
-func (f *FindCoordinatorReq) BytesLength(containApiKeyVersion bool) int {
+func (f *FindCoordinatorReq) BytesLength(containLen bool, containApiKeyVersion bool) int {
 	version := f.ApiVersion
 	length := 0
+	if containLen {
+		length += LenLength
+	}
 	if containApiKeyVersion {
 		length += LenApiKey
 		length += LenApiVersion
@@ -82,10 +85,13 @@ func (f *FindCoordinatorReq) BytesLength(containApiKeyVersion bool) int {
 	return length
 }
 
-func (f *FindCoordinatorReq) Bytes(containApiKeyVersion bool) []byte {
+func (f *FindCoordinatorReq) Bytes(containLen bool, containApiKeyVersion bool) []byte {
 	version := f.ApiVersion
-	bytes := make([]byte, f.BytesLength(containApiKeyVersion))
+	bytes := make([]byte, f.BytesLength(containLen, containApiKeyVersion))
 	idx := 0
+	if containLen {
+		idx = putLength(bytes, idx)
+	}
 	if containApiKeyVersion {
 		idx = putApiKey(bytes, idx, FindCoordinator)
 		idx = putApiVersion(bytes, idx, version)

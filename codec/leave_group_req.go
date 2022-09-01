@@ -68,9 +68,12 @@ func DecodeLeaveGroupReq(bytes []byte, version int16) (leaveGroupReq *LeaveGroup
 	return leaveGroupReq, nil
 }
 
-func (l *LeaveGroupReq) BytesLength(containApiKeyVersion bool) int {
+func (l *LeaveGroupReq) BytesLength(containLen bool, containApiKeyVersion bool) int {
 	version := l.ApiVersion
 	length := 0
+	if containLen {
+		length += LenLength
+	}
 	if containApiKeyVersion {
 		length += LenApiKey
 		length += LenApiVersion
@@ -101,10 +104,13 @@ func (l *LeaveGroupReq) BytesLength(containApiKeyVersion bool) int {
 	return length
 }
 
-func (l *LeaveGroupReq) Bytes(containApiKeyVersion bool) []byte {
+func (l *LeaveGroupReq) Bytes(containLen bool, containApiKeyVersion bool) []byte {
 	version := l.ApiVersion
-	bytes := make([]byte, l.BytesLength(containApiKeyVersion))
+	bytes := make([]byte, l.BytesLength(containLen, containApiKeyVersion))
 	idx := 0
+	if containLen {
+		idx = putLength(bytes, idx)
+	}
 	if containApiKeyVersion {
 		idx = putApiKey(bytes, idx, LeaveGroup)
 		idx = putApiVersion(bytes, idx, version)

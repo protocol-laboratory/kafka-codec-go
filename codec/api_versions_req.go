@@ -76,7 +76,7 @@ func (a *ApiReq) Bytes(containLen bool, containApiKeyVersion bool) []byte {
 	bytes := make([]byte, a.BytesLength(containLen, containApiKeyVersion))
 	idx := 0
 	if containLen {
-		idx = putInt(bytes, idx, len(bytes)-4)
+		idx = putLength(bytes, idx)
 	}
 	if containApiKeyVersion {
 		idx = putApiKey(bytes, idx, ApiVersions)

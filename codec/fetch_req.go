@@ -95,8 +95,11 @@ func DecodeFetchReq(bytes []byte, version int16) (fetchReq *FetchReq, err error)
 	return fetchReq, nil
 }
 
-func (f *FetchReq) BytesLength(containApiKeyVersion bool) int {
+func (f *FetchReq) BytesLength(containLen bool, containApiKeyVersion bool) int {
 	length := 0
+	if containLen {
+		length += LenLength
+	}
 	if containApiKeyVersion {
 		length += LenApiKey
 		length += LenApiVersion
@@ -125,10 +128,13 @@ func (f *FetchReq) BytesLength(containApiKeyVersion bool) int {
 	return length
 }
 
-func (f *FetchReq) Bytes(containApiKeyVersion bool) []byte {
+func (f *FetchReq) Bytes(containLen bool, containApiKeyVersion bool) []byte {
 	version := f.ApiVersion
-	bytes := make([]byte, f.BytesLength(containApiKeyVersion))
+	bytes := make([]byte, f.BytesLength(containLen, containApiKeyVersion))
 	idx := 0
+	if containLen {
+		idx = putLength(bytes, idx)
+	}
 	if containApiKeyVersion {
 		idx = putApiKey(bytes, idx, Fetch)
 		idx = putApiVersion(bytes, idx, version)

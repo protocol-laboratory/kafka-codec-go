@@ -42,8 +42,11 @@ func DecodeSaslHandshakeReq(bytes []byte, version int16) (saslHandshakeReq *Sasl
 	return req, nil
 }
 
-func (s *SaslHandshakeReq) BytesLength(containApiKeyVersion bool) int {
+func (s *SaslHandshakeReq) BytesLength(containLen bool, containApiKeyVersion bool) int {
 	length := 0
+	if containLen {
+		length += LenLength
+	}
 	if containApiKeyVersion {
 		length += LenApiKey
 		length += LenApiVersion
@@ -54,10 +57,13 @@ func (s *SaslHandshakeReq) BytesLength(containApiKeyVersion bool) int {
 	return length
 }
 
-func (s *SaslHandshakeReq) Bytes(containApiKeyVersion bool) []byte {
+func (s *SaslHandshakeReq) Bytes(containLen bool, containApiKeyVersion bool) []byte {
 	version := s.ApiVersion
-	bytes := make([]byte, s.BytesLength(containApiKeyVersion))
+	bytes := make([]byte, s.BytesLength(containLen, containApiKeyVersion))
 	idx := 0
+	if containLen {
+		idx = putLength(bytes, idx)
+	}
 	if containApiKeyVersion {
 		idx = putApiKey(bytes, idx, SaslHandshake)
 		idx = putApiVersion(bytes, idx, version)

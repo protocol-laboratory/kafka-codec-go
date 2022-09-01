@@ -71,8 +71,11 @@ func DecodeOffsetForLeaderEpochReq(bytes []byte, version int16) (leaderEpochReq 
 	return leaderEpochReq, nil
 }
 
-func (o *OffsetForLeaderEpochReq) BytesLength(containApiKeyVersion bool) int {
+func (o *OffsetForLeaderEpochReq) BytesLength(containLen bool, containApiKeyVersion bool) int {
 	length := 0
+	if containLen {
+		length += LenLength
+	}
 	if containApiKeyVersion {
 		length += LenApiKey
 		length += LenApiVersion
@@ -93,10 +96,13 @@ func (o *OffsetForLeaderEpochReq) BytesLength(containApiKeyVersion bool) int {
 	return length
 }
 
-func (o *OffsetForLeaderEpochReq) Bytes(containApiKeyVersion bool) []byte {
+func (o *OffsetForLeaderEpochReq) Bytes(containLen bool, containApiKeyVersion bool) []byte {
 	version := o.ApiVersion
-	bytes := make([]byte, o.BytesLength(containApiKeyVersion))
+	bytes := make([]byte, o.BytesLength(containLen, containApiKeyVersion))
 	idx := 0
+	if containLen {
+		idx = putLength(bytes, idx)
+	}
 	if containApiKeyVersion {
 		idx = putApiKey(bytes, idx, OffsetForLeaderEpoch)
 		idx = putApiVersion(bytes, idx, version)
