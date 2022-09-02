@@ -29,15 +29,24 @@ func putBytes(bytes []byte, idx int, srcBytes []byte) int {
 }
 
 func readCompactBytes(bytes []byte, idx int) ([]byte, int) {
-	auxUInt32, offset := readUVarint(bytes, idx)
-	intLen := int(auxUInt32)
-	return bytes[offset : idx+intLen], idx + intLen
+	auxUInt32, idx := readUVarint(bytes, idx)
+	intLen := ConvertCompactLen(int(auxUInt32))
+	return bytes[idx : idx+intLen], idx + intLen
 }
 
 func putCompactBytes(bytes []byte, idx int, compactBytes []byte) int {
-	idx = putUVarint(bytes, idx, uint32(len(compactBytes)+1))
+	idx = putUVarint(bytes, idx, uint32(CompactBytesLen(compactBytes)))
 	copy(bytes[idx:], compactBytes)
 	return idx + len(compactBytes)
+}
+
+func readCompactNullableBytes(bytes []byte, idx int) ([]byte, int) {
+	bytesLen, idx := readUVarint(bytes, idx)
+	if bytesLen == 0 {
+		return nil, idx
+	}
+	intLen := ConvertCompactLen(int(bytesLen))
+	return bytes[idx : idx+intLen], idx + intLen
 }
 
 func putCompactNullableBytes(bytes []byte, idx int, content []byte) int {

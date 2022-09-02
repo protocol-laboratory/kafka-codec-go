@@ -86,7 +86,7 @@ func DecodeFetchResp(bytes []byte, version int16) (fetchResp *FetchResp, err err
 			}
 			var recordBatchLength int
 			recordBatchLength, idx = readInt(bytes, idx)
-			partitionResp.RecordBatch = DecodeRecordBatch(bytes[idx:idx+recordBatchLength-1], version)
+			partitionResp.RecordBatch = DecodeRecordBatch(bytes[idx:idx+recordBatchLength], version)
 			idx += recordBatchLength
 			topicResp.PartitionRespList[j] = partitionResp
 		}
