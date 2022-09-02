@@ -34,6 +34,7 @@ func DecodeRecord(bytes []byte, version int16) *Record {
 	record.RelativeOffset, idx = readRelativeOffset(bytes, idx)
 	record.Key, idx = readVCompactBytes(bytes, idx)
 	record.Value, idx = readVCompactBytes(bytes, idx)
+	record.Headers, idx = readCompactNullableBytes(bytes, idx)
 	return record
 }
 

@@ -19,6 +19,11 @@ package codec
 
 import "encoding/binary"
 
+// ConvertCompactLen convert compactLen into realLen
+func ConvertCompactLen(compactLen int) int {
+	return parseUVarintSize(uint(compactLen))
+}
+
 func putVarint64(bytes []byte, idx int, x int64) int {
 	delta := binary.PutVarint(bytes[idx:], x)
 	return idx + delta
@@ -49,7 +54,6 @@ func readVarint(bytes []byte, idx int) (int, int) {
 	return int(varint), idx + i
 }
 
-//nolint
 func varint64Size(x int64) int {
 	ux := uint64(x) << 1
 	if x < 0 {
@@ -67,7 +71,6 @@ func varintSize(x int) int {
 	return varint64Size(int64(x))
 }
 
-//nolint
 func uVarint64Size(x uint64) int {
 	i := 0
 	for x >= 0x80 {
@@ -79,4 +82,18 @@ func uVarint64Size(x uint64) int {
 
 func uVarintSize(x uint) int {
 	return uVarint64Size(uint64(x))
+}
+
+func parseUVarint64Size(x uint64) int {
+	x--
+	res := x
+	for x >= 0x80 {
+		x >>= 7
+		res--
+	}
+	return int(res)
+}
+
+func parseUVarintSize(x uint) int {
+	return parseUVarint64Size(uint64(x))
 }
