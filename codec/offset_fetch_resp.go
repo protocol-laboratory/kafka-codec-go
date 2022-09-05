@@ -105,9 +105,7 @@ func DecodeOffsetFetchResp(bytes []byte, version int16) (resp *OffsetFetchResp, 
 				partitionResp.LeaderEpoch, idx = readLeaderEpoch(bytes, idx)
 			}
 			if version == 1 {
-				var metadata string
-				metadata, idx = readString(bytes, idx)
-				partitionResp.Metadata = &metadata
+				partitionResp.Metadata, idx = readNullableString(bytes, idx)
 			} else if version == 6 || version == 7 {
 				partitionResp.Metadata, idx = readMetadata(bytes, idx)
 			}
@@ -156,7 +154,7 @@ func (o *OffsetFetchResp) BytesLength(version int16) int {
 				result += LenLeaderEpoch
 			}
 			if version == 1 {
-				result += StrLen(*val2.Metadata)
+				result += NullableStrLen(val2.Metadata)
 			} else if version == 6 || version == 7 {
 				result += CompactNullableStrLen(val2.Metadata)
 			}
@@ -206,7 +204,7 @@ func (o *OffsetFetchResp) Bytes(version int16) []byte {
 				idx = putLeaderEpoch(bytes, idx, partition.LeaderEpoch)
 			}
 			if version == 1 {
-				idx = putString(bytes, idx, *partition.Metadata)
+				idx = putNullableString(bytes, idx, partition.Metadata)
 			} else if version == 6 || version == 7 {
 				idx = putMetadata(bytes, idx, partition.Metadata)
 			}
