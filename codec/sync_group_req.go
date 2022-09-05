@@ -85,7 +85,9 @@ func DecodeSyncGroupReq(bytes []byte, version int16) (groupReq *SyncGroupReq, er
 			groupAssignment.MemberId, idx = readMemberId(bytes, idx)
 		}
 		if version == 0 {
-			groupAssignment.MemberAssignment, idx = readString(bytes, idx)
+			var memberAssignmentBytes []byte
+			memberAssignmentBytes, idx = readBytes(bytes, idx)
+			groupAssignment.MemberAssignment = string(memberAssignmentBytes)
 		} else if version == 4 || version == 5 {
 			groupAssignment.MemberAssignment, idx = readCompactString(bytes, idx)
 		}
@@ -137,7 +139,7 @@ func (s *SyncGroupReq) BytesLength(containLen bool, containApiKeyVersion bool) i
 	for _, groupAssignment := range s.GroupAssignments {
 		if version == 0 {
 			length += StrLen(groupAssignment.MemberId)
-			length += StrLen(groupAssignment.MemberAssignment)
+			length += StrLen(groupAssignment.MemberAssignment) + 2
 		} else if version == 4 || version == 5 {
 			length += CompactStrLen(groupAssignment.MemberId)
 			length += CompactStrLen(groupAssignment.MemberAssignment)
@@ -190,7 +192,7 @@ func (s *SyncGroupReq) Bytes(containLen bool, containApiKeyVersion bool) []byte 
 	for _, groupAssignment := range s.GroupAssignments {
 		if version == 0 {
 			idx = putMemberIdString(bytes, idx, groupAssignment.MemberId)
-			idx = putString(bytes, idx, groupAssignment.MemberAssignment)
+			idx = putBytes(bytes, idx, []byte(groupAssignment.MemberAssignment))
 		} else if version == 4 || version == 5 {
 			idx = putMemberId(bytes, idx, groupAssignment.MemberId)
 			idx = putCompactString(bytes, idx, groupAssignment.MemberAssignment)
