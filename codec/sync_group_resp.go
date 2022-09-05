@@ -48,8 +48,9 @@ func DecodeSyncGroupResp(bytes []byte, version int16) (resp *SyncGroupResp, err 
 		resp.ProtocolName, idx = readProtocolName(bytes, idx)
 	}
 	if version == 0 {
-		idx += 2
-		resp.MemberAssignment, idx = readString(bytes, idx)
+		var memberAssignmentBytes []byte
+		memberAssignmentBytes, idx = readBytes(bytes, idx)
+		resp.MemberAssignment = string(memberAssignmentBytes)
 	} else if version == 4 || version == 5 {
 		resp.MemberAssignment, idx = readCompactString(bytes, idx)
 	}
@@ -94,8 +95,7 @@ func (s *SyncGroupResp) Bytes(version int16) []byte {
 		idx = putProtocolName(bytes, idx, s.ProtocolName)
 	}
 	if version == 0 {
-		idx += 2
-		idx = putString(bytes, idx, s.MemberAssignment)
+		idx = putBytes(bytes, idx, []byte(s.MemberAssignment))
 	} else if version == 4 || version == 5 {
 		idx = putCompactString(bytes, idx, s.MemberAssignment)
 	}

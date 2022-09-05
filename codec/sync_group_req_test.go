@@ -29,46 +29,48 @@ func TestDecodeIllegalSyncGroupReq(t *testing.T) {
 }
 
 func TestDecodeSyncGroupReqV0(t *testing.T) {
-	bytes := testHex2Bytes(t, "00000003006d5f5f5f546573744b61666b61436f6e73756d655f696e5f676f5f64656d6f5f64656d6f5f6b61666b612e746573744068657a68616e676a69616e64654d6163426f6f6b2d50726f2e6c6f63616c20286769746875622e636f6d2f7365676d656e74696f2f6b61666b612d676f290005746f7069630000000300925f5f5f546573744b61666b61436f6e73756d655f696e5f676f5f64656d6f5f64656d6f5f6b61666b612e746573744068657a68616e676a69616e64654d6163426f6f6b2d50726f2e6c6f63616c20286769746875622e636f6d2f7365676d656e74696f2f6b61666b612d676f292d61336635303632622d393462632d343738642d386464622d3261326665653639383963380000000100925f5f5f546573744b61666b61436f6e73756d655f696e5f676f5f64656d6f5f64656d6f5f6b61666b612e746573744068657a68616e676a69616e64654d6163426f6f6b2d50726f2e6c6f63616c20286769746875622e636f6d2f7365676d656e74696f2f6b61666b612d676f292d61336635303632622d393462632d343738642d386464622d326132666565363938396338000000190001000000010005746f7069630000000100000000ffffffff")
+	bytes := testHex2Bytes(t, "00000006000570662d6d71000767726f75702d310000001a002a70662d6d712d38636238316534642d303831382d346438342d386337642d61313564373839353231313700000001002a70662d6d712d38636238316534642d303831382d346438342d386337642d6131356437383935323131370000001d000100000001000974657374546f7069630000000100000000ffffffff")
 	syncReq, err := DecodeSyncGroupReq(bytes, 0)
 	assert.Nil(t, err)
-	assert.Equal(t, 3, syncReq.CorrelationId)
-	assert.Equal(t, "___TestKafkaConsume_in_go_demo_demo_kafka.test@hezhangjiandeMacBook-Pro.local (github.com/segmentio/kafka-go)", syncReq.ClientId)
-	assert.Equal(t, "topic", syncReq.GroupId)
-	assert.Equal(t, 3, syncReq.GenerationId)
-	assert.Equal(t, "___TestKafkaConsume_in_go_demo_demo_kafka.test@hezhangjiandeMacBook-Pro.local (github.com/segmentio/kafka-go)-a3f5062b-94bc-478d-8ddb-2a2fee6989c8", syncReq.MemberId)
+	assert.Equal(t, 6, syncReq.CorrelationId)
+	assert.Equal(t, "pf-mq", syncReq.ClientId)
+	assert.Equal(t, "group-1", syncReq.GroupId)
+	assert.Equal(t, 26, syncReq.GenerationId)
+	assert.Equal(t, "pf-mq-8cb81e4d-0818-4d84-8c7d-a15d78952117", syncReq.MemberId)
 	assert.Len(t, syncReq.GroupAssignments, 1)
 	groupAssignment := syncReq.GroupAssignments[0]
-	assert.Equal(t, "___TestKafkaConsume_in_go_demo_demo_kafka.test@hezhangjiandeMacBook-Pro.local (github.com/segmentio/kafka-go)-a3f5062b-94bc-478d-8ddb-2a2fee6989c8", groupAssignment.MemberId)
+	assert.Equal(t, "pf-mq-8cb81e4d-0818-4d84-8c7d-a15d78952117", groupAssignment.MemberId)
+	assert.Equal(t, testHex2Bytes(t, "000100000001000974657374546f7069630000000100000000ffffffff"), []byte(groupAssignment.MemberAssignment))
 }
 
 func TestEncodeSyncGroupReqV0(t *testing.T) {
 	syncGroupReq := &SyncGroupReq{}
 	syncGroupReq.ApiVersion = 0
-	syncGroupReq.CorrelationId = 3
-	syncGroupReq.ClientId = "___TestKafkaConsume_in_go_demo_demo_kafka.test@hezhangjiandeMacBook-Pro.local (github.com/segmentio/kafka-go)"
-	syncGroupReq.GroupId = "topic"
-	syncGroupReq.GenerationId = 3
-	syncGroupReq.MemberId = "___TestKafkaConsume_in_go_demo_demo_kafka.test@hezhangjiandeMacBook-Pro.local (github.com/segmentio/kafka-go)-a3f5062b-94bc-478d-8ddb-2a2fee6989c8"
+	syncGroupReq.CorrelationId = 6
+	syncGroupReq.ClientId = "pf-mq"
+	syncGroupReq.GroupId = "group-1"
+	syncGroupReq.GenerationId = 26
+	syncGroupReq.MemberId = "pf-mq-8cb81e4d-0818-4d84-8c7d-a15d78952117"
 	assignments := make([]*GroupAssignment, 1)
-	assignments[0] = &GroupAssignment{MemberId: "___TestKafkaConsume_in_go_demo_demo_kafka.test@hezhangjiandeMacBook-Pro.local (github.com/segmentio/kafka-go)-a3f5062b-94bc-478d-8ddb-2a2fee6989c8", MemberAssignment: ""}
+	assignments[0] = &GroupAssignment{MemberId: "pf-mq-8cb81e4d-0818-4d84-8c7d-a15d78952117", MemberAssignment: string(testHex2Bytes(t, "000100000001000974657374546f7069630000000100000000ffffffff"))}
 	syncGroupReq.GroupAssignments = assignments
 	codeBytes := syncGroupReq.Bytes(true, true)
-	assert.Equal(t, codeBytes, testHex2Bytes(t, "000001b0000e000000000003006d5f5f5f546573744b61666b61436f6e73756d655f696e5f676f5f64656d6f5f64656d6f5f6b61666b612e746573744068657a68616e676a69616e64654d6163426f6f6b2d50726f2e6c6f63616c20286769746875622e636f6d2f7365676d656e74696f2f6b61666b612d676f290005746f7069630000000300925f5f5f546573744b61666b61436f6e73756d655f696e5f676f5f64656d6f5f64656d6f5f6b61666b612e746573744068657a68616e676a69616e64654d6163426f6f6b2d50726f2e6c6f63616c20286769746875622e636f6d2f7365676d656e74696f2f6b61666b612d676f292d61336635303632622d393462632d343738642d386464622d3261326665653639383963380000000100925f5f5f546573744b61666b61436f6e73756d655f696e5f676f5f64656d6f5f64656d6f5f6b61666b612e746573744068657a68616e676a69616e64654d6163426f6f6b2d50726f2e6c6f63616c20286769746875622e636f6d2f7365676d656e74696f2f6b61666b612d676f292d61336635303632622d393462632d343738642d386464622d3261326665653639383963380000"))
+	assert.Equal(t, codeBytes, testHex2Bytes(t, "00000099000e000000000006000570662d6d71000767726f75702d310000001a002a70662d6d712d38636238316534642d303831382d346438342d386337642d61313564373839353231313700000001002a70662d6d712d38636238316534642d303831382d346438342d386337642d6131356437383935323131370000001d000100000001000974657374546f7069630000000100000000ffffffff"))
 }
 
 func TestDecodeAndCodeSyncGroupReqV0(t *testing.T) {
-	bytes := testHex2Bytes(t, "00000003006d5f5f5f546573744b61666b61436f6e73756d655f696e5f676f5f64656d6f5f64656d6f5f6b61666b612e746573744068657a68616e676a69616e64654d6163426f6f6b2d50726f2e6c6f63616c20286769746875622e636f6d2f7365676d656e74696f2f6b61666b612d676f290005746f7069630000000300925f5f5f546573744b61666b61436f6e73756d655f696e5f676f5f64656d6f5f64656d6f5f6b61666b612e746573744068657a68616e676a69616e64654d6163426f6f6b2d50726f2e6c6f63616c20286769746875622e636f6d2f7365676d656e74696f2f6b61666b612d676f292d61336635303632622d393462632d343738642d386464622d3261326665653639383963380000000100925f5f5f546573744b61666b61436f6e73756d655f696e5f676f5f64656d6f5f64656d6f5f6b61666b612e746573744068657a68616e676a69616e64654d6163426f6f6b2d50726f2e6c6f63616c20286769746875622e636f6d2f7365676d656e74696f2f6b61666b612d676f292d61336635303632622d393462632d343738642d386464622d3261326665653639383963380000")
+	bytes := testHex2Bytes(t, "00000006000570662d6d71000767726f75702d310000001a002a70662d6d712d38636238316534642d303831382d346438342d386337642d61313564373839353231313700000001002a70662d6d712d38636238316534642d303831382d346438342d386337642d6131356437383935323131370000001d000100000001000974657374546f7069630000000100000000ffffffff")
 	syncReq, err := DecodeSyncGroupReq(bytes, 0)
 	assert.Nil(t, err)
-	assert.Equal(t, 3, syncReq.CorrelationId)
-	assert.Equal(t, "___TestKafkaConsume_in_go_demo_demo_kafka.test@hezhangjiandeMacBook-Pro.local (github.com/segmentio/kafka-go)", syncReq.ClientId)
-	assert.Equal(t, "topic", syncReq.GroupId)
-	assert.Equal(t, 3, syncReq.GenerationId)
-	assert.Equal(t, "topic", syncReq.GroupId)
+	assert.Equal(t, 6, syncReq.CorrelationId)
+	assert.Equal(t, "pf-mq", syncReq.ClientId)
+	assert.Equal(t, "group-1", syncReq.GroupId)
+	assert.Equal(t, 26, syncReq.GenerationId)
+	assert.Equal(t, "pf-mq-8cb81e4d-0818-4d84-8c7d-a15d78952117", syncReq.MemberId)
 	assert.Len(t, syncReq.GroupAssignments, 1)
 	groupAssignment := syncReq.GroupAssignments[0]
-	assert.Equal(t, "___TestKafkaConsume_in_go_demo_demo_kafka.test@hezhangjiandeMacBook-Pro.local (github.com/segmentio/kafka-go)-a3f5062b-94bc-478d-8ddb-2a2fee6989c8", groupAssignment.MemberId)
+	assert.Equal(t, "pf-mq-8cb81e4d-0818-4d84-8c7d-a15d78952117", groupAssignment.MemberId)
+	assert.Equal(t, testHex2Bytes(t, "000100000001000974657374546f7069630000000100000000ffffffff"), []byte(groupAssignment.MemberAssignment))
 	codeBytes := syncReq.Bytes(false, false)
 	assert.Equal(t, bytes, codeBytes)
 }
