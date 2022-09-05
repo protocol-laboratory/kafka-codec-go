@@ -41,17 +41,19 @@ func DecodeSaslAuthenticateResp(bytes []byte, version int16) (resp *SaslAuthenti
 		idx = readTaggedField(bytes, idx)
 	}
 	resp.ErrorCode, idx = readErrorCode(bytes, idx)
-	if version == 1 {
+	if version <= 1 {
 		resp.ErrorMessage, idx = readErrorMessageString(bytes, idx)
 	} else if version == 2 {
 		resp.ErrorMessage, idx = readErrorMessage(bytes, idx)
 	}
-	if version == 1 {
+	if version <= 1 {
 		resp.AuthBytes, idx = readSaslAuthBytes(bytes, idx)
 	} else if version == 2 {
 		resp.AuthBytes, idx = readSaslAuthBytesCompact(bytes, idx)
 	}
-	resp.SessionLifetime, idx = readSessionLifeTimeout(bytes, idx)
+	if version > 0 {
+		resp.SessionLifetime, idx = readSessionLifeTimeout(bytes, idx)
+	}
 	if version == 2 {
 		idx = readTaggedField(bytes, idx)
 	}
@@ -64,17 +66,19 @@ func (s *SaslAuthenticateResp) BytesLength(version int16) int {
 		result += LenTaggedField
 	}
 	result += LenErrorCode
-	if version == 1 {
+	if version <= 1 {
 		result += StrLen(s.ErrorMessage)
 	} else if version == 2 {
 		result += CompactStrLen(s.ErrorMessage)
 	}
-	if version == 1 {
+	if version <= 1 {
 		result += BytesLen(s.AuthBytes)
 	} else if version == 2 {
 		result += CompactBytesLen(s.AuthBytes)
 	}
-	result += LenSessionTimeout
+	if version > 0 {
+		result += LenSessionTimeout
+	}
 	if version == 2 {
 		result += LenTaggedField
 	}
@@ -89,17 +93,19 @@ func (s *SaslAuthenticateResp) Bytes(version int16) []byte {
 		idx = putTaggedField(bytes, idx)
 	}
 	idx = putErrorCode(bytes, idx, s.ErrorCode)
-	if version == 1 {
+	if version <= 1 {
 		idx = putErrorMessageString(bytes, idx, s.ErrorMessage)
 	} else if version == 2 {
 		idx = putErrorMessage(bytes, idx, s.ErrorMessage)
 	}
-	if version == 1 {
+	if version <= 1 {
 		idx = putSaslAuthBytes(bytes, idx, s.AuthBytes)
 	} else if version == 2 {
 		idx = putSaslAuthBytesCompact(bytes, idx, s.AuthBytes)
 	}
-	idx = putSessionLifeTimeout(bytes, idx, s.SessionLifetime)
+	if version > 0 {
+		idx = putSessionLifeTimeout(bytes, idx, s.SessionLifetime)
+	}
 	if version == 2 {
 		idx = putTaggedField(bytes, idx)
 	}

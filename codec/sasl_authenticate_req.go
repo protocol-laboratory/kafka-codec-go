@@ -40,7 +40,7 @@ func DecodeSaslAuthenticateReq(bytes []byte, version int16) (authReq *SaslAuthen
 	authReq.CorrelationId, idx = readCorrId(bytes, idx)
 	authReq.ClientId, idx = readClientId(bytes, idx)
 	var saslBytes []byte
-	if version == 1 {
+	if version <= 1 {
 		saslBytes, idx = readBytes(bytes, idx)
 	} else if version == 2 {
 		idx = readTaggedField(bytes, idx)
@@ -66,7 +66,7 @@ func (s *SaslAuthenticateReq) BytesLength(containLen bool, containApiKeyVersion 
 	length += LenCorrId
 	length += StrLen(s.ClientId)
 	authBytes := generateSaslAuthUsernamePwdBytes(s.Username, s.Password)
-	if version == 1 {
+	if version <= 1 {
 		length += BytesLen(authBytes)
 	} else if version == 2 {
 		length += LenTaggedField
@@ -92,7 +92,7 @@ func (s *SaslAuthenticateReq) Bytes(containLen bool, containApiKeyVersion bool) 
 	idx = putCorrId(bytes, idx, s.CorrelationId)
 	idx = putClientId(bytes, idx, s.ClientId)
 	authBytes := generateSaslAuthUsernamePwdBytes(s.Username, s.Password)
-	if version == 1 {
+	if version <= 1 {
 		idx = putSaslAuthBytes(bytes, idx, authBytes)
 	} else if version == 2 {
 		idx = putTaggedField(bytes, idx)
