@@ -86,7 +86,9 @@ func DecodeJoinGroupReq(bytes []byte, version int16) (joinGroupReq *JoinGroupReq
 			groupProtocol.ProtocolName, idx = readProtocolName(bytes, idx)
 		}
 		if version == 1 {
-			groupProtocol.ProtocolMetadata, idx = readString(bytes, idx)
+			var metaDataBytes []byte
+			metaDataBytes, idx = readBytes(bytes, idx)
+			groupProtocol.ProtocolMetadata = string(metaDataBytes)
 		} else if version == 6 {
 			groupProtocol.ProtocolMetadata, idx = readCompactString(bytes, idx)
 		}
@@ -134,7 +136,7 @@ func (j *JoinGroupReq) BytesLength(containLen bool, containApiKeyVersion bool) i
 	for _, groupProtocol := range j.GroupProtocols {
 		if version == 1 {
 			length += StrLen(groupProtocol.ProtocolName)
-			length += StrLen(groupProtocol.ProtocolMetadata)
+			length += StrLen(groupProtocol.ProtocolMetadata) + 2
 		} else if version == 6 {
 			length += CompactStrLen(groupProtocol.ProtocolName)
 			length += CompactStrLen(groupProtocol.ProtocolMetadata)
@@ -181,7 +183,7 @@ func (j *JoinGroupReq) Bytes(containLen bool, containApiKeyVersion bool) []byte 
 	for _, groupProtocol := range j.GroupProtocols {
 		if version == 1 {
 			idx = putProtocolNameString(bytes, idx, groupProtocol.ProtocolName)
-			idx = putString(bytes, idx, groupProtocol.ProtocolMetadata)
+			idx = putBytes(bytes, idx, []byte(groupProtocol.ProtocolMetadata))
 		} else if version == 6 {
 			idx = putProtocolName(bytes, idx, groupProtocol.ProtocolName)
 			idx = putCompactString(bytes, idx, groupProtocol.ProtocolMetadata)
