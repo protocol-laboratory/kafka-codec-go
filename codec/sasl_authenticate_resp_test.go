@@ -22,6 +22,35 @@ import (
 	"testing"
 )
 
+func TestDecodeSaslAuthenticateRespV0(t *testing.T) {
+	bytes := testHex2Bytes(t, "000000030000000000000000")
+	resp, err := DecodeSaslAuthenticateResp(bytes, 0)
+	assert.Nil(t, err)
+	assert.Equal(t, resp.CorrelationId, 3)
+	assert.Equal(t, resp.ErrorCode, NONE)
+}
+
+func TestEncodeSaslHandshakeAuthRespV0(t *testing.T) {
+	saslHandshakeAuthResp := SaslAuthenticateResp{
+		BaseResp: BaseResp{
+			CorrelationId: 3,
+		},
+	}
+	bytes := saslHandshakeAuthResp.Bytes(0)
+	expectBytes := testHex2Bytes(t, "000000030000000000000000")
+	assert.Equal(t, expectBytes, bytes)
+}
+
+func TestDecodeAndCodeSaslAuthenticateRespV0(t *testing.T) {
+	bytes := testHex2Bytes(t, "000000030000000000000000")
+	resp, err := DecodeSaslAuthenticateResp(bytes, 0)
+	assert.Nil(t, err)
+	assert.Equal(t, resp.CorrelationId, 3)
+	assert.Equal(t, resp.ErrorCode, NONE)
+	codeBytes := resp.Bytes(0)
+	assert.Equal(t, bytes, codeBytes)
+}
+
 func TestDecodeSaslAuthenticateRespV1(t *testing.T) {
 	bytes := testHex2Bytes(t, "7ffffffa00000000000000000000000000000000")
 	resp, err := DecodeSaslAuthenticateResp(bytes, 1)

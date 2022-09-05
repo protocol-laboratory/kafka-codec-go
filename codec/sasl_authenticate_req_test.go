@@ -28,6 +28,39 @@ func TestDecodeIllegalSaslHandshakeAuthReq(t *testing.T) {
 	assert.NotNil(t, err)
 }
 
+func TestDecodeSaslAuthenticateReqV0(t *testing.T) {
+	bytes := testHex2Bytes(t, "00000003000570662d6d710000000c00616c69636500616c696365")
+	saslHandshakeAuthReq, err := DecodeSaslAuthenticateReq(bytes, 0)
+	assert.Nil(t, err)
+	assert.Equal(t, 3, saslHandshakeAuthReq.CorrelationId)
+	assert.Equal(t, "pf-mq", saslHandshakeAuthReq.ClientId)
+	assert.Equal(t, "alice", saslHandshakeAuthReq.Username)
+	assert.Equal(t, "alice", saslHandshakeAuthReq.Password)
+}
+
+func TestEncodeSaslHandshakeAuthReqV0(t *testing.T) {
+	saslHandshakeAuthReq := &SaslAuthenticateReq{}
+	saslHandshakeAuthReq.ApiVersion = 0
+	saslHandshakeAuthReq.CorrelationId = 3
+	saslHandshakeAuthReq.ClientId = "pf-mq"
+	saslHandshakeAuthReq.Username = "alice"
+	saslHandshakeAuthReq.Password = "alice"
+	codeBytes := saslHandshakeAuthReq.Bytes(true, true)
+	assert.Equal(t, codeBytes, testHex2Bytes(t, "0000001f0024000000000003000570662d6d710000000c00616c69636500616c696365"))
+}
+
+func TestDecodeAndCodeSaslHandshakeAuthReqV0(t *testing.T) {
+	bytes := testHex2Bytes(t, "00000003000570662d6d710000000c00616c69636500616c696365")
+	saslHandshakeAuthReq, err := DecodeSaslAuthenticateReq(bytes, 0)
+	assert.Nil(t, err)
+	assert.Equal(t, 3, saslHandshakeAuthReq.CorrelationId)
+	assert.Equal(t, "pf-mq", saslHandshakeAuthReq.ClientId)
+	assert.Equal(t, "alice", saslHandshakeAuthReq.Username)
+	assert.Equal(t, "alice", saslHandshakeAuthReq.Password)
+	codeBytes := saslHandshakeAuthReq.Bytes(false, false)
+	assert.Equal(t, bytes, codeBytes)
+}
+
 func TestDecodeSaslHandshakeAuthReqV1(t *testing.T) {
 	bytes := testHex2Bytes(t, "7ffffffa002f636f6e73756d65722d33616332336137662d346333362d343064392d393964342d6163646134376430613438642d310000000c00616c69636500616c696365")
 	saslHandshakeAuthReq, err := DecodeSaslAuthenticateReq(bytes, 1)
