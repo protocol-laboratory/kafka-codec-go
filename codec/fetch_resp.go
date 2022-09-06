@@ -113,7 +113,10 @@ func (f *FetchResp) BytesLength(version int16) int {
 			if version == 11 {
 				result += LenReplicaId
 			}
-			result += LenMessageSize + p.RecordBatch.BytesLength()
+			result += LenMessageSize
+			if p.RecordBatch != nil {
+				result += p.RecordBatch.BytesLength()
+			}
 		}
 	}
 	return result
@@ -140,7 +143,9 @@ func (f *FetchResp) Bytes(version int16) []byte {
 			if version == 11 {
 				idx = putInt(bytes, idx, -1)
 			}
-			if p.RecordBatch != nil {
+			if p.RecordBatch == nil {
+				idx = putRecordBatch(bytes, idx, nil)
+			} else {
 				idx = putRecordBatch(bytes, idx, p.RecordBatch.Bytes())
 			}
 		}
