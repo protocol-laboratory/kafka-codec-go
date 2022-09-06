@@ -35,24 +35,42 @@ func DecodeHeartbeatResp(bytes []byte, version int16) (resp *HeartbeatResp, err 
 	resp = &HeartbeatResp{}
 	idx := 0
 	resp.CorrelationId, idx = readCorrId(bytes, idx)
-	idx = readTaggedField(bytes, idx)
-	resp.ThrottleTime, idx = readThrottleTime(bytes, idx)
+	if version == 4 {
+		idx = readTaggedField(bytes, idx)
+		resp.ThrottleTime, idx = readThrottleTime(bytes, idx)
+	}
 	resp.ErrorCode, idx = readErrorCode(bytes, idx)
-	idx = readTaggedField(bytes, idx)
+	if version == 4 {
+		idx = readTaggedField(bytes, idx)
+	}
 	return resp, nil
 }
 
 func (h *HeartbeatResp) BytesLength(version int16) int {
-	return LenCorrId + LenTaggedField + LenThrottleTime + LenErrorCode + LenTaggedField
+	length := 0
+	length += LenCorrId
+	if version == 4 {
+		length += LenTaggedField
+		length += LenThrottleTime
+	}
+	length += LenErrorCode
+	if version == 4 {
+		length += LenTaggedField
+	}
+	return length
 }
 
 func (h *HeartbeatResp) Bytes(version int16) []byte {
 	bytes := make([]byte, h.BytesLength(version))
 	idx := 0
 	idx = putCorrId(bytes, idx, h.CorrelationId)
-	idx = putTaggedField(bytes, idx)
-	idx = putThrottleTime(bytes, idx, 0)
+	if version == 4 {
+		idx = putTaggedField(bytes, idx)
+		idx = putThrottleTime(bytes, idx, 0)
+	}
 	idx = putErrorCode(bytes, idx, h.ErrorCode)
-	idx = putTaggedField(bytes, idx)
+	if version == 4 {
+		idx = putTaggedField(bytes, idx)
+	}
 	return bytes
 }

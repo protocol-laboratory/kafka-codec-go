@@ -28,6 +28,44 @@ func TestDecodeIllegalHeartbeatReq(t *testing.T) {
 	assert.NotNil(t, err)
 }
 
+func TestDecodeHeartbeatReqV0(t *testing.T) {
+	bytes := testHex2Bytes(t, "00000008000570662d6d71000767726f75702d3100000001002a70662d6d712d33316465643736652d396463312d343430332d613465652d316432343330346137396237")
+	req, err := DecodeHeartbeatReq(bytes, 0)
+	assert.Nil(t, err)
+	assert.Equal(t, req.CorrelationId, 8)
+	assert.Equal(t, req.ClientId, "pf-mq")
+	assert.Equal(t, req.GenerationId, 1)
+	assert.Equal(t, req.GroupId, "group-1")
+	assert.Equal(t, req.MemberId, "pf-mq-31ded76e-9dc1-4403-a4ee-1d24304a79b7")
+	assert.Nil(t, req.GroupInstanceId)
+}
+
+func TestEncodeHeartbeatReqV0(t *testing.T) {
+	heartbeatReq := &HeartbeatReq{}
+	heartbeatReq.ApiVersion = 0
+	heartbeatReq.CorrelationId = 8
+	heartbeatReq.GenerationId = 1
+	heartbeatReq.ClientId = "pf-mq"
+	heartbeatReq.GroupId = "group-1"
+	heartbeatReq.MemberId = "pf-mq-31ded76e-9dc1-4403-a4ee-1d24304a79b7"
+	codeBytes := heartbeatReq.Bytes(true, true)
+	assert.Equal(t, testHex2Bytes(t, "00000048000c000000000008000570662d6d71000767726f75702d3100000001002a70662d6d712d33316465643736652d396463312d343430332d613465652d316432343330346137396237"), codeBytes)
+}
+
+func TestDecodeAndCodeHeartbeatReqV0(t *testing.T) {
+	bytes := testHex2Bytes(t, "00000008000570662d6d71000767726f75702d3100000001002a70662d6d712d33316465643736652d396463312d343430332d613465652d316432343330346137396237")
+	req, err := DecodeHeartbeatReq(bytes, 0)
+	assert.Nil(t, err)
+	assert.Equal(t, req.CorrelationId, 8)
+	assert.Equal(t, req.ClientId, "pf-mq")
+	assert.Equal(t, req.GenerationId, 1)
+	assert.Equal(t, req.GroupId, "group-1")
+	assert.Equal(t, req.MemberId, "pf-mq-31ded76e-9dc1-4403-a4ee-1d24304a79b7")
+	assert.Nil(t, req.GroupInstanceId)
+	codeBytes := req.Bytes(false, false)
+	assert.Equal(t, bytes, codeBytes)
+}
+
 func TestDecodeHeartbeatReqV4(t *testing.T) {
 	bytes := testHex2Bytes(t, "0000007d0023636f6e73756d65722d68706354657374546f7069633b67726f75702d6870632d312d31001968706354657374546f7069633b67726f75702d6870632d310000000249636f6e73756d65722d68706354657374546f7069633b67726f75702d6870632d312d312d66643931663933332d393532302d346363392d393430662d3561386166666539376566370000")
 	req, err := DecodeHeartbeatReq(bytes, 4)

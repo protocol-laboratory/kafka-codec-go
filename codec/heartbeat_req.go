@@ -41,16 +41,29 @@ func DecodeHeartbeatReq(bytes []byte, version int16) (heartBeatReq *HeartbeatReq
 	idx := 0
 	heartBeatReq.CorrelationId, idx = readCorrId(bytes, idx)
 	heartBeatReq.ClientId, idx = readClientId(bytes, idx)
-	idx = readTaggedField(bytes, idx)
-	heartBeatReq.GroupId, idx = readGroupId(bytes, idx)
+	if version == 4 {
+		idx = readTaggedField(bytes, idx)
+	}
+	if version == 0 {
+		heartBeatReq.GroupId, idx = readGroupIdString(bytes, idx)
+	} else if version == 4 {
+		heartBeatReq.GroupId, idx = readGroupId(bytes, idx)
+	}
 	heartBeatReq.GenerationId, idx = readGenerationId(bytes, idx)
-	heartBeatReq.MemberId, idx = readMemberId(bytes, idx)
-	heartBeatReq.GroupInstanceId, idx = readGroupInstanceId(bytes, idx)
-	idx = readTaggedField(bytes, idx)
+	if version == 0 {
+		heartBeatReq.MemberId, idx = readMemberIdString(bytes, idx)
+	} else if version == 4 {
+		heartBeatReq.MemberId, idx = readMemberId(bytes, idx)
+	}
+	if version == 4 {
+		heartBeatReq.GroupInstanceId, idx = readGroupInstanceId(bytes, idx)
+		idx = readTaggedField(bytes, idx)
+	}
 	return heartBeatReq, nil
 }
 
 func (h *HeartbeatReq) BytesLength(containLen bool, containApiKeyVersion bool) int {
+	version := h.ApiVersion
 	length := 0
 	if containLen {
 		length += LenLength
@@ -61,12 +74,24 @@ func (h *HeartbeatReq) BytesLength(containLen bool, containApiKeyVersion bool) i
 	}
 	length += LenCorrId
 	length += StrLen(h.ClientId)
-	length += LenTaggedField
-	length += CompactStrLen(h.GroupId)
+	if version == 4 {
+		length += LenTaggedField
+	}
+	if version == 0 {
+		length += StrLen(h.GroupId)
+	} else if version == 4 {
+		length += CompactStrLen(h.GroupId)
+	}
 	length += LenGenerationId
-	length += CompactStrLen(h.MemberId)
-	length += CompactNullableStrLen(h.GroupInstanceId)
-	length += LenTaggedField
+	if version == 0 {
+		length += StrLen(h.MemberId)
+	} else if version == 4 {
+		length += CompactStrLen(h.MemberId)
+	}
+	if version == 4 {
+		length += CompactNullableStrLen(h.GroupInstanceId)
+		length += LenTaggedField
+	}
 	return length
 }
 
@@ -83,11 +108,23 @@ func (h *HeartbeatReq) Bytes(containLen bool, containApiKeyVersion bool) []byte 
 	}
 	idx = putCorrId(bytes, idx, h.CorrelationId)
 	idx = putClientId(bytes, idx, h.ClientId)
-	idx = putTaggedField(bytes, idx)
-	idx = putGroupId(bytes, idx, h.GroupId)
+	if version == 4 {
+		idx = putTaggedField(bytes, idx)
+	}
+	if version == 0 {
+		idx = putGroupIdString(bytes, idx, h.GroupId)
+	} else if version == 4 {
+		idx = putGroupId(bytes, idx, h.GroupId)
+	}
 	idx = putGenerationId(bytes, idx, h.GenerationId)
-	idx = putMemberId(bytes, idx, h.MemberId)
-	idx = putGroupInstanceId(bytes, idx, h.GroupInstanceId)
-	idx = putTaggedField(bytes, idx)
+	if version == 0 {
+		idx = putMemberIdString(bytes, idx, h.MemberId)
+	} else if version == 4 {
+		idx = putMemberId(bytes, idx, h.MemberId)
+	}
+	if version == 4 {
+		idx = putGroupInstanceId(bytes, idx, h.GroupInstanceId)
+		idx = putTaggedField(bytes, idx)
+	}
 	return bytes
 }
