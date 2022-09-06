@@ -22,6 +22,35 @@ import (
 	"testing"
 )
 
+func TestDecodeHeartbeatRespV0(t *testing.T) {
+	bytes := testHex2Bytes(t, "0000000a0000")
+	resp, err := DecodeHeartbeatResp(bytes, 0)
+	assert.Nil(t, err)
+	assert.Equal(t, resp.CorrelationId, 10)
+	assert.Equal(t, resp.ErrorCode, NONE)
+}
+
+func TestEncodeHeartbeatRespV0(t *testing.T) {
+	heartBeatResp := HeartbeatResp{
+		BaseResp: BaseResp{
+			CorrelationId: 10,
+		},
+	}
+	bytes := heartBeatResp.Bytes(0)
+	expectBytes := testHex2Bytes(t, "0000000a0000")
+	assert.Equal(t, expectBytes, bytes)
+}
+
+func TestDecodeAndCodeHeartbeatRespV0(t *testing.T) {
+	bytes := testHex2Bytes(t, "0000000a0000")
+	resp, err := DecodeHeartbeatResp(bytes, 0)
+	assert.Nil(t, err)
+	assert.Equal(t, resp.CorrelationId, 10)
+	assert.Equal(t, resp.ErrorCode, NONE)
+	codeBytes := resp.Bytes(0)
+	assert.Equal(t, bytes, codeBytes)
+}
+
 func TestDecodeHeartbeatRespV4(t *testing.T) {
 	bytes := testHex2Bytes(t, "000000110000000000001b00")
 	resp, err := DecodeHeartbeatResp(bytes, 4)
