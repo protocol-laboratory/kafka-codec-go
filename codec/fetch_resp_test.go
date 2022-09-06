@@ -109,6 +109,30 @@ func TestEncodeFetchRespV10(t *testing.T) {
 	assert.Equal(t, expectBytes, bytes)
 }
 
+func TestEncodeFetchRespWithRecodeBatchNilV10(t *testing.T) {
+	fetchPartitionResp := &FetchPartitionResp{}
+	fetchPartitionResp.PartitionIndex = 0
+	fetchPartitionResp.ErrorCode = 0
+	fetchPartitionResp.HighWatermark = 0
+	fetchPartitionResp.LastStableOffset = 0
+	fetchPartitionResp.LogStartOffset = 0
+	fetchPartitionResp.AbortedTransactions = -1
+	fetchTopicResp := &FetchTopicResp{}
+	fetchTopicResp.Topic = "testTopic"
+	fetchTopicResp.PartitionRespList = []*FetchPartitionResp{fetchPartitionResp}
+	fetchResp := FetchResp{
+		BaseResp: BaseResp{
+			CorrelationId: 8,
+		},
+	}
+	fetchResp.ErrorCode = NONE
+	fetchResp.SessionId = 0
+	fetchResp.TopicRespList = []*FetchTopicResp{fetchTopicResp}
+	bytes := fetchResp.Bytes(10)
+	expectBytes := testHex2Bytes(t, "000000080000000000000000000000000001000974657374546f70696300000001000000000000000000000000000000000000000000000000000000000000ffffffff00000000")
+	assert.Equal(t, expectBytes, bytes)
+}
+
 func TestDecodeAndCodeFetchRespV10(t *testing.T) {
 	bytes := testHex2Bytes(t, "0000000600000000000000000000000000010005746f70696300000001000000000000000000000000000100000000000000010000000000000000ffffffff0000004700000000000000000000003b00000000022c30096c0000000000000000017df19951180000017df1995118ffffffffffffffffffffffffffff000000011200000001066d736700")
 	resp, err := DecodeFetchResp(bytes, 10)
