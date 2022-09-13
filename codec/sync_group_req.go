@@ -33,9 +33,8 @@ type SyncGroupReq struct {
 }
 
 type GroupAssignment struct {
-	MemberId string
-	// COMPACT_BYTES
-	MemberAssignment string
+	MemberId         string
+	MemberAssignment []byte
 }
 
 func DecodeSyncGroupReq(bytes []byte, version int16) (groupReq *SyncGroupReq, err error) {
@@ -85,11 +84,9 @@ func DecodeSyncGroupReq(bytes []byte, version int16) (groupReq *SyncGroupReq, er
 			groupAssignment.MemberId, idx = readMemberId(bytes, idx)
 		}
 		if version == 0 {
-			var memberAssignmentBytes []byte
-			memberAssignmentBytes, idx = readBytes(bytes, idx)
-			groupAssignment.MemberAssignment = string(memberAssignmentBytes)
+			groupAssignment.MemberAssignment, idx = readBytes(bytes, idx)
 		} else if version == 4 || version == 5 {
-			groupAssignment.MemberAssignment, idx = readCompactString(bytes, idx)
+			groupAssignment.MemberAssignment, idx = readCompactBytes(bytes, idx)
 		}
 		if version == 4 || version == 5 {
 			idx = readTaggedField(bytes, idx)
@@ -139,10 +136,10 @@ func (s *SyncGroupReq) BytesLength(containLen bool, containApiKeyVersion bool) i
 	for _, groupAssignment := range s.GroupAssignments {
 		if version == 0 {
 			length += StrLen(groupAssignment.MemberId)
-			length += StrLen(groupAssignment.MemberAssignment) + 2
+			length += BytesLen(groupAssignment.MemberAssignment)
 		} else if version == 4 || version == 5 {
 			length += CompactStrLen(groupAssignment.MemberId)
-			length += CompactStrLen(groupAssignment.MemberAssignment)
+			length += CompactBytesLen(groupAssignment.MemberAssignment)
 		}
 		if version == 4 || version == 5 {
 			length += LenTaggedField
@@ -195,7 +192,7 @@ func (s *SyncGroupReq) Bytes(containLen bool, containApiKeyVersion bool) []byte 
 			idx = putBytes(bytes, idx, []byte(groupAssignment.MemberAssignment))
 		} else if version == 4 || version == 5 {
 			idx = putMemberId(bytes, idx, groupAssignment.MemberId)
-			idx = putCompactString(bytes, idx, groupAssignment.MemberAssignment)
+			idx = putCompactBytes(bytes, idx, groupAssignment.MemberAssignment)
 		}
 		if version == 4 || version == 5 {
 			idx = putTaggedField(bytes, idx)

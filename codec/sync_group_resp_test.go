@@ -28,7 +28,7 @@ func TestDecodeSyncGroupRespV0(t *testing.T) {
 	assert.Nil(t, err)
 	assert.Equal(t, resp.CorrelationId, 3)
 	assert.Equal(t, resp.ErrorCode, NONE)
-	assert.Equal(t, resp.MemberAssignment, string(testHex2Bytes(t, "0001000000010005746f7069630000000100000000ffffffff")))
+	assert.Equal(t, resp.MemberAssignment, testHex2Bytes(t, "0001000000010005746f7069630000000100000000ffffffff"))
 }
 
 func TestEncodeSyncGroupRespV0(t *testing.T) {
@@ -38,7 +38,7 @@ func TestEncodeSyncGroupRespV0(t *testing.T) {
 		},
 	}
 	syncGroupResp.ErrorCode = 0
-	syncGroupResp.MemberAssignment = string(testHex2Bytes(t, "0001000000010005746f7069630000000100000000ffffffff"))
+	syncGroupResp.MemberAssignment = testHex2Bytes(t, "0001000000010005746f7069630000000100000000ffffffff")
 	bytes := syncGroupResp.Bytes(0)
 	expectBytes := testHex2Bytes(t, "000000030000000000190001000000010005746f7069630000000100000000ffffffff")
 	assert.Equal(t, expectBytes, bytes)
@@ -50,7 +50,7 @@ func TestDecodeAndCodeSyncGroupRespV0(t *testing.T) {
 	assert.Nil(t, err)
 	assert.Equal(t, resp.CorrelationId, 3)
 	assert.Equal(t, resp.ErrorCode, NONE)
-	assert.Equal(t, resp.MemberAssignment, string(testHex2Bytes(t, "0001000000010005746f7069630000000100000000ffffffff")))
+	assert.Equal(t, resp.MemberAssignment, testHex2Bytes(t, "0001000000010005746f7069630000000100000000ffffffff"))
 	codeBytes := resp.Bytes(0)
 	assert.Equal(t, bytes, codeBytes)
 }
@@ -61,7 +61,7 @@ func TestDecodeSyncGroupRespV4(t *testing.T) {
 	assert.Nil(t, err)
 	assert.Equal(t, resp.CorrelationId, 6)
 	assert.Equal(t, resp.ErrorCode, NONE)
-	assert.Equal(t, resp.MemberAssignment, string(testHex2Bytes(t, "0001000000010006746573742d350000000100000000ffffffff")))
+	assert.Equal(t, resp.MemberAssignment, testHex2Bytes(t, "0001000000010006746573742d350000000100000000ffffffff"))
 }
 
 func TestEncodeSyncGroupRespV4(t *testing.T) {
@@ -70,7 +70,7 @@ func TestEncodeSyncGroupRespV4(t *testing.T) {
 			CorrelationId: 6,
 		},
 	}
-	syncGroupResp.MemberAssignment = string(testHex2Bytes(t, "0001000000010006746573742d350000000100000000ffffffff"))
+	syncGroupResp.MemberAssignment = testHex2Bytes(t, "0001000000010006746573742d350000000100000000ffffffff")
 	bytes := syncGroupResp.Bytes(4)
 	expectBytes := testHex2Bytes(t, "00000006000000000000001b0001000000010006746573742d350000000100000000ffffffff00")
 	assert.Equal(t, expectBytes, bytes)
@@ -82,7 +82,7 @@ func TestDecodeAndCodeSyncGroupRespV4(t *testing.T) {
 	assert.Nil(t, err)
 	assert.Equal(t, resp.CorrelationId, 6)
 	assert.Equal(t, resp.ErrorCode, NONE)
-	assert.Equal(t, resp.MemberAssignment, string(testHex2Bytes(t, "0001000000010006746573742d350000000100000000ffffffff")))
+	assert.Equal(t, resp.MemberAssignment, testHex2Bytes(t, "0001000000010006746573742d350000000100000000ffffffff"))
 	codeBytes := resp.Bytes(4)
 	assert.Equal(t, bytes, codeBytes)
 }
@@ -94,7 +94,7 @@ func TestDecodeSyncGroupRespV5(t *testing.T) {
 	assert.Equal(t, resp.CorrelationId, 67)
 	assert.Equal(t, resp.ProtocolType, "consumer")
 	assert.Equal(t, resp.ProtocolName, "range")
-	assert.Equal(t, resp.MemberAssignment, string(testHex2Bytes(t, "000100000001000c68706354657374546f7069630000000100000002ffffffff")))
+	assert.Equal(t, resp.MemberAssignment, testHex2Bytes(t, "000100000001000c68706354657374546f7069630000000100000002ffffffff"))
 }
 
 func TestEncodeSyncGroupRespV5(t *testing.T) {
@@ -105,7 +105,7 @@ func TestEncodeSyncGroupRespV5(t *testing.T) {
 	}
 	syncGroupResp.ProtocolType = "consumer"
 	syncGroupResp.ProtocolName = "range"
-	syncGroupResp.MemberAssignment = string(testHex2Bytes(t, "000100000001000c68706354657374546f7069630000000100000002ffffffff"))
+	syncGroupResp.MemberAssignment = testHex2Bytes(t, "000100000001000c68706354657374546f7069630000000100000002ffffffff")
 	bytes := syncGroupResp.Bytes(5)
 	expectBytes := testHex2Bytes(t, "000000430000000000000009636f6e73756d65720672616e676521000100000001000c68706354657374546f7069630000000100000002ffffffff00")
 	assert.Equal(t, expectBytes, bytes)
@@ -118,7 +118,7 @@ func TestDecodeAndCodeSyncGroupRespV5(t *testing.T) {
 	assert.Equal(t, resp.CorrelationId, 67)
 	assert.Equal(t, resp.ProtocolType, "consumer")
 	assert.Equal(t, resp.ProtocolName, "range")
-	assert.Equal(t, resp.MemberAssignment, string(testHex2Bytes(t, "000100000001000c68706354657374546f7069630000000100000002ffffffff")))
+	assert.Equal(t, resp.MemberAssignment, testHex2Bytes(t, "000100000001000c68706354657374546f7069630000000100000002ffffffff"))
 	codeBytes := resp.Bytes(5)
 	assert.Equal(t, bytes, codeBytes)
 }
