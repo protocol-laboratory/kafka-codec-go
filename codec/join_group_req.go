@@ -34,7 +34,7 @@ type JoinGroupReq struct {
 
 type GroupProtocol struct {
 	ProtocolName     string
-	ProtocolMetadata string
+	ProtocolMetadata []byte
 }
 
 func DecodeJoinGroupReq(bytes []byte, version int16) (joinGroupReq *JoinGroupReq, err error) {
@@ -88,9 +88,9 @@ func DecodeJoinGroupReq(bytes []byte, version int16) (joinGroupReq *JoinGroupReq
 		if version == 1 {
 			var metaDataBytes []byte
 			metaDataBytes, idx = readBytes(bytes, idx)
-			groupProtocol.ProtocolMetadata = string(metaDataBytes)
+			groupProtocol.ProtocolMetadata = metaDataBytes
 		} else if version == 6 {
-			groupProtocol.ProtocolMetadata, idx = readCompactString(bytes, idx)
+			groupProtocol.ProtocolMetadata, idx = readCompactBytes(bytes, idx)
 		}
 		if version == 6 {
 			idx = readTaggedField(bytes, idx)
@@ -136,10 +136,10 @@ func (j *JoinGroupReq) BytesLength(containLen bool, containApiKeyVersion bool) i
 	for _, groupProtocol := range j.GroupProtocols {
 		if version == 1 {
 			length += StrLen(groupProtocol.ProtocolName)
-			length += StrLen(groupProtocol.ProtocolMetadata) + 2
+			length += BytesLen(groupProtocol.ProtocolMetadata)
 		} else if version == 6 {
 			length += CompactStrLen(groupProtocol.ProtocolName)
-			length += CompactStrLen(groupProtocol.ProtocolMetadata)
+			length += CompactBytesLen(groupProtocol.ProtocolMetadata)
 			length += LenTaggedField
 		}
 	}
@@ -183,10 +183,10 @@ func (j *JoinGroupReq) Bytes(containLen bool, containApiKeyVersion bool) []byte 
 	for _, groupProtocol := range j.GroupProtocols {
 		if version == 1 {
 			idx = putProtocolNameString(bytes, idx, groupProtocol.ProtocolName)
-			idx = putBytes(bytes, idx, []byte(groupProtocol.ProtocolMetadata))
+			idx = putBytes(bytes, idx, groupProtocol.ProtocolMetadata)
 		} else if version == 6 {
 			idx = putProtocolName(bytes, idx, groupProtocol.ProtocolName)
-			idx = putCompactString(bytes, idx, groupProtocol.ProtocolMetadata)
+			idx = putCompactBytes(bytes, idx, groupProtocol.ProtocolMetadata)
 			idx = putTaggedField(bytes, idx)
 		}
 	}
