@@ -25,7 +25,7 @@ type SyncGroupResp struct {
 	ErrorCode        ErrorCode
 	ProtocolType     string
 	ProtocolName     string
-	MemberAssignment string
+	MemberAssignment []byte
 }
 
 func DecodeSyncGroupResp(bytes []byte, version int16) (resp *SyncGroupResp, err error) {
@@ -48,11 +48,9 @@ func DecodeSyncGroupResp(bytes []byte, version int16) (resp *SyncGroupResp, err 
 		resp.ProtocolName, idx = readProtocolName(bytes, idx)
 	}
 	if version == 0 {
-		var memberAssignmentBytes []byte
-		memberAssignmentBytes, idx = readBytes(bytes, idx)
-		resp.MemberAssignment = string(memberAssignmentBytes)
+		resp.MemberAssignment, idx = readBytes(bytes, idx)
 	} else if version == 4 || version == 5 {
-		resp.MemberAssignment, idx = readCompactString(bytes, idx)
+		resp.MemberAssignment, idx = readCompactBytes(bytes, idx)
 	}
 	if version == 4 || version == 5 {
 		idx = readTaggedField(bytes, idx)
@@ -70,10 +68,9 @@ func (s *SyncGroupResp) BytesLength(version int16) int {
 		result += CompactStrLen(s.ProtocolType) + CompactStrLen(s.ProtocolName)
 	}
 	if version == 0 {
-		result += 2
-		result += StrLen(s.MemberAssignment)
+		result += BytesLen(s.MemberAssignment)
 	} else if version == 4 || version == 5 {
-		result += CompactStrLen(s.MemberAssignment)
+		result += CompactBytesLen(s.MemberAssignment)
 	}
 	if version == 4 || version == 5 {
 		result += LenTaggedField
@@ -95,9 +92,9 @@ func (s *SyncGroupResp) Bytes(version int16) []byte {
 		idx = putProtocolName(bytes, idx, s.ProtocolName)
 	}
 	if version == 0 {
-		idx = putBytes(bytes, idx, []byte(s.MemberAssignment))
+		idx = putBytes(bytes, idx, s.MemberAssignment)
 	} else if version == 4 || version == 5 {
-		idx = putCompactString(bytes, idx, s.MemberAssignment)
+		idx = putCompactBytes(bytes, idx, s.MemberAssignment)
 	}
 	if version == 4 || version == 5 {
 		idx = putTaggedField(bytes, idx)
