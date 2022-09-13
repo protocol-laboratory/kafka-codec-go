@@ -61,8 +61,8 @@ func TestEncodeJoinGroupReqV1(t *testing.T) {
 	joinGroupReq.ProtocolType = "consumer"
 	joinGroupReq.GroupInstanceId = nil
 	groupProtocols := make([]*GroupProtocol, 2)
-	groupProtocols[0] = &GroupProtocol{ProtocolName: "range", ProtocolMetadata: string(testHex2Bytes(t, "000100000001000974657374546f706963ffffffff"))}
-	groupProtocols[1] = &GroupProtocol{ProtocolName: "roundrobin", ProtocolMetadata: string(testHex2Bytes(t, "000100000001000974657374546f706963ffffffff"))}
+	groupProtocols[0] = &GroupProtocol{ProtocolName: "range", ProtocolMetadata: testHex2Bytes(t, "000100000001000974657374546f706963ffffffff")}
+	groupProtocols[1] = &GroupProtocol{ProtocolName: "roundrobin", ProtocolMetadata: testHex2Bytes(t, "000100000001000974657374546f706963ffffffff")}
 	joinGroupReq.GroupProtocols = groupProtocols
 	codeBytes := joinGroupReq.Bytes(true, true)
 	expectBytes := testHex2Bytes(t, "00000075000b000100000004000570662d6d71000767726f75702d31000075300000753000000008636f6e73756d657200000002000572616e676500000015000100000001000974657374546f706963ffffffff000a726f756e64726f62696e00000015000100000001000974657374546f706963ffffffff")
@@ -121,7 +121,7 @@ func TestEncodeJoinGroupReqV6(t *testing.T) {
 	groupProtocols := make([]*GroupProtocol, 1)
 	protocolMetadata, err := hex.DecodeString("000100000001002437363465646565332d303037652d343865302d623966392d646637663731336666373037ffffffff00000000")
 	assert.Nil(t, err)
-	groupProtocols[0] = &GroupProtocol{ProtocolName: "range", ProtocolMetadata: string(protocolMetadata)}
+	groupProtocols[0] = &GroupProtocol{ProtocolName: "range", ProtocolMetadata: protocolMetadata}
 	joinGroupReq.GroupProtocols = groupProtocols
 	codeBytes := joinGroupReq.Bytes(false, true)
 	expectBytes := testHex2Bytes(t, "000b000600000008002f636f6e73756d65722d37336664633964612d306439322d346537622d613761372d6563323636663637633137312d31002537336664633964612d306439322d346537622d613761372d65633236366636376331373100002710000493e0010009636f6e73756d6572020672616e676535000100000001002437363465646565332d303037652d343865302d623966392d646637663731336666373037ffffffff000000000000")

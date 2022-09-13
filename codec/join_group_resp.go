@@ -34,7 +34,7 @@ type JoinGroupResp struct {
 type Member struct {
 	MemberId        string
 	GroupInstanceId *string
-	Metadata        string
+	Metadata        []byte
 }
 
 func DecodeJoinGroupResp(bytes []byte, version int16) (resp *JoinGroupResp, err error) {
@@ -90,9 +90,9 @@ func DecodeJoinGroupResp(bytes []byte, version int16) (resp *JoinGroupResp, err 
 		if version == 1 {
 			var metadataBytes []byte
 			metadataBytes, idx = readBytes(bytes, idx)
-			member.Metadata = string(metadataBytes)
+			member.Metadata = metadataBytes
 		} else if version == 6 || version == 7 {
-			member.Metadata, idx = readCompactString(bytes, idx)
+			member.Metadata, idx = readCompactBytes(bytes, idx)
 		}
 		if version == 6 || version == 7 {
 			idx = readTaggedField(bytes, idx)
@@ -144,9 +144,9 @@ func (j *JoinGroupResp) BytesLength(version int16) int {
 			result += CompactNullableStrLen(val.GroupInstanceId)
 		}
 		if version == 1 {
-			result += 2 + StrLen(val.Metadata)
+			result += BytesLen(val.Metadata)
 		} else if version == 6 || version == 7 {
-			result += CompactStrLen(val.Metadata)
+			result += CompactBytesLen(val.Metadata)
 		}
 		if version == 6 || version == 7 {
 			result += LenTaggedField
@@ -202,9 +202,9 @@ func (j *JoinGroupResp) Bytes(version int16) []byte {
 			idx = putGroupInstanceId(bytes, idx, val.GroupInstanceId)
 		}
 		if version == 1 {
-			idx = putBytes(bytes, idx, []byte(val.Metadata))
+			idx = putBytes(bytes, idx, val.Metadata)
 		} else if version == 6 || version == 7 {
-			idx = putCompactString(bytes, idx, val.Metadata)
+			idx = putCompactBytes(bytes, idx, val.Metadata)
 		}
 		if version == 6 || version == 7 {
 			idx = putTaggedField(bytes, idx)
