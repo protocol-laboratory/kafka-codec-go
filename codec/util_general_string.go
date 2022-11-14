@@ -38,12 +38,12 @@ func putCompactStringNullable(bytes []byte, idx int, str *string) int {
 
 func readCompactString(bytes []byte, idx int) (string, int) {
 	strLen, idx := readUVarint(bytes, idx)
-	intLen := ConvertCompactLen(int(strLen))
+	intLen := int(strLen) - 1
 	return string(bytes[idx : idx+intLen]), idx + intLen
 }
 
 func putCompactString(bytes []byte, idx int, str string) int {
-	idx = putUVarint(bytes, idx, uint32(CompactStrLen(str)))
+	idx = putUVarint(bytes, idx, uint32(len([]byte(str))+1))
 	copy(bytes[idx:], str)
 	return idx + len(str)
 }
@@ -94,7 +94,7 @@ func NullableStrLen(str *string) int {
 
 func CompactStrLen(str string) int {
 	aux := len([]byte(str))
-	return uVarintSize(uint(aux)) + aux
+	return uVarintSize(uint(aux)+1) + aux
 }
 
 func CompactNullableStrLen(str *string) int {

@@ -27,32 +27,36 @@ func TestCompactStr(t *testing.T) {
 	// 1 bytes
 	bytes2 := make([]byte, 2)
 	value2 := string(testHex2Bytes(t, "88"))
-	putCompactString(bytes2, 0, value2)
+	len2 := putCompactString(bytes2, 0, value2)
 	res2, idx2 := readCompactString(bytes2, 0)
+	assert.Equal(t, len2, idx2)
 	assert.Equal(t, 2, idx2)
 	assert.Equal(t, value2, res2)
 
 	// 127bytes
 	bytes3 := make([]byte, 129)
 	value3 := string(testHex2Bytes(t, "00000006006d5f5f5f546573744b61666b61436f6e73756d655f696e5f676f5f64656d6f5f64656d6f5f6b61666b612e746573744068657a68616e676a69616e64654d6163426f6f6b2d50726f2e6c6f63616c20286769746875622e636f6d2f7365676d656e74696f2f6b61666b612d676f29ffffffff0000232600000001"))
-	putCompactString(bytes3, 0, value3)
+	len3 := putCompactString(bytes3, 0, value3)
 	res3, idx3 := readCompactString(bytes3, 0)
+	assert.Equal(t, len3, idx3)
 	assert.Equal(t, 129, idx3)
 	assert.Equal(t, value3, res3)
 
 	// 128 bytes
 	bytes4 := make([]byte, 130)
 	value4 := string(testHex2Bytes(t, "00000006006d5f5f5f546573744b61666b61436f6e73756d655f696e5f676f5f64656d6f5f64656d6f5f6b61666b612e746573744068657a68616e676a69616e64654d6163426f6f6b2d50726f2e6c6f63616c20286769746875622e636f6d2f7365676d656e74696f2f6b61666b612d676f29ffffffff000023260000000100"))
-	putCompactString(bytes4, 0, value4)
+	len4 := putCompactString(bytes4, 0, value4)
 	res4, idx4 := readCompactString(bytes4, 0)
+	assert.Equal(t, len4, idx4)
 	assert.Equal(t, 130, idx4)
 	assert.Equal(t, value4, res4)
 
 	// 256 bytes
 	bytes5 := make([]byte, 258)
 	value5 := string(testHex2Bytes(t, "00000006006d5f5f5f546573744b61666b61436f6e73756d655f696e5f676f5f64656d6f5f64656d6f5f6b61666b612e746573744068657a68616e676a69616e64654d6163426f6f6b2d50726f2e6c6f63616c20286769746875622e636f6d2f7365676d656e74696f2f6b61666b612d676f29ffffffff00002326000000010000000006006d5f5f5f546573744b61666b61436f6e73756d655f696e5f676f5f64656d6f5f64656d6f5f6b61666b612e746573744068657a68616e676a69616e64654d6163426f6f6b2d50726f2e6c6f63616c20286769746875622e636f6d2f7365676d656e74696f2f6b61666b612d676f29ffffffff000023260000000100"))
-	putCompactString(bytes5, 0, value5)
+	len5 := putCompactString(bytes5, 0, value5)
 	res5, idx5 := readCompactString(bytes5, 0)
+	assert.Equal(t, len5, idx5)
 	assert.Equal(t, 258, idx5)
 	assert.Equal(t, value5, res5)
 }
