@@ -86,7 +86,7 @@ func (s *SyncGroupResp) Bytes(version int16) []byte {
 		idx = putTaggedField(bytes, idx)
 		idx = putThrottleTime(bytes, idx, 0)
 	}
-	idx = putErrorCode(bytes, idx, 0)
+	idx = putErrorCode(bytes, idx, s.ErrorCode)
 	if version == 5 {
 		idx = putProtocolType(bytes, idx, s.ProtocolType)
 		idx = putProtocolName(bytes, idx, s.ProtocolName)
