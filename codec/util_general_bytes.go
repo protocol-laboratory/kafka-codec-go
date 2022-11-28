@@ -90,3 +90,7 @@ func CompactNullableBytesLen(bytes []byte) int {
 	}
 	return uVarintSize(uint(len(bytes))) + len(bytes)
 }
+
+func CompactVarintBytesLen(bytes []byte) int {
+	return varintSize(len(bytes)) + len(bytes)
+}

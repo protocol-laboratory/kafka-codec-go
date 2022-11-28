@@ -43,8 +43,9 @@ func (r *Record) BytesLength() int {
 	result += LenRecordAttributes
 	result += varint64Size(r.RelativeTimestamp)
 	result += varintSize(r.RelativeOffset)
-	result += CompactBytesLen(r.Key)
-	result += CompactBytesLen(r.Value)
+	// https://kafka.apache.org/documentation/#messageformat 5.3.2
+	result += CompactVarintBytesLen(r.Key)
+	result += CompactVarintBytesLen(r.Value)
 	result += CompactNullableBytesLen(r.Headers)
 	return result
 }
