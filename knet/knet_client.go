@@ -49,12 +49,6 @@ type KafkaNetClient struct {
 	closeCh      chan struct{}
 }
 
-type buffer struct {
-	max    int
-	bytes  []byte
-	cursor int
-}
-
 func (k *KafkaNetClient) Produce(req *codec.ProduceReq) (*codec.ProduceResp, error) {
 	bytes, err := k.Send(req.Bytes(true, true))
 	if err != nil {
