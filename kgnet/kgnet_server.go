@@ -39,6 +39,7 @@ type KafkaServerImpl interface {
 	OnClosed(c gnet.Conn, err error) (action gnet.Action)
 	InvalidKafkaPacket(c gnet.Conn)
 	ConnError(c gnet.Conn, err error)
+
 	UnSupportedApi(c gnet.Conn, apiKey codec.ApiCode, apiVersion int16)
 	ApiVersion(c gnet.Conn, req *codec.ApiReq) (*codec.ApiResp, gnet.Action)
 	Fetch(c gnet.Conn, req *codec.FetchReq) (*codec.FetchResp, gnet.Action)
