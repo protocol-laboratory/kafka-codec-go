@@ -149,7 +149,7 @@ func (k *KafkaNetServer) HandleConn(kafkaConn *kafkaConn) {
 	}
 }
 
-func (k *KafkaNetServer) React(kafkaConn *kafkaConn, bytes []byte) ([]byte, error) {
+func (k *KafkaNetServer) react(kafkaConn *kafkaConn, bytes []byte) ([]byte, error) {
 	if len(bytes) < 5 {
 		return nil, fmt.Errorf("message too short: %d", len(bytes))
 	}
@@ -329,17 +329,17 @@ func NewKafkaNetServer(config KafkaNetServerConfig, impl KafkaNetServerImpl) (*K
 	if err != nil {
 		return nil, err
 	}
-	p := &KafkaNetServer{
+	k := &KafkaNetServer{
 		listener: listener,
 		impl:     impl,
 		quit:     make(chan bool),
 	}
-	p.config = config
-	if p.config.BufferMax == 0 {
-		p.config.BufferMax = 5 * 1024 * 1024
+	k.config = config
+	if k.config.BufferMax == 0 {
+		k.config.BufferMax = 5 * 1024 * 1024
 	}
 	// server thread task
-	p.connWg.Add(1)
-	go p.Run()
-	return p, nil
+	k.connWg.Add(1)
+	go k.Run()
+	return k, nil
 }
