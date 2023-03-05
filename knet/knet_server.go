@@ -127,7 +127,7 @@ func (k *KafkaNetServer) HandleConn(kafkaConn *kafkaConn) {
 			k.impl.ReadError(kafkaConn.conn, fmt.Errorf("message too long: %d", length))
 			break
 		}
-		dstBytes, err := k.React(kafkaConn, kafkaConn.buffer.bytes[4:length])
+		dstBytes, err := k.react(kafkaConn, kafkaConn.buffer.bytes[4:length])
 		if err != nil {
 			k.impl.ReactError(kafkaConn.conn, err)
 			k.impl.ConnectionClosed(kafkaConn.conn)
