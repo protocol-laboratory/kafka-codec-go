@@ -20,8 +20,10 @@ package knet
 import (
 	"encoding/binary"
 	"fmt"
-	"github.com/protocol-laboratory/kafka-codec-go/codec"
 	"net"
+	"sync"
+
+	"github.com/protocol-laboratory/kafka-codec-go/codec"
 )
 
 type KafkaNetServerConfig struct {
@@ -64,23 +66,35 @@ type KafkaNetServer struct {
 	listener net.Listener
 	impl     KafkaNetServerImpl
 	config   KafkaNetServerConfig
+	quit     chan bool
+	connWg   sync.WaitGroup
 }
 
-func (k *KafkaNetServer) run() {
+func (k *KafkaNetServer) Run() {
+	defer k.connWg.Done()
 	for {
 		conn, err := k.listener.Accept()
 		if err != nil {
-			k.impl.AcceptError(conn, err)
-			break
+			select {
+			case <-k.quit:
+				return
+			default:
+				k.impl.AcceptError(conn, err)
+				continue
+			}
 		}
-		go k.handleConn(&kafkaConn{
-			conn: conn,
-			buffer: &buffer{
-				max:    k.config.BufferMax,
-				bytes:  make([]byte, k.config.BufferMax),
-				cursor: 0,
-			},
-		})
+		k.connWg.Add(1)
+		go func() {
+			k.HandleConn(&kafkaConn{
+				conn: conn,
+				buffer: &buffer{
+					max:    k.config.BufferMax,
+					bytes:  make([]byte, k.config.BufferMax),
+					cursor: 0,
+				},
+			})
+			k.connWg.Done()
+		}()
 	}
 }
 
@@ -89,7 +103,7 @@ type kafkaConn struct {
 	buffer *buffer
 }
 
-func (k *KafkaNetServer) handleConn(kafkaConn *kafkaConn) {
+func (k *KafkaNetServer) HandleConn(kafkaConn *kafkaConn) {
 	for {
 		readLen, err := kafkaConn.conn.Read(kafkaConn.buffer.bytes[kafkaConn.buffer.cursor:])
 		if err != nil {
@@ -302,20 +316,30 @@ func (k *KafkaNetServer) react(kafkaConn *kafkaConn, bytes []byte) ([]byte, erro
 	return nil, fmt.Errorf("unsupported api key %d version %d", apiKey, apiVersion)
 }
 
+// Stop graceful stop server
+func (k *KafkaNetServer) Stop() error {
+	close(k.quit)
+	err := k.listener.Close()
+	k.connWg.Wait()
+	return err
+}
+
 func NewKafkaNetServer(config KafkaNetServerConfig, impl KafkaNetServerImpl) (*KafkaNetServer, error) {
 	listener, err := net.Listen("tcp", config.addr())
 	if err != nil {
 		return nil, err
 	}
-	p := &KafkaNetServer{}
-	p.config = config
-	if p.config.BufferMax == 0 {
-		p.config.BufferMax = 5 * 1024 * 1024
+	k := &KafkaNetServer{
+		listener: listener,
+		impl:     impl,
+		quit:     make(chan bool),
 	}
-	p.listener = listener
-	p.impl = impl
-	go func() {
-		p.run()
-	}()
-	return p, nil
+	k.config = config
+	if k.config.BufferMax == 0 {
+		k.config.BufferMax = 5 * 1024 * 1024
+	}
+	// server thread task
+	k.connWg.Add(1)
+	go k.Run()
+	return k, nil
 }
