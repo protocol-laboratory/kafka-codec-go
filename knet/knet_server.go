@@ -18,6 +18,7 @@
 package knet
 
 import (
+	"crypto/tls"
 	"encoding/binary"
 	"fmt"
 	"net"
@@ -30,6 +31,8 @@ type KafkaNetServerConfig struct {
 	Host      string
 	Port      int
 	BufferMax int
+	tlsEnable bool
+	tlsConfig *tls.Config
 }
 
 type KafkaNetServerImpl interface {
@@ -328,6 +331,9 @@ func NewKafkaNetServer(config KafkaNetServerConfig, impl KafkaNetServerImpl) (*K
 	listener, err := net.Listen("tcp", config.addr())
 	if err != nil {
 		return nil, err
+	}
+	if config.tlsEnable {
+		listener = tls.NewListener(listener, config.tlsConfig)
 	}
 	k := &KafkaNetServer{
 		listener: listener,
