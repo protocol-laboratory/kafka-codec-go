@@ -87,7 +87,9 @@ func (a *ApiReq) Bytes(containLen bool, containApiKeyVersion bool) []byte {
 	if version == 3 {
 		idx = putTaggedField(bytes, idx)
 	}
-	idx = putCompactString(bytes, idx, a.ClientSoftwareName)
-	idx = putCompactString(bytes, idx, a.ClientSoftwareVersion)
+	if version == 3 {
+		idx = putCompactString(bytes, idx, a.ClientSoftwareName)
+		idx = putCompactString(bytes, idx, a.ClientSoftwareVersion)
+	}
 	return bytes
 }
