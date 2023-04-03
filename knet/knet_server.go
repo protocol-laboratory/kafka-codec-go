@@ -36,33 +36,33 @@ type KafkaNetServerConfig struct {
 }
 
 type KafkaNetServerImpl interface {
-	ConnectionClosed(conn net.Conn)
+	ConnectionClosed(conn *Conn)
 
-	AcceptError(conn net.Conn, err error)
-	ReadError(conn net.Conn, err error)
-	ReactError(conn net.Conn, err error)
-	WriteError(conn net.Conn, err error)
+	AcceptError(conn *Conn, err error)
+	ReadError(conn *Conn, err error)
+	ReactError(conn *Conn, err error)
+	WriteError(conn *Conn, err error)
 
-	UnSupportedApi(conn net.Conn, apiKey codec.ApiCode, apiVersion int16)
-	ApiVersion(conn net.Conn, req *codec.ApiReq) (*codec.ApiResp, error)
-	Fetch(conn net.Conn, req *codec.FetchReq) (*codec.FetchResp, error)
-	FindCoordinator(conn net.Conn, req *codec.FindCoordinatorReq) (*codec.FindCoordinatorResp, error)
-	Heartbeat(conn net.Conn, req *codec.HeartbeatReq) (*codec.HeartbeatResp, error)
-	JoinGroup(conn net.Conn, req *codec.JoinGroupReq) (*codec.JoinGroupResp, error)
-	LeaveGroup(conn net.Conn, req *codec.LeaveGroupReq) (*codec.LeaveGroupResp, error)
-	ListOffsets(conn net.Conn, req *codec.ListOffsetsReq) (*codec.ListOffsetsResp, error)
-	Metadata(conn net.Conn, req *codec.MetadataReq) (*codec.MetadataResp, error)
-	OffsetCommit(conn net.Conn, req *codec.OffsetCommitReq) (*codec.OffsetCommitResp, error)
-	OffsetFetch(conn net.Conn, req *codec.OffsetFetchReq) (*codec.OffsetFetchResp, error)
-	OffsetForLeaderEpoch(conn net.Conn, req *codec.OffsetForLeaderEpochReq) (*codec.OffsetForLeaderEpochResp, error)
-	Produce(conn net.Conn, req *codec.ProduceReq) (*codec.ProduceResp, error)
-	SaslAuthenticate(conn net.Conn, req *codec.SaslAuthenticateReq) (*codec.SaslAuthenticateResp, error)
-	SaslHandshake(conn net.Conn, req *codec.SaslHandshakeReq) (*codec.SaslHandshakeResp, error)
-	SyncGroup(conn net.Conn, req *codec.SyncGroupReq) (*codec.SyncGroupResp, error)
+	UnSupportedApi(conn *Conn, apiKey codec.ApiCode, apiVersion int16)
+	ApiVersion(conn *Conn, req *codec.ApiReq) (*codec.ApiResp, error)
+	Fetch(conn *Conn, req *codec.FetchReq) (*codec.FetchResp, error)
+	FindCoordinator(conn *Conn, req *codec.FindCoordinatorReq) (*codec.FindCoordinatorResp, error)
+	Heartbeat(conn *Conn, req *codec.HeartbeatReq) (*codec.HeartbeatResp, error)
+	JoinGroup(conn *Conn, req *codec.JoinGroupReq) (*codec.JoinGroupResp, error)
+	LeaveGroup(conn *Conn, req *codec.LeaveGroupReq) (*codec.LeaveGroupResp, error)
+	ListOffsets(conn *Conn, req *codec.ListOffsetsReq) (*codec.ListOffsetsResp, error)
+	Metadata(conn *Conn, req *codec.MetadataReq) (*codec.MetadataResp, error)
+	OffsetCommit(conn *Conn, req *codec.OffsetCommitReq) (*codec.OffsetCommitResp, error)
+	OffsetFetch(conn *Conn, req *codec.OffsetFetchReq) (*codec.OffsetFetchResp, error)
+	OffsetForLeaderEpoch(conn *Conn, req *codec.OffsetForLeaderEpochReq) (*codec.OffsetForLeaderEpochResp, error)
+	Produce(conn *Conn, req *codec.ProduceReq) (*codec.ProduceResp, error)
+	SaslAuthenticate(conn *Conn, req *codec.SaslAuthenticateReq) (*codec.SaslAuthenticateResp, error)
+	SaslHandshake(conn *Conn, req *codec.SaslHandshakeReq) (*codec.SaslHandshakeResp, error)
+	SyncGroup(conn *Conn, req *codec.SyncGroupReq) (*codec.SyncGroupResp, error)
 }
 
-func (p *KafkaNetServerConfig) addr() string {
-	return fmt.Sprintf("%s:%d", p.Host, p.Port)
+func (k *KafkaNetServerConfig) addr() string {
+	return fmt.Sprintf("%s:%d", k.Host, k.Port)
 }
 
 type KafkaNetServer struct {
@@ -76,20 +76,22 @@ type KafkaNetServer struct {
 func (k *KafkaNetServer) Run() {
 	defer k.connWg.Done()
 	for {
-		conn, err := k.listener.Accept()
+		netConn, err := k.listener.Accept()
 		if err != nil {
 			select {
 			case <-k.quit:
 				return
 			default:
-				k.impl.AcceptError(conn, err)
+				k.impl.AcceptError(&Conn{Conn: netConn}, err)
 				continue
 			}
 		}
 		k.connWg.Add(1)
 		go func() {
 			k.HandleConn(&kafkaConn{
-				conn: conn,
+				conn: &Conn{
+					Conn: netConn,
+				},
 				buffer: &buffer{
 					max:    k.config.BufferMax,
 					bytes:  make([]byte, k.config.BufferMax),
@@ -102,7 +104,7 @@ func (k *KafkaNetServer) Run() {
 }
 
 type kafkaConn struct {
-	conn   net.Conn
+	conn   *Conn
 	buffer *buffer
 }
 
