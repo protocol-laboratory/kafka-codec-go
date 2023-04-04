@@ -78,9 +78,17 @@ func (s *SyncGroupResp) BytesLength(version int16) int {
 	return result
 }
 
-func (s *SyncGroupResp) Bytes(version int16) []byte {
-	bytes := make([]byte, s.BytesLength(version))
+func (s *SyncGroupResp) Bytes(version int16, containLen bool) []byte {
+	length := s.BytesLength(version)
+	var bytes []byte
 	idx := 0
+	if containLen {
+		bytes = make([]byte, length+4)
+		idx = putInt(bytes, idx, length)
+	} else {
+		bytes = make([]byte, length)
+	}
+
 	idx = putCorrId(bytes, idx, s.CorrelationId)
 	if version == 4 || version == 5 {
 		idx = putTaggedField(bytes, idx)

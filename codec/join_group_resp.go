@@ -158,9 +158,17 @@ func (j *JoinGroupResp) BytesLength(version int16) int {
 	return result
 }
 
-func (j *JoinGroupResp) Bytes(version int16) []byte {
-	bytes := make([]byte, j.BytesLength(version))
+func (j *JoinGroupResp) Bytes(version int16, containLen bool) []byte {
+	length := j.BytesLength(version)
+	var bytes []byte
 	idx := 0
+	if containLen {
+		bytes = make([]byte, length+4)
+		idx = putInt(bytes, idx, length)
+	} else {
+		bytes = make([]byte, length)
+	}
+
 	idx = putCorrId(bytes, idx, j.CorrelationId)
 	if version == 6 || version == 7 {
 		idx = putTaggedField(bytes, idx)

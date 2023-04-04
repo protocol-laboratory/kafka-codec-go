@@ -104,7 +104,7 @@ func TestEncodeFetchRespV10(t *testing.T) {
 	fetchResp.ErrorCode = 0
 	fetchResp.SessionId = 0
 	fetchResp.TopicRespList = []*FetchTopicResp{fetchTopicResp}
-	bytes := fetchResp.Bytes(10)
+	bytes := fetchResp.Bytes(10, false)
 	expectBytes := testHex2Bytes(t, "0000000600000000000000000000000000010005746f70696300000001000000000000000000000000000100000000000000010000000000000000ffffffff0000004700000000000000000000003b00000000022c30096c0000000000000000017df19951180000017df1995118ffffffffffffffffffffffffffff000000011200000001066d736700")
 	assert.Equal(t, expectBytes, bytes)
 }
@@ -128,7 +128,7 @@ func TestEncodeFetchRespWithRecodeBatchNilV10(t *testing.T) {
 	fetchResp.ErrorCode = NONE
 	fetchResp.SessionId = 0
 	fetchResp.TopicRespList = []*FetchTopicResp{fetchTopicResp}
-	bytes := fetchResp.Bytes(10)
+	bytes := fetchResp.Bytes(10, false)
 	expectBytes := testHex2Bytes(t, "000000080000000000000000000000000001000974657374546f70696300000001000000000000000000000000000000000000000000000000000000000000ffffffff00000000")
 	assert.Equal(t, expectBytes, bytes)
 }
@@ -143,7 +143,7 @@ func TestDecodeAndCodeFetchRespV10(t *testing.T) {
 	assert.Equal(t, resp.SessionId, 0)
 	topicRespList := resp.TopicRespList
 	assert.Len(t, topicRespList, 1)
-	codeBytes := resp.Bytes(10)
+	codeBytes := resp.Bytes(10, false)
 	assert.Equal(t, bytes, codeBytes)
 }
 
@@ -207,7 +207,7 @@ func TestEncodeFetchRespV11(t *testing.T) {
 	fetchResp.ErrorCode = 0
 	fetchResp.SessionId = 997895662
 	fetchResp.TopicRespList = []*FetchTopicResp{fetchTopicResp}
-	bytes := fetchResp.Bytes(11)
+	bytes := fetchResp.Bytes(11, false)
 	expectBytes := testHex2Bytes(t, "0000000a0000000000003b7aadee000000010006746573742d3500000001000000000000000000000000000100000000000000010000000000000000ffffffffffffffff0000004700000000000000000000003b000000000206cbcc440000000000000000017a931dccdf0000017a931dccdfffffffffffffffffffffffffffff00000001120000000106487a6a00")
 	assert.Equal(t, expectBytes, bytes)
 }
@@ -235,6 +235,6 @@ func TestDecodeAndCodeFetchRespV11(t *testing.T) {
 	assert.Len(t, recordBatch.Records, 1)
 	record := recordBatch.Records[0]
 	assert.Equal(t, "ShootHzj", string(record.Value))
-	codeBytes := fetchResp.Bytes(11)
+	codeBytes := fetchResp.Bytes(11, false)
 	assert.Equal(t, bytes, codeBytes)
 }

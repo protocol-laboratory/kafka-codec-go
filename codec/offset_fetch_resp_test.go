@@ -59,7 +59,7 @@ func TestEncodeOffsetFetchRespV1(t *testing.T) {
 	offsetFetchTopicResp.Topic = "topic"
 	offsetFetchTopicResp.PartitionRespList = []*OffsetFetchPartitionResp{offsetFetchPartitionResp}
 	offsetFetchResp.TopicRespList = []*OffsetFetchTopicResp{offsetFetchTopicResp}
-	bytes := offsetFetchResp.Bytes(1)
+	bytes := offsetFetchResp.Bytes(1, false)
 	expectBytes := testHex2Bytes(t, "00000004000000010005746f7069630000000100000000ffffffffffffffff00000000")
 	assert.Equal(t, expectBytes, bytes)
 }
@@ -83,7 +83,7 @@ func TestDecodeAndCodeOffsetFetchRespV1(t *testing.T) {
 	assert.Equal(t, partitionResp.LeaderEpoch, int32(0))
 	assert.Equal(t, partitionResp.ErrorCode, NONE)
 	assert.Equal(t, *partitionResp.Metadata, "")
-	codeBytes := resp.Bytes(1)
+	codeBytes := resp.Bytes(1, false)
 	assert.Equal(t, bytes, codeBytes)
 }
 
@@ -125,7 +125,7 @@ func TestEncodeOffsetFetchRespV6(t *testing.T) {
 	offsetFetchTopicResp.Topic = "test-5"
 	offsetFetchTopicResp.PartitionRespList = []*OffsetFetchPartitionResp{offsetFetchPartitionResp}
 	offsetFetchResp.TopicRespList = []*OffsetFetchTopicResp{offsetFetchTopicResp}
-	bytes := offsetFetchResp.Bytes(6)
+	bytes := offsetFetchResp.Bytes(6, false)
 	expectBytes := testHex2Bytes(t, "0000000700000000000207746573742d350200000000ffffffffffffffffffffffff0100000000000000")
 	assert.Equal(t, expectBytes, bytes)
 }
@@ -149,7 +149,7 @@ func TestDecodeAndCodeOffsetFetchRespV6(t *testing.T) {
 	assert.Equal(t, partitionResp.LeaderEpoch, int32(-1))
 	assert.Equal(t, partitionResp.ErrorCode, NONE)
 	assert.Equal(t, *partitionResp.Metadata, "")
-	codeBytes := resp.Bytes(6)
+	codeBytes := resp.Bytes(6, false)
 	assert.Equal(t, bytes, codeBytes)
 }
 
@@ -191,7 +191,7 @@ func TestEncodeOffsetFetchRespV7(t *testing.T) {
 	offsetFetchTopicResp.Topic = "test-5"
 	offsetFetchTopicResp.PartitionRespList = []*OffsetFetchPartitionResp{offsetFetchPartitionResp}
 	offsetFetchResp.TopicRespList = []*OffsetFetchTopicResp{offsetFetchTopicResp}
-	bytes := offsetFetchResp.Bytes(7)
+	bytes := offsetFetchResp.Bytes(7, false)
 	expectBytes := testHex2Bytes(t, "0000000700000000000207746573742d350200000000ffffffffffffffffffffffff0100000000000000")
 	assert.Equal(t, expectBytes, bytes)
 }
@@ -213,9 +213,9 @@ func TestDecodeAndCodeOffsetFetchRespV7(t *testing.T) {
 	offsetFetchTopicResp.Topic = "test-5"
 	offsetFetchTopicResp.PartitionRespList = []*OffsetFetchPartitionResp{offsetFetchPartitionResp}
 	offsetFetchResp.TopicRespList = []*OffsetFetchTopicResp{offsetFetchTopicResp}
-	bytes := offsetFetchResp.Bytes(7)
+	bytes := offsetFetchResp.Bytes(7, false)
 	expectBytes := testHex2Bytes(t, "0000000700000000000207746573742d350200000000ffffffffffffffffffffffff0100000000000000")
 	assert.Equal(t, expectBytes, bytes)
-	codeBytes := offsetFetchResp.Bytes(7)
+	codeBytes := offsetFetchResp.Bytes(7, false)
 	assert.Equal(t, bytes, codeBytes)
 }

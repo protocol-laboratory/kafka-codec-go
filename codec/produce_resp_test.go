@@ -58,7 +58,7 @@ func TestEncodeProduceRespV7(t *testing.T) {
 	produceTopicResp.Topic = "topic"
 	produceTopicResp.PartitionRespList = []*ProducePartitionResp{producePartitionResp}
 	produceResp.TopicRespList = []*ProduceTopicResp{produceTopicResp}
-	bytes := produceResp.Bytes(7)
+	bytes := produceResp.Bytes(7, false)
 	expectBytes := testHex2Bytes(t, "00000002000000010005746f706963000000010000000000000000000000000000ffffffffffffffff000000000000000000000000")
 	assert.Equal(t, expectBytes, bytes)
 }
@@ -71,7 +71,7 @@ func TestDecodeAndCodeProduceRespV7(t *testing.T) {
 	assert.Equal(t, len(resp.TopicRespList), 1)
 	topicResp := resp.TopicRespList[0]
 	assert.Equal(t, topicResp.Topic, "topic")
-	codeBytes := resp.Bytes(7)
+	codeBytes := resp.Bytes(7, false)
 	assert.Equal(t, produceRespBytes, codeBytes)
 }
 
@@ -117,7 +117,7 @@ func TestEncodeProduceRespV8(t *testing.T) {
 	produceTopicResp.Topic = "topic"
 	produceTopicResp.PartitionRespList = []*ProducePartitionResp{producePartitionResp}
 	produceResp.TopicRespList = []*ProduceTopicResp{produceTopicResp}
-	bytes := produceResp.Bytes(8)
+	bytes := produceResp.Bytes(8, false)
 	expectBytes := testHex2Bytes(t, "00000004000000010005746f706963000000010000000000000000000000000000ffffffffffffffff0000000000000000ffffffffffff00000000")
 	assert.Equal(t, expectBytes, bytes)
 }
@@ -140,6 +140,6 @@ func TestDecodeAndCodeProduceRespV8(t *testing.T) {
 	assert.Equal(t, partitionResp.Offset, int64(0))
 	assert.Equal(t, partitionResp.Time, int64(-1))
 	assert.Equal(t, partitionResp.LogStartOffset, int64(0))
-	codeBytes := resp.Bytes(8)
+	codeBytes := resp.Bytes(8, false)
 	assert.Equal(t, bytes, codeBytes)
 }

@@ -36,7 +36,7 @@ func TestEncodeSaslHandshakeAuthRespV0(t *testing.T) {
 			CorrelationId: 3,
 		},
 	}
-	bytes := saslHandshakeAuthResp.Bytes(0)
+	bytes := saslHandshakeAuthResp.Bytes(0, false)
 	expectBytes := testHex2Bytes(t, "000000030000000000000000")
 	assert.Equal(t, expectBytes, bytes)
 }
@@ -47,7 +47,7 @@ func TestDecodeAndCodeSaslAuthenticateRespV0(t *testing.T) {
 	assert.Nil(t, err)
 	assert.Equal(t, resp.CorrelationId, 3)
 	assert.Equal(t, resp.ErrorCode, NONE)
-	codeBytes := resp.Bytes(0)
+	codeBytes := resp.Bytes(0, false)
 	assert.Equal(t, bytes, codeBytes)
 }
 
@@ -66,7 +66,7 @@ func TestEncodeSaslHandshakeAuthRespV1(t *testing.T) {
 			CorrelationId: 2147483642,
 		},
 	}
-	bytes := saslHandshakeAuthResp.Bytes(1)
+	bytes := saslHandshakeAuthResp.Bytes(1, false)
 	expectBytes := testHex2Bytes(t, "7ffffffa00000000000000000000000000000000")
 	assert.Equal(t, expectBytes, bytes)
 }
@@ -78,7 +78,7 @@ func TestDecodeAndCodeSaslAuthenticateRespV1(t *testing.T) {
 	assert.Equal(t, resp.CorrelationId, 2147483642)
 	assert.Equal(t, resp.ErrorCode, NONE)
 	assert.Equal(t, resp.SessionLifetime, int64(0))
-	codeBytes := resp.Bytes(1)
+	codeBytes := resp.Bytes(1, false)
 	assert.Equal(t, bytes, codeBytes)
 }
 
@@ -102,7 +102,7 @@ func TestEncodeSaslHandshakeAuthRespV2(t *testing.T) {
 	saslHandshakeAuthResp.SessionLifetime = 5000
 	authBytes := generateSaslAuthUsernamePwdBytes("slice", "slice")
 	saslHandshakeAuthResp.AuthBytes = authBytes
-	codeBytes := saslHandshakeAuthResp.Bytes(2)
+	codeBytes := saslHandshakeAuthResp.Bytes(2, false)
 	expectBytes := testHex2Bytes(t, "7ffffffa000000010d00736c69636500736c696365000000000000138800")
 	assert.Equal(t, expectBytes, codeBytes)
 }
@@ -116,6 +116,6 @@ func TestDecodeAndCodeSaslAuthenticateRespV2(t *testing.T) {
 	assert.Equal(t, resp.SessionLifetime, int64(5000))
 	authBytes := generateSaslAuthUsernamePwdBytes("slice", "slice")
 	assert.Equal(t, resp.AuthBytes, authBytes)
-	codeBytes := resp.Bytes(2)
+	codeBytes := resp.Bytes(2, false)
 	assert.Equal(t, bytes, codeBytes)
 }

@@ -75,9 +75,17 @@ func (l *LeaveGroupResp) BytesLength(version int16) int {
 	return result
 }
 
-func (l *LeaveGroupResp) Bytes(version int16) []byte {
-	bytes := make([]byte, l.BytesLength(version))
+func (l *LeaveGroupResp) Bytes(version int16, containLen bool) []byte {
+	length := l.BytesLength(version)
+	var bytes []byte
 	idx := 0
+	if containLen {
+		bytes = make([]byte, length+4)
+		idx = putInt(bytes, idx, length)
+	} else {
+		bytes = make([]byte, length)
+	}
+
 	idx = putCorrId(bytes, idx, l.CorrelationId)
 	if version == 0 {
 		idx = putErrorCode(bytes, idx, 0)

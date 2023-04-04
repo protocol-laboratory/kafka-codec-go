@@ -94,7 +94,7 @@ func (k *KafkaServer) React(frame []byte, c gnet.Conn) (_ []byte, action gnet.Ac
 		if resp == nil {
 			return nil, action
 		}
-		return resp.Bytes(apiVersion), action
+		return resp.Bytes(apiVersion, false), action
 	case codec.SaslHandshake:
 		req, err := codec.DecodeSaslHandshakeReq(frame[4:], apiVersion)
 		if err != nil {
@@ -105,7 +105,7 @@ func (k *KafkaServer) React(frame []byte, c gnet.Conn) (_ []byte, action gnet.Ac
 		if resp == nil {
 			return nil, action
 		}
-		return resp.Bytes(apiVersion), action
+		return resp.Bytes(apiVersion, false), action
 	case codec.SaslAuthenticate:
 		req, err := codec.DecodeSaslAuthenticateReq(frame[4:], apiVersion)
 		if err != nil {
@@ -116,7 +116,7 @@ func (k *KafkaServer) React(frame []byte, c gnet.Conn) (_ []byte, action gnet.Ac
 		if resp == nil {
 			return nil, action
 		}
-		return resp.Bytes(apiVersion), action
+		return resp.Bytes(apiVersion, false), action
 	case codec.Heartbeat:
 		req, err := codec.DecodeHeartbeatReq(frame[4:], apiVersion)
 		if err != nil {
@@ -127,7 +127,7 @@ func (k *KafkaServer) React(frame []byte, c gnet.Conn) (_ []byte, action gnet.Ac
 		if resp == nil {
 			return nil, action
 		}
-		return resp.Bytes(apiVersion), action
+		return resp.Bytes(apiVersion, false), action
 	case codec.JoinGroup:
 		req, err := codec.DecodeJoinGroupReq(frame[4:], apiVersion)
 		if err != nil {
@@ -138,7 +138,7 @@ func (k *KafkaServer) React(frame []byte, c gnet.Conn) (_ []byte, action gnet.Ac
 		if resp == nil {
 			return nil, action
 		}
-		return resp.Bytes(apiVersion), action
+		return resp.Bytes(apiVersion, false), action
 	case codec.SyncGroup:
 		req, err := codec.DecodeSyncGroupReq(frame[4:], apiVersion)
 		if err != nil {
@@ -149,7 +149,7 @@ func (k *KafkaServer) React(frame []byte, c gnet.Conn) (_ []byte, action gnet.Ac
 		if resp == nil {
 			return nil, action
 		}
-		return resp.Bytes(apiVersion), action
+		return resp.Bytes(apiVersion, false), action
 	case codec.OffsetFetch:
 		req, err := codec.DecodeOffsetFetchReq(frame[4:], apiVersion)
 		if err != nil {
@@ -160,7 +160,7 @@ func (k *KafkaServer) React(frame []byte, c gnet.Conn) (_ []byte, action gnet.Ac
 		if resp == nil {
 			return nil, action
 		}
-		return resp.Bytes(apiVersion), action
+		return resp.Bytes(apiVersion, false), action
 	case codec.ListOffsets:
 		req, err := codec.DecodeListOffsetsReq(frame[4:], apiVersion)
 		if err != nil {
@@ -171,7 +171,7 @@ func (k *KafkaServer) React(frame []byte, c gnet.Conn) (_ []byte, action gnet.Ac
 		if resp == nil {
 			return nil, action
 		}
-		return resp.Bytes(apiVersion), action
+		return resp.Bytes(apiVersion, false), action
 	case codec.Fetch:
 		req, err := codec.DecodeFetchReq(frame[4:], apiVersion)
 		if err != nil {
@@ -182,7 +182,7 @@ func (k *KafkaServer) React(frame []byte, c gnet.Conn) (_ []byte, action gnet.Ac
 		if resp == nil {
 			return nil, action
 		}
-		return resp.Bytes(apiVersion), action
+		return resp.Bytes(apiVersion, false), action
 	case codec.OffsetCommit:
 		req, err := codec.DecodeOffsetCommitReq(frame[4:], apiVersion)
 		if err != nil {
@@ -193,7 +193,7 @@ func (k *KafkaServer) React(frame []byte, c gnet.Conn) (_ []byte, action gnet.Ac
 		if resp == nil {
 			return nil, action
 		}
-		return resp.Bytes(apiVersion), action
+		return resp.Bytes(apiVersion, false), action
 	case codec.OffsetForLeaderEpoch:
 		req, err := codec.DecodeOffsetForLeaderEpochReq(frame[4:], apiVersion)
 		if err != nil {
@@ -204,7 +204,7 @@ func (k *KafkaServer) React(frame []byte, c gnet.Conn) (_ []byte, action gnet.Ac
 		if resp == nil {
 			return nil, action
 		}
-		return resp.Bytes(apiVersion), action
+		return resp.Bytes(apiVersion, false), action
 	case codec.LeaveGroup:
 		req, err := codec.DecodeLeaveGroupReq(frame[4:], apiVersion)
 		if err != nil {
@@ -215,7 +215,7 @@ func (k *KafkaServer) React(frame []byte, c gnet.Conn) (_ []byte, action gnet.Ac
 		if resp == nil {
 			return nil, action
 		}
-		return resp.Bytes(apiVersion), action
+		return resp.Bytes(apiVersion, false), action
 	case codec.Produce:
 		req, err := codec.DecodeProduceReq(frame[4:], apiVersion)
 		if err != nil {
@@ -229,7 +229,7 @@ func (k *KafkaServer) React(frame []byte, c gnet.Conn) (_ []byte, action gnet.Ac
 		if req.RequiredAcks == 0 {
 			return nil, action
 		}
-		return resp.Bytes(apiVersion), action
+		return resp.Bytes(apiVersion, false), action
 	case codec.Metadata:
 		req, err := codec.DecodeMetadataReq(frame[4:], apiVersion)
 		if err != nil {
@@ -240,7 +240,7 @@ func (k *KafkaServer) React(frame []byte, c gnet.Conn) (_ []byte, action gnet.Ac
 		if resp == nil {
 			return nil, action
 		}
-		return resp.Bytes(apiVersion), action
+		return resp.Bytes(apiVersion, false), action
 	case codec.FindCoordinator:
 		req, err := codec.DecodeFindCoordinatorReq(frame[4:], apiVersion)
 		if err != nil {
@@ -251,7 +251,7 @@ func (k *KafkaServer) React(frame []byte, c gnet.Conn) (_ []byte, action gnet.Ac
 		if resp == nil {
 			return nil, action
 		}
-		return resp.Bytes(apiVersion), action
+		return resp.Bytes(apiVersion, false), action
 	}
 
 	k.impl.UnSupportedApi(c, apiKey, apiVersion)

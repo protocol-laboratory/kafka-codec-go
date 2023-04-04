@@ -308,9 +308,17 @@ func (m *MetadataResp) BytesLength(version int16) int {
 	return result
 }
 
-func (m *MetadataResp) Bytes(version int16) []byte {
-	bytes := make([]byte, m.BytesLength(version))
+func (m *MetadataResp) Bytes(version int16, containLen bool) []byte {
+	length := m.BytesLength(version)
+	var bytes []byte
 	idx := 0
+	if containLen {
+		bytes = make([]byte, length+4)
+		idx = putInt(bytes, idx, length)
+	} else {
+		bytes = make([]byte, length)
+	}
+
 	idx = putCorrId(bytes, idx, m.CorrelationId)
 	if version == 9 {
 		idx = putTaggedField(bytes, idx)
