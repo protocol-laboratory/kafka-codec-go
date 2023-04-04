@@ -110,6 +110,7 @@ type kafkaConn struct {
 
 func (k *KafkaNetServer) HandleConn(kafkaConn *kafkaConn) {
 	for {
+		// read data into buffer
 		readLen, err := kafkaConn.conn.Read(kafkaConn.buffer.bytes[kafkaConn.buffer.cursor:])
 		if err != nil {
 			if isEof(err) {
@@ -121,36 +122,49 @@ func (k *KafkaNetServer) HandleConn(kafkaConn *kafkaConn) {
 			break
 		}
 		kafkaConn.buffer.cursor += readLen
-		if kafkaConn.buffer.cursor < 4 {
-			continue
+
+		// process messages in buffer
+		for {
+			if kafkaConn.buffer.cursor < 4 {
+				break
+			}
+			length := codec.FourByteLength(kafkaConn.buffer.bytes[kafkaConn.buffer.start:])
+			if kafkaConn.buffer.cursor < length+4 {
+				break
+			}
+			if length > kafkaConn.buffer.max {
+				k.impl.ReadError(kafkaConn.conn, fmt.Errorf("message too long: %d", length))
+				k.impl.ConnectionClosed(kafkaConn.conn)
+				break
+			}
+			dstBytes, err := k.react(kafkaConn, kafkaConn.buffer.bytes[kafkaConn.buffer.start+4:kafkaConn.buffer.start+length])
+			if err != nil {
+				k.impl.ReactError(kafkaConn.conn, err)
+				k.impl.ConnectionClosed(kafkaConn.conn)
+				break
+			}
+			write, err := kafkaConn.conn.Write(dstBytes)
+			if err != nil {
+				k.impl.WriteError(kafkaConn.conn, err)
+				k.impl.ConnectionClosed(kafkaConn.conn)
+				break
+			}
+			if write != len(dstBytes) {
+				k.impl.WriteError(kafkaConn.conn, fmt.Errorf("write %d bytes, but expect %d bytes", write, len(dstBytes)))
+				k.impl.ConnectionClosed(kafkaConn.conn)
+				break
+			}
+			kafkaConn.buffer.cursor -= length + 4
+			kafkaConn.buffer.start += length + 4
+			kafkaConn.buffer.start %= len(kafkaConn.buffer.bytes)
 		}
-		length := codec.FourByteLength(kafkaConn.buffer.bytes) + 4
-		if kafkaConn.buffer.cursor < length {
-			continue
-		}
-		if length > kafkaConn.buffer.max {
-			k.impl.ReadError(kafkaConn.conn, fmt.Errorf("message too long: %d", length))
-			break
-		}
-		dstBytes, err := k.react(kafkaConn, kafkaConn.buffer.bytes[4:length])
-		if err != nil {
-			k.impl.ReactError(kafkaConn.conn, err)
+
+		// close connection if buffer is full
+		if kafkaConn.buffer.cursor == kafkaConn.buffer.max {
+			k.impl.ReadError(kafkaConn.conn, fmt.Errorf("buffer full"))
 			k.impl.ConnectionClosed(kafkaConn.conn)
 			break
 		}
-		write, err := kafkaConn.conn.Write(dstBytes)
-		if err != nil {
-			k.impl.WriteError(kafkaConn.conn, err)
-			k.impl.ConnectionClosed(kafkaConn.conn)
-			break
-		}
-		if write != len(dstBytes) {
-			k.impl.WriteError(kafkaConn.conn, fmt.Errorf("write %d bytes, but expect %d bytes", write, len(dstBytes)))
-			k.impl.ConnectionClosed(kafkaConn.conn)
-			break
-		}
-		kafkaConn.buffer.cursor -= length
-		copy(kafkaConn.buffer.bytes[:kafkaConn.buffer.cursor], kafkaConn.buffer.bytes[length:])
 	}
 }
 
