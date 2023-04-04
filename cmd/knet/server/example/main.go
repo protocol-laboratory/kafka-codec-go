@@ -49,7 +49,7 @@ func (e ExampleKafkaNetServerImpl) WriteError(conn *knet.Conn, err error) {
 }
 
 func (e ExampleKafkaNetServerImpl) UnSupportedApi(conn *knet.Conn, apiKey codec.ApiCode, apiVersion int16) {
-	log.Printf("UnSupportedApi: %s, %s, %d", conn.RemoteAddr(), apiKey, apiVersion)
+	log.Printf("UnSupportedApi: %s, %v, %d", conn.RemoteAddr(), apiKey, apiVersion)
 }
 
 func (e ExampleKafkaNetServerImpl) ApiVersion(conn *knet.Conn, req *codec.ApiReq) (*codec.ApiResp, error) {
