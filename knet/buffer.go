@@ -17,8 +17,32 @@
 
 package knet
 
+import "fmt"
+
 type buffer struct {
 	max    int
 	bytes  []byte
 	cursor int
+	start  int
+	count  int
+}
+
+func (b *buffer) Write(p []byte) (int, error) {
+	n := len(p)
+	if n > b.Available() {
+		return 0, fmt.Errorf("buffer full")
+	}
+	if b.cursor+n <= len(b.bytes) {
+		b.bytes = append(b.bytes[:b.cursor], p...)
+	} else {
+		remaining := len(b.bytes) - b.cursor
+		b.bytes = append(b.bytes[:b.cursor], p[:remaining]...)
+		b.bytes = append(b.bytes, p[remaining:]...)
+	}
+	b.cursor += n
+	return n, nil
+}
+
+func (b *buffer) Available() int {
+	return b.max - b.cursor
 }
