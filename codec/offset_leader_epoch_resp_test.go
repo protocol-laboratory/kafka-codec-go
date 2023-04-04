@@ -56,7 +56,7 @@ func TestEncodeOffsetForLeaderEpochRespV3(t *testing.T) {
 	offsetLeaderEpochTopicResp.Topic = "lt-test-1"
 	offsetLeaderEpochTopicResp.PartitionRespList = []*OffsetForLeaderEpochPartitionResp{offsetLeaderEpochPartitionResp}
 	offsetLeaderEpochResp.TopicRespList = []*OffsetForLeaderEpochTopicResp{offsetLeaderEpochTopicResp}
-	bytes := offsetLeaderEpochResp.Bytes(3)
+	bytes := offsetLeaderEpochResp.Bytes(3, false)
 	expectBytes := testHex2Bytes(t, "00000009000000000000000100096c742d746573742d3100000001000000000000000000000000000000000006")
 	assert.Equal(t, expectBytes, bytes)
 }
@@ -78,6 +78,6 @@ func TestDecodeAndCodeOffsetForLeaderEpochRespV3(t *testing.T) {
 	assert.Equal(t, partitionResp.LeaderEpoch, int32(0))
 	assert.Equal(t, partitionResp.Offset, int64(6))
 	assert.Equal(t, partitionResp.ErrorCode, NONE)
-	codeBytes := resp.Bytes(3)
+	codeBytes := resp.Bytes(3, false)
 	assert.Equal(t, bytes, codeBytes)
 }

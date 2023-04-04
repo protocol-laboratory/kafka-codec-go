@@ -58,9 +58,17 @@ func (s *SaslHandshakeResp) BytesLength(version int16) int {
 	return length
 }
 
-func (s *SaslHandshakeResp) Bytes(version int16) []byte {
-	bytes := make([]byte, s.BytesLength(version))
+func (s *SaslHandshakeResp) Bytes(version int16, containLen bool) []byte {
+	length := s.BytesLength(version)
+	var bytes []byte
 	idx := 0
+	if containLen {
+		bytes = make([]byte, length+4)
+		idx = putInt(bytes, idx, length)
+	} else {
+		bytes = make([]byte, length)
+	}
+
 	idx = putCorrId(bytes, idx, s.CorrelationId)
 	idx = putErrorCode(bytes, idx, s.ErrorCode)
 	idx = putArrayLen(bytes, idx, s.EnableMechanisms)

@@ -68,7 +68,7 @@ func TestEncodeMetadataRespV1(t *testing.T) {
 	}
 	metadataResp.TopicMetadataList[0] = &topicMetadata
 	metadataResp.ClusterAuthorizedOperation = -2147483648
-	bytes := metadataResp.Bytes(1)
+	bytes := metadataResp.Bytes(1, false)
 	expectBytes := testHex2Bytes(t, "00000002000000010000000100096c6f63616c686f737400002384ffff000000010000000100000005746f70696300000000010000000000000000000100000001000000010000000100000001")
 	assert.Equal(t, expectBytes, bytes)
 }
@@ -90,7 +90,7 @@ func TestDecodeAndEncodeMetadataRespV1(t *testing.T) {
 	assert.Equal(t, ErrorCode(0), topicMetadata.ErrorCode)
 	assert.Equal(t, "topic", topicMetadata.Topic)
 	assert.False(t, topicMetadata.IsInternal)
-	codeBytes := metadataResp.Bytes(1)
+	codeBytes := metadataResp.Bytes(1, false)
 	assert.Equal(t, bytes, codeBytes)
 }
 
@@ -143,7 +143,7 @@ func TestEncodeMetadataRespV8(t *testing.T) {
 	}
 	metadataResp.TopicMetadataList[0] = &topicMetadata
 	metadataResp.ClusterAuthorizedOperation = -2147483648
-	bytes := metadataResp.Bytes(8)
+	bytes := metadataResp.Bytes(8, false)
 	expectBytes := testHex2Bytes(t, "0000000100000000000000010000000100096c6f63616c686f737400002384ffff00167635346934394266536c656b356e357a7a2d4c634a4100000001000000010000000a746573742d746f7069630000000001000000000000000000010000000000000001000000010000000100000001ffffffff8000000080000000")
 	assert.Equal(t, expectBytes, bytes)
 }
@@ -167,7 +167,7 @@ func TestDecodeAndEncodeMetadataRespV8(t *testing.T) {
 	assert.Equal(t, ErrorCode(0), topicMetadata.ErrorCode)
 	assert.Equal(t, "test-topic", topicMetadata.Topic)
 	assert.False(t, topicMetadata.IsInternal)
-	codeBytes := metadataResp.Bytes(8)
+	codeBytes := metadataResp.Bytes(8, false)
 	assert.Equal(t, bytes, codeBytes)
 }
 
@@ -220,7 +220,7 @@ func TestEncodeMetadataRespV9(t *testing.T) {
 	}
 	metadataResp.TopicMetadataList[0] = &topicMetadata
 	metadataResp.ClusterAuthorizedOperation = -2147483648
-	bytes := metadataResp.Bytes(9)
+	bytes := metadataResp.Bytes(9, false)
 	expectBytes := testHex2Bytes(t, "00000002000000000002000000000a6c6f63616c686f73740000238400000973686f6f74687a6a000000000200002537363465646565332d303037652d343865302d623966392d6466376637313366663730370002000000000000000000000000000002000000000200000000010080000000008000000000")
 	assert.Equal(t, expectBytes, bytes)
 }
@@ -244,6 +244,6 @@ func TestDecodeAndEncodeMetadataRespV9(t *testing.T) {
 	assert.Equal(t, ErrorCode(0), topicMetadata.ErrorCode)
 	assert.Equal(t, "test-3", topicMetadata.Topic)
 	assert.False(t, topicMetadata.IsInternal)
-	codeBytes := metadataResp.Bytes(9)
+	codeBytes := metadataResp.Bytes(9, false)
 	assert.Equal(t, bytes, codeBytes)
 }

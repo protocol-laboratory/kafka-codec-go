@@ -58,7 +58,7 @@ func TestEncodeListOffsetsRespV1(t *testing.T) {
 		},
 	}
 	listOffsetResp.TopicRespList = []*ListOffsetsTopicResp{listOffsetTopicResp}
-	bytes := listOffsetResp.Bytes(1)
+	bytes := listOffsetResp.Bytes(1, false)
 	expectBytes := testHex2Bytes(t, "00000004000000010005746f70696300000001000000000000ffffffffffffffff0000000000000001")
 	assert.Equal(t, expectBytes, bytes)
 }
@@ -82,7 +82,7 @@ func TestDecodeAndCodeListOffsetsRespV1(t *testing.T) {
 	assert.Equal(t, partitionResp.Timestamp, int64(-1))
 	assert.Equal(t, partitionResp.Offset, int64(1))
 	assert.Equal(t, partitionResp.LeaderEpoch, int32(0))
-	codeBytes := resp.Bytes(1)
+	codeBytes := resp.Bytes(1, false)
 	assert.Equal(t, expectBytes, codeBytes)
 }
 
@@ -123,7 +123,7 @@ func TestEncodeListOffsetsRespV5(t *testing.T) {
 		},
 	}
 	listOffsetResp.TopicRespList = []*ListOffsetsTopicResp{listOffsetTopicResp}
-	bytes := listOffsetResp.Bytes(5)
+	bytes := listOffsetResp.Bytes(5, false)
 	expectBytes := testHex2Bytes(t, "0000000800000000000000010006746573742d3500000001000000000000ffffffffffffffff000000000000000000000000")
 	assert.Equal(t, expectBytes, bytes)
 }
@@ -147,7 +147,7 @@ func TestDecodeAndCodeListOffsetsRespV5(t *testing.T) {
 	assert.Equal(t, partitionResp.Timestamp, int64(-1))
 	assert.Equal(t, partitionResp.Offset, int64(0))
 	assert.Equal(t, partitionResp.LeaderEpoch, int32(0))
-	codeBytes := resp.Bytes(5)
+	codeBytes := resp.Bytes(5, false)
 	assert.Equal(t, expectBytes, codeBytes)
 }
 
@@ -217,7 +217,7 @@ func TestEncodeListOffsetsRespV6(t *testing.T) {
 		},
 	}
 	listOffsetResp.TopicRespList = []*ListOffsetsTopicResp{listOffsetTopicResp}
-	bytes := listOffsetResp.Bytes(6)
+	bytes := listOffsetResp.Bytes(6, false)
 	expectBytes := testHex2Bytes(t, "000000090000000000020d68706354657374546f70696306000000040000fffffffffffffffe000000000177679c0000000000000000020000fffffffffffffffe0000000001788ab50000000000000000030000fffffffffffffffe0000000001772e410000000000000000000000fffffffffffffffe000000000182d74c0000000000000000010000fffffffffffffffe00000000019864cd00000000000000")
 	assert.Equal(t, expectBytes, bytes)
 }
@@ -241,6 +241,6 @@ func TestDecodeAndCodeListOffsetsRespV6(t *testing.T) {
 	assert.Equal(t, partitionResp.Timestamp, int64(-2))
 	assert.Equal(t, partitionResp.Offset, int64(24602524))
 	assert.Equal(t, partitionResp.LeaderEpoch, int32(0))
-	codeBytes := resp.Bytes(6)
+	codeBytes := resp.Bytes(6, false)
 	assert.Equal(t, expectBytes, codeBytes)
 }

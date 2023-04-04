@@ -39,7 +39,7 @@ func TestEncodeSyncGroupRespV0(t *testing.T) {
 	}
 	syncGroupResp.ErrorCode = 0
 	syncGroupResp.MemberAssignment = testHex2Bytes(t, "0001000000010005746f7069630000000100000000ffffffff")
-	bytes := syncGroupResp.Bytes(0)
+	bytes := syncGroupResp.Bytes(0, false)
 	expectBytes := testHex2Bytes(t, "000000030000000000190001000000010005746f7069630000000100000000ffffffff")
 	assert.Equal(t, expectBytes, bytes)
 }
@@ -49,7 +49,7 @@ func TestDecodeAndCodeSyncGroupRespV0WithErr(t *testing.T) {
 	resp, err := DecodeSyncGroupResp(bytes, 0)
 	assert.Nil(t, err)
 	assert.Equal(t, resp.ErrorCode, REBALANCE_IN_PROGRESS)
-	codeBytes := resp.Bytes(0)
+	codeBytes := resp.Bytes(0, false)
 	assert.Equal(t, codeBytes, bytes)
 }
 
@@ -60,7 +60,7 @@ func TestDecodeAndCodeSyncGroupRespV0(t *testing.T) {
 	assert.Equal(t, resp.CorrelationId, 3)
 	assert.Equal(t, resp.ErrorCode, NONE)
 	assert.Equal(t, resp.MemberAssignment, testHex2Bytes(t, "0001000000010005746f7069630000000100000000ffffffff"))
-	codeBytes := resp.Bytes(0)
+	codeBytes := resp.Bytes(0, false)
 	assert.Equal(t, bytes, codeBytes)
 }
 
@@ -80,7 +80,7 @@ func TestEncodeSyncGroupRespV4(t *testing.T) {
 		},
 	}
 	syncGroupResp.MemberAssignment = testHex2Bytes(t, "0001000000010006746573742d350000000100000000ffffffff")
-	bytes := syncGroupResp.Bytes(4)
+	bytes := syncGroupResp.Bytes(4, false)
 	expectBytes := testHex2Bytes(t, "00000006000000000000001b0001000000010006746573742d350000000100000000ffffffff00")
 	assert.Equal(t, expectBytes, bytes)
 }
@@ -90,7 +90,7 @@ func TestDecodeAndCodeSyncGroupRespV4WithErr(t *testing.T) {
 	resp, err := DecodeSyncGroupResp(bytes, 4)
 	assert.Nil(t, err)
 	assert.Equal(t, resp.ErrorCode, REBALANCE_IN_PROGRESS)
-	codeBytes := resp.Bytes(4)
+	codeBytes := resp.Bytes(4, false)
 	assert.Equal(t, codeBytes, bytes)
 }
 
@@ -101,7 +101,7 @@ func TestDecodeAndCodeSyncGroupRespV4(t *testing.T) {
 	assert.Equal(t, resp.CorrelationId, 6)
 	assert.Equal(t, resp.ErrorCode, NONE)
 	assert.Equal(t, resp.MemberAssignment, testHex2Bytes(t, "0001000000010006746573742d350000000100000000ffffffff"))
-	codeBytes := resp.Bytes(4)
+	codeBytes := resp.Bytes(4, false)
 	assert.Equal(t, bytes, codeBytes)
 }
 
@@ -124,7 +124,7 @@ func TestEncodeSyncGroupRespV5(t *testing.T) {
 	syncGroupResp.ProtocolType = "consumer"
 	syncGroupResp.ProtocolName = "range"
 	syncGroupResp.MemberAssignment = testHex2Bytes(t, "000100000001000c68706354657374546f7069630000000100000002ffffffff")
-	bytes := syncGroupResp.Bytes(5)
+	bytes := syncGroupResp.Bytes(5, false)
 	expectBytes := testHex2Bytes(t, "000000430000000000000009636f6e73756d65720672616e676521000100000001000c68706354657374546f7069630000000100000002ffffffff00")
 	assert.Equal(t, expectBytes, bytes)
 }
@@ -137,7 +137,7 @@ func TestDecodeAndCodeSyncGroupRespV5(t *testing.T) {
 	assert.Equal(t, resp.ProtocolType, "consumer")
 	assert.Equal(t, resp.ProtocolName, "range")
 	assert.Equal(t, resp.MemberAssignment, testHex2Bytes(t, "000100000001000c68706354657374546f7069630000000100000002ffffffff"))
-	codeBytes := resp.Bytes(5)
+	codeBytes := resp.Bytes(5, false)
 	assert.Equal(t, bytes, codeBytes)
 }
 
@@ -146,6 +146,6 @@ func TestDecodeAndCodeSyncGroupRespV5WithErr(t *testing.T) {
 	resp, err := DecodeSyncGroupResp(bytes, 5)
 	assert.Nil(t, err)
 	assert.Equal(t, resp.ErrorCode, REBALANCE_IN_PROGRESS)
-	codeBytes := resp.Bytes(5)
+	codeBytes := resp.Bytes(5, false)
 	assert.Equal(t, codeBytes, bytes)
 }

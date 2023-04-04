@@ -80,9 +80,17 @@ func (a *ApiResp) BytesLength(version int16) int {
 	return length
 }
 
-func (a *ApiResp) Bytes(version int16) []byte {
-	bytes := make([]byte, a.BytesLength(version))
+func (a *ApiResp) Bytes(version int16, containLen bool) []byte {
+	length := a.BytesLength(version)
+	var bytes []byte
 	idx := 0
+	if containLen {
+		bytes = make([]byte, length+4)
+		idx = putInt(bytes, idx, length)
+	} else {
+		bytes = make([]byte, length)
+	}
+
 	idx = putCorrId(bytes, idx, a.CorrelationId)
 	idx = putErrorCode(bytes, idx, a.ErrorCode)
 	if version < 3 {

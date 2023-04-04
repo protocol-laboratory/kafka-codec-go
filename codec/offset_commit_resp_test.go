@@ -52,7 +52,7 @@ func TestEncodeOffsetCommitRespV2(t *testing.T) {
 		},
 	}
 	offsetCommitResp.TopicRespList = []*OffsetCommitTopicResp{offsetCommitTopicResp}
-	bytes := offsetCommitResp.Bytes(2)
+	bytes := offsetCommitResp.Bytes(2, false)
 	expectBytes := testHex2Bytes(t, "00000005000000010005746f70696300000001000000000000")
 	assert.Equal(t, expectBytes, bytes)
 }
@@ -72,7 +72,7 @@ func TestDecodeAndCodeOffsetCommitRespV2(t *testing.T) {
 	partitionResp := partitionRespList[0]
 	assert.Equal(t, partitionResp.PartitionId, 0)
 	assert.Equal(t, partitionResp.ErrorCode, NONE)
-	codeBytes := resp.Bytes(2)
+	codeBytes := resp.Bytes(2, false)
 	assert.Equal(t, expectBytes, codeBytes)
 }
 
@@ -106,7 +106,7 @@ func TestEncodeOffsetCommitRespV8(t *testing.T) {
 		},
 	}
 	offsetCommitResp.TopicRespList = []*OffsetCommitTopicResp{offsetCommitTopicResp}
-	bytes := offsetCommitResp.Bytes(8)
+	bytes := offsetCommitResp.Bytes(8, false)
 	expectBytes := testHex2Bytes(t, "0000000b00000000000207746573742d3502000000000000000000")
 	assert.Equal(t, expectBytes, bytes)
 }
@@ -126,6 +126,6 @@ func TestDecodeAndCodeOffsetCommitRespV8(t *testing.T) {
 	partitionResp := partitionRespList[0]
 	assert.Equal(t, partitionResp.PartitionId, 0)
 	assert.Equal(t, partitionResp.ErrorCode, NONE)
-	codeBytes := resp.Bytes(8)
+	codeBytes := resp.Bytes(8, false)
 	assert.Equal(t, expectBytes, codeBytes)
 }

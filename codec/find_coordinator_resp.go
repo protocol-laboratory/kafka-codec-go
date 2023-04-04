@@ -82,9 +82,17 @@ func (f *FindCoordinatorResp) BytesLength(version int16) int {
 	return result
 }
 
-func (f *FindCoordinatorResp) Bytes(version int16) []byte {
-	bytes := make([]byte, f.BytesLength(version))
+func (f *FindCoordinatorResp) Bytes(version int16, containLen bool) []byte {
+	length := f.BytesLength(version)
+	var bytes []byte
 	idx := 0
+	if containLen {
+		bytes = make([]byte, length+4)
+		idx = putInt(bytes, idx, length)
+	} else {
+		bytes = make([]byte, length)
+	}
+
 	idx = putCorrId(bytes, idx, f.CorrelationId)
 	if version == 3 {
 		idx = putTaggedField(bytes, idx)

@@ -36,7 +36,7 @@ func TestEncodeHeartbeatRespV0(t *testing.T) {
 			CorrelationId: 10,
 		},
 	}
-	bytes := heartBeatResp.Bytes(0)
+	bytes := heartBeatResp.Bytes(0, false)
 	expectBytes := testHex2Bytes(t, "0000000a0000")
 	assert.Equal(t, expectBytes, bytes)
 }
@@ -47,7 +47,7 @@ func TestDecodeAndCodeHeartbeatRespV0(t *testing.T) {
 	assert.Nil(t, err)
 	assert.Equal(t, resp.CorrelationId, 10)
 	assert.Equal(t, resp.ErrorCode, NONE)
-	codeBytes := resp.Bytes(0)
+	codeBytes := resp.Bytes(0, false)
 	assert.Equal(t, bytes, codeBytes)
 }
 
@@ -66,7 +66,7 @@ func TestEncodeHeartbeatRespV4(t *testing.T) {
 			CorrelationId: 17,
 		},
 	}
-	bytes := heartBeatResp.Bytes(4)
+	bytes := heartBeatResp.Bytes(4, false)
 	expectBytes := testHex2Bytes(t, "000000110000000000000000")
 	assert.Equal(t, expectBytes, bytes)
 }
@@ -78,7 +78,7 @@ func TestEncodeHeartbeatRespWithErrV4(t *testing.T) {
 		},
 		ErrorCode: REBALANCE_IN_PROGRESS,
 	}
-	bytes := heartBeatResp.Bytes(4)
+	bytes := heartBeatResp.Bytes(4, false)
 	expectBytes := testHex2Bytes(t, "000000110000000000001b00")
 	assert.Equal(t, expectBytes, bytes)
 }
@@ -90,6 +90,6 @@ func TestDecodeAndCodeHeartbeatRespV4(t *testing.T) {
 	assert.Equal(t, resp.CorrelationId, 17)
 	assert.Equal(t, resp.ThrottleTime, 0)
 	assert.Equal(t, resp.ErrorCode, REBALANCE_IN_PROGRESS)
-	codeBytes := resp.Bytes(4)
+	codeBytes := resp.Bytes(4, false)
 	assert.Equal(t, bytes, codeBytes)
 }
