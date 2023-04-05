@@ -139,13 +139,28 @@ func (e ExampleKafkaNetServerImpl) Produce(conn *knet.Conn, req *codec.ProduceRe
 }
 
 func (e ExampleKafkaNetServerImpl) SaslAuthenticate(conn *knet.Conn, req *codec.SaslAuthenticateReq) (*codec.SaslAuthenticateResp, error) {
-	//TODO implement me
-	panic("implement me")
+	saslAuthResp := &codec.SaslAuthenticateResp{
+		BaseResp: codec.BaseResp{
+			CorrelationId: req.CorrelationId,
+		},
+		ErrorCode:       0,
+		ErrorMessage:    "",
+		AuthBytes:       nil,
+		SessionLifetime: 0,
+	}
+	return saslAuthResp, nil
 }
 
 func (e ExampleKafkaNetServerImpl) SaslHandshake(conn *knet.Conn, req *codec.SaslHandshakeReq) (*codec.SaslHandshakeResp, error) {
-	//TODO implement me
-	panic("implement me")
+	saslHandshakeResp := &codec.SaslHandshakeResp{
+		BaseResp: codec.BaseResp{
+			CorrelationId: req.CorrelationId,
+		},
+		ErrorCode:        0,
+		EnableMechanisms: make([]*codec.EnableMechanism, 1),
+	}
+	saslHandshakeResp.EnableMechanisms[0] = &codec.EnableMechanism{SaslMechanism: "PLAIN"}
+	return saslHandshakeResp, nil
 }
 
 func (e ExampleKafkaNetServerImpl) SyncGroup(conn *knet.Conn, req *codec.SyncGroupReq) (*codec.SyncGroupResp, error) {

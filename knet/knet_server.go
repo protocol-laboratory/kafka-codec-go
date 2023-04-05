@@ -128,16 +128,17 @@ func (k *KafkaNetServer) HandleConn(kafkaConn *kafkaConn) {
 			if kafkaConn.buffer.cursor < 4 {
 				break
 			}
-			length := codec.FourByteLength(kafkaConn.buffer.bytes[kafkaConn.buffer.start:])
-			if kafkaConn.buffer.cursor < length+4 {
+			bodyLen := codec.FourByteLength(kafkaConn.buffer.bytes)
+			packetLen := bodyLen + 4
+			if kafkaConn.buffer.cursor < packetLen {
 				break
 			}
-			if length > kafkaConn.buffer.max {
-				k.impl.ReadError(kafkaConn.conn, fmt.Errorf("message too long: %d", length))
+			if packetLen > kafkaConn.buffer.max {
+				k.impl.ReadError(kafkaConn.conn, fmt.Errorf("message too long: %d", packetLen))
 				k.impl.ConnectionClosed(kafkaConn.conn)
 				break
 			}
-			dstBytes, err := k.react(kafkaConn, kafkaConn.buffer.bytes[kafkaConn.buffer.start+4:kafkaConn.buffer.start+length])
+			dstBytes, err := k.react(kafkaConn, kafkaConn.buffer.bytes[4:packetLen])
 			if err != nil {
 				k.impl.ReactError(kafkaConn.conn, err)
 				k.impl.ConnectionClosed(kafkaConn.conn)
@@ -154,9 +155,8 @@ func (k *KafkaNetServer) HandleConn(kafkaConn *kafkaConn) {
 				k.impl.ConnectionClosed(kafkaConn.conn)
 				break
 			}
-			kafkaConn.buffer.cursor -= length + 4
-			kafkaConn.buffer.start += length + 4
-			kafkaConn.buffer.start %= len(kafkaConn.buffer.bytes)
+			kafkaConn.buffer.cursor -= packetLen
+			copy(kafkaConn.buffer.bytes[:kafkaConn.buffer.cursor], kafkaConn.buffer.bytes[packetLen:])
 		}
 
 		// close connection if buffer is full

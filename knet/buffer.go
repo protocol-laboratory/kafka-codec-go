@@ -23,8 +23,6 @@ type buffer struct {
 	max    int
 	bytes  []byte
 	cursor int
-	start  int
-	count  int
 }
 
 func (b *buffer) Write(p []byte) (int, error) {
