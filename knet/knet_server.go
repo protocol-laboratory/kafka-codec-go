@@ -22,6 +22,8 @@ import (
 	"encoding/binary"
 	"fmt"
 	"net"
+	"os"
+	"runtime/debug"
 	"sync"
 
 	"github.com/protocol-laboratory/kafka-codec-go/codec"
@@ -74,7 +76,11 @@ type KafkaNetServer struct {
 }
 
 func (k *KafkaNetServer) Run() {
-	defer k.connWg.Done()
+	defer func() {
+		if err := recover(); err != nil {
+			_, _ = fmt.Fprintf(os.Stderr, "network server failed: %s", codec.PanicToError(err, debug.Stack()))
+		}
+	}()
 	for {
 		netConn, err := k.listener.Accept()
 		if err != nil {
@@ -88,10 +94,16 @@ func (k *KafkaNetServer) Run() {
 		}
 		k.connWg.Add(1)
 		go func() {
+			var conn = &Conn{
+				Conn: netConn,
+			}
+			defer func() {
+				if err := recover(); err != nil {
+					k.impl.ReactError(conn, codec.PanicToError(err, debug.Stack()))
+				}
+			}()
 			k.HandleConn(&kafkaConn{
-				conn: &Conn{
-					Conn: netConn,
-				},
+				conn: conn,
 				buffer: &buffer{
 					max:    k.config.BufferMax,
 					bytes:  make([]byte, k.config.BufferMax),
@@ -361,7 +373,6 @@ func NewKafkaNetServer(config KafkaNetServerConfig, impl KafkaNetServerImpl) (*K
 		k.config.BufferMax = 5 * 1024 * 1024
 	}
 	// server thread task
-	k.connWg.Add(1)
 	go k.Run()
 	return k, nil
 }
