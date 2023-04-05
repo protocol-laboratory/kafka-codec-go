@@ -15,32 +15,32 @@
 // specific language governing permissions and limitations
 // under the License.
 
-package knet
+package main
 
-import "fmt"
+import (
+	"fmt"
+	"github.com/protocol-laboratory/kafka-codec-go/codec"
+	"github.com/protocol-laboratory/kafka-codec-go/knet"
+)
 
-type buffer struct {
-	max    int
-	bytes  []byte
-	cursor int
-}
-
-func (b *buffer) Write(p []byte) (int, error) {
-	n := len(p)
-	if n > b.Available() {
-		return 0, fmt.Errorf("buffer full")
+func main() {
+	cli, err := knet.NewKafkaNetClient(knet.KafkaNetClientConfig{
+		Host: "localhost",
+		Port: 9092,
+	})
+	if err != nil {
+		panic(err)
 	}
-	if b.cursor+n <= len(b.bytes) {
-		b.bytes = append(b.bytes[:b.cursor], p...)
-	} else {
-		remaining := len(b.bytes) - b.cursor
-		b.bytes = append(b.bytes[:b.cursor], p[:remaining]...)
-		b.bytes = append(b.bytes, p[remaining:]...)
+	handshakeResp, err := cli.SaslHandshake(&codec.SaslHandshakeReq{
+		BaseReq: codec.BaseReq{
+			ApiVersion:    1,
+			CorrelationId: 1,
+			ClientId:      "1",
+		},
+		SaslMechanism: "PLAIN",
+	})
+	if err != nil {
+		panic(err)
 	}
-	b.cursor += n
-	return n, nil
-}
-
-func (b *buffer) Available() int {
-	return b.max - b.cursor
+	fmt.Printf("%+v\n", handshakeResp)
 }
