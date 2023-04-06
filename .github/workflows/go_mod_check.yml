@@ -16,9 +16,23 @@
 # specific language governing permissions and limitations
 # under the License.
 #
-version: 2
-updates:
-  - package-ecosystem: "github-actions"
-    directory: "/"
-    schedule:
-      interval: "daily"
+name: Go mod check
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  go-mod-check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v2
+      - name: Run Go Mod Check Action
+        uses: Shoothzj/go-mod-check-action@main
+        with:
+          prohibitIndirectDepUpdate: 'true'
