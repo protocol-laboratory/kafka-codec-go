@@ -38,6 +38,7 @@ type KafkaNetServerConfig struct {
 }
 
 type KafkaNetServerImpl interface {
+	ConnectionOpened(conn *Conn)
 	ConnectionClosed(conn *Conn)
 
 	AcceptError(conn *Conn, err error)
@@ -93,6 +94,7 @@ func (k *KafkaNetServer) Run() {
 			}
 		}
 		k.connWg.Add(1)
+		k.impl.ConnectionOpened(&Conn{Conn: netConn})
 		go func() {
 			var conn = &Conn{
 				Conn: netConn,

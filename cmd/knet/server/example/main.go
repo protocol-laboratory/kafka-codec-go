@@ -28,6 +28,10 @@ import (
 type ExampleKafkaNetServerImpl struct {
 }
 
+func (e ExampleKafkaNetServerImpl) ConnectionOpened(conn *knet.Conn) {
+	log.Printf("ConnectionOpened: %s", conn.RemoteAddr())
+}
+
 func (e ExampleKafkaNetServerImpl) ConnectionClosed(conn *knet.Conn) {
 	log.Printf("ConnectionClosed: %s", conn.RemoteAddr())
 }
