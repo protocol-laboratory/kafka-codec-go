@@ -15,26 +15,29 @@
 // specific language governing permissions and limitations
 // under the License.
 
-package kgnet
+package knet
 
 import (
-	"encoding/binary"
-	"github.com/panjf2000/gnet"
+	"fmt"
+	"github.com/stretchr/testify/require"
+	"net"
+	"testing"
+	"time"
 )
 
-var (
-	encoderConfig = gnet.EncoderConfig{
-		ByteOrder:                       binary.BigEndian,
-		LengthFieldLength:               4,
-		LengthAdjustment:                0,
-		LengthIncludesLengthFieldLength: false,
-	}
-	decoderConfig = gnet.DecoderConfig{
-		ByteOrder:           binary.BigEndian,
-		LengthFieldOffset:   0,
-		LengthFieldLength:   4,
-		LengthAdjustment:    0,
-		InitialBytesToStrip: 4,
-	}
-	kafkaCodec = gnet.NewLengthFieldBasedFrameCodec(encoderConfig, decoderConfig)
-)
+func TestNetDial(t *testing.T) {
+	port, err := AcquireUnusedPort()
+	require.Nil(t, err)
+	server, err := NewKafkaNetServer(KafkaNetServerConfig{
+		Host: "localhost",
+		Port: port,
+	}, nil)
+	require.Nil(t, err)
+	go func() {
+		server.Run()
+	}()
+	address := fmt.Sprintf("localhost:%d", port)
+	conn, err := net.DialTimeout("tcp", address, time.Second*5)
+	require.Nil(t, err)
+	conn.Close()
+}
