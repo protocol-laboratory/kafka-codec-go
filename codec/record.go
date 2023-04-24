@@ -23,7 +23,12 @@ type Record struct {
 	RelativeOffset    int
 	Key               []byte
 	Value             []byte
-	Headers           []byte
+	Headers           []*Header
+}
+
+type Header struct {
+	Key   string
+	Value []byte
 }
 
 func DecodeRecord(bytes []byte, version int16) *Record {
@@ -34,7 +39,20 @@ func DecodeRecord(bytes []byte, version int16) *Record {
 	record.RelativeOffset, idx = readRelativeOffset(bytes, idx)
 	record.Key, idx = readVCompactBytes(bytes, idx)
 	record.Value, idx = readVCompactBytes(bytes, idx)
-	record.Headers, idx = readCompactNullableBytes(bytes, idx)
+	headerLen, idx := readRecordHeadersSize(bytes, idx)
+	if headerLen > 0 {
+		record.Headers = make([]*Header, headerLen)
+	}
+	for i := 0; i < headerLen; i++ {
+		var headerKey string
+		var headerValue []byte
+		headerKey, idx = readRecordHeaderKey(bytes, idx)
+		headerValue, idx = readRecordHeaderValue(bytes, idx)
+		record.Headers[i] = &Header{
+			Key:   headerKey,
+			Value: headerValue,
+		}
+	}
 	return record
 }
 
@@ -46,7 +64,11 @@ func (r *Record) BytesLength() int {
 	// https://kafka.apache.org/documentation/#messageformat 5.3.2
 	result += CompactVarintBytesLen(r.Key)
 	result += CompactVarintBytesLen(r.Value)
-	result += CompactNullableBytesLen(r.Headers)
+	result += recordHeadersSizeLen(len(r.Headers))
+	for _, header := range r.Headers {
+		result += recordHeaderKeyLen(header.Key)
+		result += recordHeaderValueLen(header.Value)
+	}
 	return result
 }
 
@@ -58,6 +80,10 @@ func (r *Record) Bytes() []byte {
 	idx = putRelativeOffset(bytes, idx, r.RelativeOffset)
 	idx = putVCompactBytes(bytes, idx, r.Key)
 	idx = putVCompactBytes(bytes, idx, r.Value)
-	idx = putCompactNullableBytes(bytes, idx, r.Headers)
+	idx = putRecordHeadersSize(bytes, idx, len(r.Headers))
+	for _, header := range r.Headers {
+		idx = putRecordHeaderKey(bytes, idx, header.Key)
+		idx = putRecordHeaderValue(bytes, idx, header.Value)
+	}
 	return bytes
 }
