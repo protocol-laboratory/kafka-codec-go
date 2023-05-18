@@ -26,14 +26,17 @@ import (
 	"os"
 	"runtime/debug"
 	"sync"
+	"time"
 )
 
 type KafkaNetServerConfig struct {
-	Host      string
-	Port      int
-	BufferMax int
-	tlsEnable bool
-	tlsConfig *tls.Config
+	Host         string
+	Port         int
+	BufferMax    int
+	ReadTimeout  time.Duration
+	WriteTimeout time.Duration
+	tlsEnable    bool
+	tlsConfig    *tls.Config
 }
 
 type KafkaNetServerImpl interface {
@@ -128,6 +131,9 @@ func (k *KafkaNetServer) HandleConn(kafkaConn *kafkaConn) {
 			break
 		}
 		// read data into buffer
+		if k.config.ReadTimeout > 0 {
+			_ = kafkaConn.conn.SetReadDeadline(time.Now().Add(k.config.ReadTimeout))
+		}
 		readLen, err := kafkaConn.conn.Read(kafkaConn.buffer.bytes[kafkaConn.buffer.cursor:])
 		if err != nil {
 			if isEof(err) {
@@ -162,6 +168,9 @@ func (k *KafkaNetServer) HandleConn(kafkaConn *kafkaConn) {
 				activeClose = true
 				k.activeCloseConn(kafkaConn)
 				break
+			}
+			if k.config.WriteTimeout > 0 {
+				_ = kafkaConn.conn.SetWriteDeadline(time.Now().Add(k.config.WriteTimeout))
 			}
 			write, err := kafkaConn.conn.Write(dstBytes)
 			if err != nil {
