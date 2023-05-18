@@ -21,12 +21,11 @@ import (
 	"crypto/tls"
 	"encoding/binary"
 	"fmt"
+	"github.com/protocol-laboratory/kafka-codec-go/codec"
 	"net"
 	"os"
 	"runtime/debug"
 	"sync"
-
-	"github.com/protocol-laboratory/kafka-codec-go/codec"
 )
 
 type KafkaNetServerConfig struct {
@@ -184,6 +183,7 @@ func (k *KafkaNetServer) HandleConn(kafkaConn *kafkaConn) {
 		// close connection if buffer is full
 		if kafkaConn.buffer.cursor == kafkaConn.buffer.max {
 			k.impl.ReadError(kafkaConn.conn, fmt.Errorf("buffer full"))
+			activeClose = true
 			k.activeCloseConn(kafkaConn)
 			break
 		}
