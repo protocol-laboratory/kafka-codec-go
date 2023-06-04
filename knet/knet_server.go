@@ -104,15 +104,12 @@ func (k *KafkaNetServer) Run() {
 			defer func() {
 				if err := recover(); err != nil {
 					k.impl.ReactError(conn, codec.PanicToError(err, debug.Stack()))
+					_ = conn.Close()
 				}
 			}()
 			k.HandleConn(&kafkaConn{
-				conn: conn,
-				buffer: &buffer{
-					max:    k.config.BufferMax,
-					bytes:  make([]byte, k.config.BufferMax),
-					cursor: 0,
-				},
+				conn:   conn,
+				buffer: newBuffer(k.config.BufferMax),
 			})
 			k.connWg.Done()
 		}()
@@ -195,6 +192,9 @@ func (k *KafkaNetServer) HandleConn(kafkaConn *kafkaConn) {
 			activeClose = true
 			k.activeCloseConn(kafkaConn)
 			break
+		}
+		if kafkaConn.buffer.cursor == kafkaConn.buffer.currentSize && kafkaConn.buffer.currentSize < kafkaConn.buffer.max {
+			kafkaConn.buffer.expand()
 		}
 	}
 }
