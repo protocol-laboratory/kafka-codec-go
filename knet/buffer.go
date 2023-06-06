@@ -20,27 +20,40 @@ package knet
 import "fmt"
 
 type buffer struct {
-	max    int
-	bytes  []byte
-	cursor int
+	max         int
+	cursor      int
+	currentSize int
+	bytes       []byte
+}
+
+func newBuffer(maxSize int) *buffer {
+	var buf = new(buffer)
+	buf.max = maxSize
+	buf.currentSize = maxSize / 32
+	buf.bytes = make([]byte, buf.currentSize)
+	return buf
+}
+
+func (b *buffer) expand() {
+	if b.currentSize*2 > b.max {
+		b.currentSize = b.max
+	} else {
+		b.currentSize *= 2
+	}
+	buf := make([]byte, b.currentSize)
+	copy(buf, b.bytes)
+	b.bytes = buf
 }
 
 func (b *buffer) Write(p []byte) (int, error) {
 	n := len(p)
-	if n > b.Available() {
+	if b.cursor+n > b.max {
 		return 0, fmt.Errorf("buffer full")
 	}
-	if b.cursor+n <= len(b.bytes) {
-		b.bytes = append(b.bytes[:b.cursor], p...)
-	} else {
-		remaining := len(b.bytes) - b.cursor
-		b.bytes = append(b.bytes[:b.cursor], p[:remaining]...)
-		b.bytes = append(b.bytes, p[remaining:]...)
+	if b.cursor+n > len(b.bytes) {
+		b.expand()
 	}
+	b.bytes = append(b.bytes[:b.cursor], p...)
 	b.cursor += n
 	return n, nil
-}
-
-func (b *buffer) Available() int {
-	return b.max - b.cursor
 }

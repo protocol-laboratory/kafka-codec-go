@@ -331,11 +331,7 @@ func NewKafkaNetClient(config KafkaNetClientConfig) (*KafkaNetClient, error) {
 	k.conn = conn
 	k.eventsChan = make(chan *sendRequest, config.SendQueueSize)
 	k.pendingQueue = make(chan *sendRequest, config.PendingQueueSize)
-	k.buffer = &buffer{
-		max:    config.BufferMax,
-		bytes:  make([]byte, config.BufferMax),
-		cursor: 0,
-	}
+	k.buffer = newBuffer(config.BufferMax)
 	k.closeCh = make(chan struct{})
 	go func() {
 		k.read()
