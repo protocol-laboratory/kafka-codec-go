@@ -35,8 +35,8 @@ type KafkaNetServerConfig struct {
 	BufferMax    int
 	ReadTimeout  time.Duration
 	WriteTimeout time.Duration
-	tlsEnable    bool
-	tlsConfig    *tls.Config
+	TlsEnable    bool
+	TlsConfig    *tls.Config
 }
 
 type KafkaNetServerImpl interface {
@@ -384,8 +384,8 @@ func NewKafkaNetServer(config KafkaNetServerConfig, impl KafkaNetServerImpl) (*K
 	if err != nil {
 		return nil, err
 	}
-	if config.tlsEnable {
-		listener = tls.NewListener(listener, config.tlsConfig)
+	if config.TlsEnable {
+		listener = tls.NewListener(listener, config.TlsConfig)
 	}
 	k := &KafkaNetServer{
 		listener: listener,
